@@ -1,0 +1,1942 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DDX Balance Wheel</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&family=IBM+Plex+Mono:wght@400;600&display=swap');
+
+    :root {
+      --ink: #10242e;
+      --muted: #56717d;
+      --paper: #f8faf7;
+      --card: #ffffff;
+      --line: #cde1d7;
+      --accent: #116466;
+      --accent-2: #ff8f3f;
+      --danger: #bf2f39;
+      --ok: #1f7a46;
+      --today: #ffffff;
+      --shadow: 0 12px 28px rgba(10, 33, 28, 0.09);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      font-family: 'Manrope', sans-serif;
+      background:
+        radial-gradient(circle at 6% 0%, rgba(17, 100, 102, 0.16), transparent 35%),
+        radial-gradient(circle at 100% 10%, rgba(255, 143, 63, 0.18), transparent 40%),
+        linear-gradient(180deg, #f5fbf9, #eff7f3 62%, #edf6f1);
+      min-height: 100vh;
+    }
+
+    .app {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 24px 18px 40px;
+    }
+
+    .hero {
+      background: linear-gradient(110deg, rgba(17, 100, 102, 0.95), rgba(17, 100, 102, 0.74)), url('assets/hero-image.png') center/cover;
+      border-radius: 24px;
+      padding: 24px;
+      color: #f2fffb;
+      box-shadow: var(--shadow);
+    }
+
+    .hero h1 {
+      margin: 0 0 6px;
+      font-size: clamp(1.3rem, 2.4vw, 2rem);
+      letter-spacing: 0.02em;
+    }
+
+    .hero p {
+      margin: 0;
+      color: #dff3ec;
+      max-width: 900px;
+    }
+
+    .toolbar {
+      margin-top: 14px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .status-pill {
+      background: rgba(255, 255, 255, 0.16);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-size: 0.86rem;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin: 18px 0;
+    }
+
+    .tab-btn {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 10px 14px;
+      background: rgba(255, 255, 255, 0.8);
+      color: var(--ink);
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .tab-btn.active {
+      background: var(--accent);
+      color: #ecfffb;
+      border-color: var(--accent);
+    }
+
+    .panel {
+      display: none;
+      background: rgba(255, 255, 255, 0.86);
+      border: 1px solid #e0ece5;
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+      padding: 16px;
+      backdrop-filter: blur(4px);
+    }
+
+    .panel.active {
+      display: block;
+      animation: fade .2s ease;
+    }
+
+    @keyframes fade {
+      from { opacity: 0; transform: translateY(5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    h2 {
+      margin: 0 0 14px;
+      font-size: 1.28rem;
+    }
+
+    h3 {
+      margin: 0 0 10px;
+      font-size: 1.05rem;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid #ddebe3;
+      border-radius: 16px;
+      padding: 12px;
+    }
+
+    .sector-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 10px;
+    }
+
+    .sector-card {
+      text-align: left;
+      border: 1px solid #cfe3d7;
+      background: linear-gradient(145deg, #fff, #f4fbf7);
+      border-radius: 15px;
+      padding: 10px;
+      cursor: pointer;
+      transition: transform .15s ease;
+    }
+
+    .sector-card:hover {
+      transform: translateY(-2px);
+    }
+
+    .meta {
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+
+    .level-legend {
+      margin-top: 10px;
+      border-collapse: collapse;
+      width: 100%;
+      font-size: 0.88rem;
+    }
+
+    .level-legend td,
+    .level-legend th {
+      border: 1px solid #e4efe9;
+      padding: 8px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      border: 1px solid #c9ddd2;
+      border-radius: 10px;
+      padding: 8px;
+      font-family: 'Manrope', sans-serif;
+      font-size: 0.94rem;
+      color: var(--ink);
+      background: #fff;
+    }
+
+    textarea {
+      min-height: 74px;
+      resize: vertical;
+    }
+
+    .mono {
+      font-family: 'IBM Plex Mono', monospace;
+    }
+
+    .btn {
+      border: 1px solid #c8dfd1;
+      background: #fff;
+      border-radius: 999px;
+      padding: 8px 12px;
+      cursor: pointer;
+      font-weight: 700;
+      color: #183741;
+    }
+
+    .btn.primary {
+      background: var(--accent);
+      color: #edfffa;
+      border-color: var(--accent);
+    }
+
+    .btn.warn {
+      background: #fff6f6;
+      border-color: #f0c9cd;
+      color: #9d2530;
+    }
+
+    .list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    .list-item {
+      border: 1px solid #d8e8df;
+      border-radius: 12px;
+      padding: 8px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 6px;
+      align-items: center;
+      background: #fbfffd;
+    }
+
+    .matrix-layout {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 12px;
+    }
+
+    .matrix-tabs {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .matrix-tabs button {
+      text-align: left;
+      padding: 10px;
+      border-radius: 10px;
+      border: 1px solid #d5e6dc;
+      background: #fff;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .matrix-tabs button.active {
+      background: #e9f8f1;
+      border-color: #a8d2bf;
+    }
+
+    .pane {
+      display: none;
+    }
+
+    .pane.active {
+      display: block;
+    }
+
+    .relations-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+
+    .relations-table th,
+    .relations-table td {
+      border: 1px solid #e1eee7;
+      padding: 8px;
+      vertical-align: top;
+    }
+
+    .badge {
+      background: #e5f4ed;
+      color: #255948;
+      border-radius: 999px;
+      padding: 4px 8px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      display: inline-block;
+    }
+
+    .process-item,
+    .task-item {
+      border: 1px solid #dae9e2;
+      border-radius: 14px;
+      padding: 10px;
+      background: #fff;
+      margin-bottom: 8px;
+    }
+
+    .task-item.today {
+      background: var(--today);
+      border-color: #b9d9ca;
+    }
+
+    .task-item.overdue {
+      border-color: #f2c4ca;
+      background: #fff4f5;
+    }
+
+    .task-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .calendar {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+    }
+
+    .calendar th,
+    .calendar td {
+      border: 1px solid #dceae2;
+      padding: 6px;
+      text-align: left;
+      vertical-align: top;
+      height: 90px;
+      background: #fff;
+      cursor: pointer;
+    }
+
+    .calendar td strong {
+      display: inline-block;
+      margin-bottom: 4px;
+    }
+
+    .dot {
+      display: inline-block;
+      border-radius: 999px;
+      font-size: 0.72rem;
+      padding: 2px 7px;
+      background: #edf7f2;
+      margin: 2px 0;
+    }
+
+    .progress-wrap {
+      width: 100%;
+      height: 14px;
+      border-radius: 999px;
+      background: #e2efe8;
+      overflow: hidden;
+    }
+
+    .progress {
+      height: 100%;
+      background: linear-gradient(90deg, #1f7a46, #4cb970);
+      width: 0;
+    }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(8, 20, 17, 0.58);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 20;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-box {
+      width: min(1040px, 100%);
+      max-height: 92vh;
+      overflow: auto;
+      background: #fff;
+      border-radius: 18px;
+      padding: 14px;
+    }
+
+    .close-row {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 10px;
+      gap: 6px;
+    }
+
+    .small {
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+
+    @media (max-width: 900px) {
+      .matrix-layout,
+      .grid-2 {
+        grid-template-columns: 1fr;
+      }
+
+      .app {
+        padding: 14px 10px 24px;
+      }
+
+      .calendar th,
+      .calendar td {
+        height: 74px;
+        font-size: 0.76rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <section class="hero">
+      <h1>DDX: Годовая настройка, процессы и выполнение задач</h1>
+      <p>Для каждого из 8 секторов поддерживается отдельная X-матрица. Пользователь работает с интерфейсом сектора, а матрицы хранятся скрыто как отдельные структуры данных.</p>
+      <div class="toolbar">
+        <span class="status-pill" id="saveStateLabel">Статус: синхронизация...</span>
+        <button class="btn" id="syncNowBtn" type="button">Синхронизировать сейчас</button>
+      </div>
+    </section>
+
+    <nav class="tabs">
+      <button class="tab-btn active" data-tab="year" type="button">Настройка на год</button>
+      <button class="tab-btn" data-tab="personality" type="button">Настройка личности</button>
+      <button class="tab-btn" data-tab="processes" type="button">Процессы</button>
+      <button class="tab-btn" data-tab="tasks" type="button">Задачи</button>
+      <button class="tab-btn" data-tab="analytics" type="button">Календарь и аналитика</button>
+    </nav>
+
+    <section class="panel active" id="panel-year">
+      <h2>Сектора года</h2>
+      <p class="meta">Откройте сектор и заполните 5 вкладок: результаты, стратегии, тактика, процесс/проект, взаимосвязи.</p>
+      <div id="sectorCards" class="sector-grid"></div>
+      <table class="level-legend">
+        <thead>
+          <tr>
+            <th>Уровень влияния</th>
+            <th>Значок</th>
+          </tr>
+        </thead>
+        <tbody id="influenceLegendBody"></tbody>
+      </table>
+      <div class="card" style="margin-top: 12px;">
+        <h3>Таблица взаимосвязей (базовые правила)</h3>
+        <table class="relations-table">
+          <thead>
+            <tr>
+              <th>№</th>
+              <th>Что связываем</th>
+              <th>С чем связываем</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>1</td><td>Результаты</td><td>Стратегии</td></tr>
+            <tr><td>2</td><td>Стратегии</td><td>Тактика</td></tr>
+            <tr><td>3</td><td>Тактика</td><td>Процесс/Проект, Исполнитель/Ответственный</td></tr>
+            <tr><td>4</td><td>Процесс/Проект</td><td>Результаты, Исполнитель/Ответственный</td></tr>
+            <tr><td>5</td><td>Исполнитель/Ответственный</td><td>Результаты</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="panel" id="panel-personality">
+      <h2>Антропометрия и оценка личности</h2>
+      <div class="grid-2">
+        <article class="card">
+          <h3>Антропометрические параметры (InBody / DDX)</h3>
+          <div id="anthroForm" class="form-row"></div>
+          <button class="btn primary" type="button" id="saveAnthroBtn">Сохранить антропометрию</button>
+          <p class="small">Параметры используются для анализа спортивных достижений и здоровья. Раздел анализов расширяемый.</p>
+        </article>
+        <article class="card">
+          <h3>Психологическое тестирование</h3>
+          <div id="testForm"></div>
+          <div style="margin-top: 8px;" id="testSummary" class="badge"></div>
+        </article>
+      </div>
+      <article class="card" style="margin-top: 12px;">
+        <h3>Результаты анализов</h3>
+        <div id="analysisList" class="list"></div>
+        <div class="form-row" style="margin-top: 8px;">
+          <input id="analysisName" placeholder="Название анализа" />
+          <input id="analysisValue" placeholder="Значение" />
+          <input id="analysisDate" type="date" />
+        </div>
+        <button class="btn" type="button" id="addAnalysisBtn">Добавить результат</button>
+      </article>
+    </section>
+
+    <section class="panel" id="panel-processes">
+      <h2>Процессы (4 уровня иерархии)</h2>
+      <div class="card">
+        <h3>Категории процессов</h3>
+        <div id="processCategories" class="list"></div>
+        <div class="form-row" style="margin-top: 8px;">
+          <input id="newCategoryInput" placeholder="Новая категория" />
+          <button class="btn" type="button" id="addCategoryBtn">Добавить категорию</button>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top: 10px;">
+        <h3>Шаблоны верхнеуровневых процессов</h3>
+        <div id="processTemplates" class="list"></div>
+      </div>
+
+      <div class="card" style="margin-top: 10px;">
+        <h3>Процессы пользователя</h3>
+        <div id="processItems"></div>
+        <button class="btn primary" type="button" id="addProcessItemBtn">Добавить процесс</button>
+      </div>
+
+      <div class="card" style="margin-top: 10px;">
+        <h3>Генерация календаря процессов</h3>
+        <p class="small">Ежесуточные, еженедельные, ежемесячные процессы формируют регулярные задачи. Генерация добавляет задачи на 14 дней вперед.</p>
+        <button class="btn" type="button" id="generateScheduleBtn">Сформировать календарь процессов</button>
+      </div>
+    </section>
+
+    <section class="panel" id="panel-tasks">
+      <h2>Задачи по дням</h2>
+      <div class="form-row">
+        <div>
+          <label for="taskDateFilter">Дата</label>
+          <input id="taskDateFilter" type="date" />
+        </div>
+        <div>
+          <label for="freeTimeInput">Оставшееся время (мин.)</label>
+          <input id="freeTimeInput" type="number" min="0" value="90" />
+        </div>
+      </div>
+      <div class="card">
+        <h3>Создать функцию на день</h3>
+        <div class="form-row">
+          <input id="quickTaskTitle" placeholder="Название функции/задачи" />
+          <select id="quickTaskSector"></select>
+          <input id="quickTaskMinutes" type="number" min="5" value="30" placeholder="Время" />
+          <select id="quickTaskInfluence"></select>
+          <button class="btn primary" type="button" id="createQuickTaskBtn">Добавить</button>
+        </div>
+      </div>
+      <div style="margin-top: 12px;" id="tasksContainer"></div>
+    </section>
+
+    <section class="panel" id="panel-analytics">
+      <h2>Календарь, прогресс и первичная аналитика</h2>
+      <div class="form-row">
+        <button class="btn" id="prevMonthBtn" type="button">Предыдущий месяц</button>
+        <div id="calendarMonthLabel" class="badge" style="justify-self: center;"></div>
+        <button class="btn" id="nextMonthBtn" type="button">Следующий месяц</button>
+      </div>
+      <div style="overflow-x: auto;">
+        <table class="calendar">
+          <thead id="calendarHead"></thead>
+          <tbody id="calendarBody"></tbody>
+        </table>
+      </div>
+      <div class="card" style="margin-top: 12px;">
+        <h3>Аналитика за период</h3>
+        <div class="form-row">
+          <div>
+            <label for="analyticsFrom">От</label>
+            <input id="analyticsFrom" type="date" />
+          </div>
+          <div>
+            <label for="analyticsTo">До</label>
+            <input id="analyticsTo" type="date" />
+          </div>
+          <button class="btn" type="button" id="runAnalyticsBtn">Рассчитать</button>
+        </div>
+        <div id="analyticsText" class="meta"></div>
+        <div class="progress-wrap" style="margin-top: 8px;"><div id="analyticsProgress" class="progress"></div></div>
+      </div>
+    </section>
+  </main>
+
+  <section class="modal" id="matrixModal">
+    <div class="modal-box">
+      <h2 id="matrixTitle"></h2>
+      <div class="matrix-layout">
+        <div class="matrix-tabs" id="matrixTabs"></div>
+        <div id="matrixPanes"></div>
+      </div>
+      <div class="close-row">
+        <button class="btn" type="button" id="closeMatrixBtn">Закрыть</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="modal" id="taskModal">
+    <div class="modal-box" style="max-width: 760px;">
+      <h2 id="taskModalTitle">Задача</h2>
+      <div id="taskModalBody"></div>
+      <div class="close-row">
+        <button class="btn" type="button" id="markReadBtn">Выйти без заполнения</button>
+        <button class="btn" type="button" id="closeTaskBtn">Закрыть</button>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    const USER_ID = '69d7a4ce59d4646ae0dae714';
+    const stateEndpoint = `/.netlify/functions/app-state?userId=${encodeURIComponent(USER_ID)}`;
+
+    const sectorMeta = [
+      { id: 'career_business', title: '🧑‍💼 Карьера / Бизнес' },
+      { id: 'finance', title: '💰 Финансы' },
+      { id: 'health_fitness', title: '🩺 Здоровье и Фитнес' },
+      { id: 'family_friends', title: '👨‍👩‍👧‍👦 Семья и Друзья' },
+      { id: 'romantic_relations', title: '❤️ Романтические отношения' },
+      { id: 'physical_environment', title: '🏠 Физическое окружение' },
+      { id: 'rest_entertainment', title: '🎉 Отдых и Развлечения' },
+      { id: 'personal_growth', title: '📚 Личностный рост' }
+    ];
+
+    const matrixPanesMeta = [
+      { key: 'results', label: '1. Результаты' },
+      { key: 'strategies', label: '2. Стратегии' },
+      { key: 'tactics', label: '3. Тактика' },
+      { key: 'processProjects', label: '4. Процесс/Проект' },
+      { key: 'relations', label: '5. Взаимосвязи' }
+    ];
+
+    const influenceMap = {
+      1: { icon: '○', label: 'Самое слабое влияние' },
+      2: { icon: '◔', label: 'Слабое влияние' },
+      3: { icon: '◑', label: 'Среднее влияние' },
+      4: { icon: '◕', label: 'Сильное влияние' },
+      5: { icon: '●', label: 'Самое сильное влияние' }
+    };
+
+    const processRegularityTemplates = {
+      daily: [
+        'Подъем по будильнику',
+        'Утренний туалет',
+        'Быстрый завтрак',
+        'Коммутация',
+        'Рабочие процессы',
+        'Перекур / кофе-брейк',
+        'Обед по расписанию',
+        'Дорога домой',
+        'Вечерний ритуал',
+        'Засыпание'
+      ],
+      weekly: [
+        'Закупка продуктов',
+        'Стирка',
+        'Уборка',
+        'Подготовка еды',
+        'Ремонт/обслуживание',
+        'Психологическая разгрузка'
+      ],
+      monthly: [
+        'Оплата ЖКХ',
+        'Пополнение счетов',
+        'Закрытие кредита/рассрочки'
+      ]
+    };
+
+    let appState = null;
+    let currentTab = 'year';
+    let activeSectorId = null;
+    let activeMatrixPane = 'results';
+    let selectedTaskId = null;
+    let calendarDate = new Date();
+    let saveInFlight = false;
+
+    function uid(prefix) {
+      return `${prefix}_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
+    }
+
+    function todayIso() {
+      return new Date().toISOString().slice(0, 10);
+    }
+
+    function safeArray(value) {
+      return Array.isArray(value) ? value : [];
+    }
+
+    function getDefaultState() {
+      const sectors = {};
+      for (const sector of sectorMeta) {
+        sectors[sector.id] = {
+          title: sector.title,
+          score: 5,
+          matrix: {
+            results: [],
+            strategies: [],
+            tactics: [],
+            processProjects: [],
+            owners: [],
+            links: []
+          }
+        };
+      }
+      return {
+        sectors,
+        influenceLevels: influenceMap,
+        personality: {
+          anthropometry: {
+            heightCm: null,
+            weightKg: null,
+            chestCm: null,
+            waistCm: null,
+            hipsCm: null,
+            neckCm: null,
+            headCm: null,
+            armLengthCm: null,
+            legLengthCm: null,
+            shoulderWidthCm: null,
+            bmi: null
+          },
+          test: { responses: {}, latestScore: null },
+          analysisResults: []
+        },
+        processes: {
+          categories: ['Регулярно-циклические', 'Нестандартные (адаптивные / редкие)'],
+          hierarchyTemplates: [
+            { id: 'employment', name: 'Процесс работа в найме (основная)', level: 1, dailyMinutes: 480, regularity: 'будни', category: 'Регулярно-циклические' },
+            { id: 'sleep', name: 'Процесс сон', level: 1, dailyMinutes: 480, regularity: 'ежедневно', category: 'Регулярно-циклические' },
+            { id: 'sport', name: 'Процесс спорт', level: 1, dailyMinutes: 60, regularity: '3 раза в неделю', category: 'Регулярно-циклические' }
+          ],
+          items: []
+        },
+        tasks: [],
+        readWithoutChecklist: [],
+        updatedAt: new Date().toISOString()
+      };
+    }
+
+    function mergeState(state) {
+      const merged = { ...getDefaultState(), ...(state || {}) };
+      merged.sectors = { ...getDefaultState().sectors, ...(state?.sectors || {}) };
+      for (const key of Object.keys(merged.sectors)) {
+        const matrix = merged.sectors[key].matrix || {};
+        merged.sectors[key].matrix = {
+          results: safeArray(matrix.results),
+          strategies: safeArray(matrix.strategies),
+          tactics: safeArray(matrix.tactics),
+          processProjects: safeArray(matrix.processProjects),
+          owners: safeArray(matrix.owners),
+          links: safeArray(matrix.links)
+        };
+      }
+      merged.processes = {
+        ...getDefaultState().processes,
+        ...(state?.processes || {}),
+        categories: safeArray(state?.processes?.categories || getDefaultState().processes.categories),
+        hierarchyTemplates: safeArray(state?.processes?.hierarchyTemplates || getDefaultState().processes.hierarchyTemplates),
+        items: safeArray(state?.processes?.items)
+      };
+      merged.tasks = safeArray(state?.tasks);
+      merged.readWithoutChecklist = safeArray(state?.readWithoutChecklist);
+      merged.personality = {
+        ...getDefaultState().personality,
+        ...(state?.personality || {}),
+        anthropometry: {
+          ...getDefaultState().personality.anthropometry,
+          ...(state?.personality?.anthropometry || {})
+        },
+        test: {
+          ...getDefaultState().personality.test,
+          ...(state?.personality?.test || {}),
+          responses: { ...(state?.personality?.test?.responses || {}) }
+        },
+        analysisResults: safeArray(state?.personality?.analysisResults)
+      };
+      return merged;
+    }
+
+    function setSaveStatus(text) {
+      document.getElementById('saveStateLabel').textContent = `Статус: ${text}`;
+    }
+
+    async function loadState() {
+      setSaveStatus('загрузка...');
+      try {
+        const response = await fetch(stateEndpoint, { method: 'GET' });
+        const payload = await response.json();
+        if (!response.ok || !payload?.state) {
+          throw new Error(payload?.error || 'Не удалось загрузить состояние');
+        }
+        appState = mergeState(payload.state);
+        setSaveStatus('данные загружены');
+      } catch (error) {
+        appState = getDefaultState();
+        setSaveStatus('офлайн-режим, локальная сессия');
+      }
+    }
+
+    async function saveState() {
+      if (!appState || saveInFlight) {
+        return;
+      }
+      saveInFlight = true;
+      setSaveStatus('сохранение...');
+      try {
+        const response = await fetch(stateEndpoint, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ...appState, updatedAt: new Date().toISOString() })
+        });
+        const payload = await response.json();
+        if (!response.ok || !payload.ok) {
+          throw new Error(payload?.error || 'Ошибка сохранения');
+        }
+        appState = mergeState(payload.state);
+        setSaveStatus(`сохранено ${new Date().toLocaleTimeString('ru-RU')}`);
+      } catch (error) {
+        setSaveStatus('сбой сети, повторите синхронизацию');
+      } finally {
+        saveInFlight = false;
+      }
+    }
+
+    function activateTab(tabName) {
+      currentTab = tabName;
+      document.querySelectorAll('.tab-btn').forEach((button) => {
+        button.classList.toggle('active', button.dataset.tab === tabName);
+      });
+      document.querySelectorAll('.panel').forEach((panel) => {
+        panel.classList.toggle('active', panel.id === `panel-${tabName}`);
+      });
+      if (tabName === 'tasks') {
+        renderTasks();
+      }
+      if (tabName === 'analytics') {
+        renderCalendar();
+        runAnalytics();
+      }
+    }
+
+    function renderInfluenceLegend() {
+      const body = document.getElementById('influenceLegendBody');
+      body.innerHTML = '';
+      Object.entries(influenceMap).forEach(([level, item]) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `<td>${item.label}</td><td class="mono">${item.icon} (${level})</td>`;
+        body.appendChild(row);
+      });
+    }
+
+    function renderYearTab() {
+      const container = document.getElementById('sectorCards');
+      container.innerHTML = '';
+      for (const sector of sectorMeta) {
+        const matrix = appState.sectors[sector.id]?.matrix || {};
+        const linkCount = safeArray(matrix.links).length;
+        const card = document.createElement('button');
+        card.type = 'button';
+        card.className = 'sector-card';
+        card.innerHTML = `
+          <div><strong>${sector.title}</strong></div>
+          <div class="small">Результаты: ${safeArray(matrix.results).length}</div>
+          <div class="small">Стратегии: ${safeArray(matrix.strategies).length} | Тактика: ${safeArray(matrix.tactics).length}</div>
+          <div class="small">Процессы/проекты: ${safeArray(matrix.processProjects).length} | Исполнители: ${safeArray(matrix.owners).length}</div>
+          <div class="badge" style="margin-top: 8px;">Связи: ${linkCount}</div>
+        `;
+        card.addEventListener('click', () => openMatrix(sector.id));
+        container.appendChild(card);
+      }
+    }
+
+    function openMatrix(sectorId) {
+      activeSectorId = sectorId;
+      activeMatrixPane = 'results';
+      const sector = appState.sectors[sectorId];
+      document.getElementById('matrixTitle').textContent = `${sector.title}: X-матрица`;
+      document.getElementById('matrixModal').classList.add('active');
+      renderMatrixTabs();
+      renderMatrixPane();
+    }
+
+    function closeMatrix() {
+      activeSectorId = null;
+      document.getElementById('matrixModal').classList.remove('active');
+      renderYearTab();
+      saveState();
+    }
+
+    function renderMatrixTabs() {
+      const tabs = document.getElementById('matrixTabs');
+      tabs.innerHTML = '';
+      matrixPanesMeta.forEach((item) => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.textContent = item.label;
+        button.classList.toggle('active', item.key === activeMatrixPane);
+        button.addEventListener('click', () => {
+          activeMatrixPane = item.key;
+          renderMatrixTabs();
+          renderMatrixPane();
+        });
+        tabs.appendChild(button);
+      });
+    }
+
+    function addMatrixItem(sectionKey) {
+      if (!activeSectorId) {
+        return;
+      }
+      const nextId = uid(sectionKey);
+      const matrix = appState.sectors[activeSectorId].matrix;
+      if (sectionKey === 'processProjects') {
+        matrix.processProjects.push({ id: nextId, title: '', ownerId: '' });
+      } else if (sectionKey === 'owners') {
+        matrix.owners.push({ id: nextId, name: '' });
+      } else {
+        matrix[sectionKey].push({ id: nextId, title: '' });
+      }
+      renderMatrixPane();
+    }
+
+    function updateMatrixText(sectionKey, id, value, subKey = 'title') {
+      const matrix = appState.sectors[activeSectorId].matrix;
+      const list = sectionKey === 'processProjects' ? matrix.processProjects : sectionKey === 'owners' ? matrix.owners : matrix[sectionKey];
+      const index = list.findIndex((item) => item.id === id);
+      if (index >= 0) {
+        list[index][subKey] = value;
+      }
+    }
+
+    function removeMatrixItem(sectionKey, id) {
+      const matrix = appState.sectors[activeSectorId].matrix;
+      const targetKey = sectionKey === 'processProjects' ? 'processProjects' : sectionKey;
+      matrix[targetKey] = matrix[targetKey].filter((item) => item.id !== id);
+      matrix.links = matrix.links.filter((link) => link.fromId !== id && link.toId !== id);
+      renderMatrixPane();
+    }
+
+    function labelForNodeType(nodeType) {
+      if (nodeType === 'results') return 'Результаты';
+      if (nodeType === 'strategies') return 'Стратегии';
+      if (nodeType === 'tactics') return 'Тактика';
+      if (nodeType === 'processProjects') return 'Процесс/Проект';
+      if (nodeType === 'owners') return 'Исполнитель/Ответственный';
+      return nodeType;
+    }
+
+    function allowedLinkPairs() {
+      return [
+        { from: 'results', to: 'strategies' },
+        { from: 'strategies', to: 'tactics' },
+        { from: 'tactics', to: 'processProjects' },
+        { from: 'tactics', to: 'owners' },
+        { from: 'processProjects', to: 'results' },
+        { from: 'processProjects', to: 'owners' },
+        { from: 'owners', to: 'results' }
+      ];
+    }
+
+    function renderEntityEditor(sectionKey, title, addLabel) {
+      const matrix = appState.sectors[activeSectorId].matrix;
+      const list = sectionKey === 'processProjects' ? matrix.processProjects : sectionKey === 'owners' ? matrix.owners : matrix[sectionKey];
+      const ownerOptions = safeArray(matrix.owners);
+
+      const wrap = document.createElement('div');
+      wrap.className = 'pane active';
+      wrap.innerHTML = `<h3>${title}</h3><div class="list" id="list_${sectionKey}"></div><button class="btn" id="add_${sectionKey}" type="button">${addLabel}</button>`;
+
+      const listContainer = wrap.querySelector(`#list_${sectionKey}`);
+      list.forEach((item) => {
+        const row = document.createElement('div');
+        row.className = 'list-item';
+
+        if (sectionKey === 'processProjects') {
+          row.innerHTML = `
+            <div>
+              <input data-id="${item.id}" data-key="title" placeholder="Название процесса/проекта" value="${escapeHtml(item.title || '')}" />
+              <div class="small" style="margin-top: 6px;">Исполнитель/ответственный</div>
+              <select data-id="${item.id}" data-key="ownerId">
+                <option value="">Не выбран</option>
+                ${ownerOptions.map((owner) => `<option value="${owner.id}" ${owner.id === item.ownerId ? 'selected' : ''}>${escapeHtml(owner.name || '(без имени)')}</option>`).join('')}
+              </select>
+            </div>
+            <button class="btn warn" data-del="${item.id}" type="button">Удалить</button>
+          `;
+        } else {
+          const placeholder = sectionKey === 'owners' ? 'ФИО исполнителя/ответственного' : 'Текст';
+          const value = sectionKey === 'owners' ? item.name : item.title;
+          row.innerHTML = `
+            <input data-id="${item.id}" data-key="${sectionKey === 'owners' ? 'name' : 'title'}" placeholder="${placeholder}" value="${escapeHtml(value || '')}" />
+            <button class="btn warn" data-del="${item.id}" type="button">Удалить</button>
+          `;
+        }
+
+        listContainer.appendChild(row);
+      });
+
+      listContainer.querySelectorAll('input, select').forEach((control) => {
+        control.addEventListener('change', () => {
+          const id = control.dataset.id;
+          const key = control.dataset.key;
+          updateMatrixText(sectionKey, id, control.value, key);
+          saveState();
+        });
+      });
+
+      listContainer.querySelectorAll('button[data-del]').forEach((button) => {
+        button.addEventListener('click', () => {
+          removeMatrixItem(sectionKey, button.dataset.del);
+          saveState();
+        });
+      });
+
+      wrap.querySelector(`#add_${sectionKey}`).addEventListener('click', () => {
+        addMatrixItem(sectionKey);
+        saveState();
+      });
+
+      return wrap;
+    }
+
+    function matrixNodesByType(matrix, type) {
+      if (type === 'results') return safeArray(matrix.results);
+      if (type === 'strategies') return safeArray(matrix.strategies);
+      if (type === 'tactics') return safeArray(matrix.tactics);
+      if (type === 'processProjects') return safeArray(matrix.processProjects);
+      if (type === 'owners') return safeArray(matrix.owners);
+      return [];
+    }
+
+    function renderRelationsEditor() {
+      const matrix = appState.sectors[activeSectorId].matrix;
+      const wrap = document.createElement('div');
+      wrap.className = 'pane active';
+      wrap.innerHTML = `
+        <h3>Взаимосвязи и уровень влияния</h3>
+        <p class="small">Создаются только допустимые связи по таблице. Для каждой связи задается влияние 1-5.</p>
+        <div class="form-row">
+          <select id="relFromType"></select>
+          <select id="relFromId"></select>
+          <select id="relToType"></select>
+          <select id="relToId"></select>
+          <select id="relInfluence"></select>
+          <button class="btn" type="button" id="addRelationBtn">Добавить связь</button>
+        </div>
+        <table class="relations-table">
+          <thead>
+            <tr>
+              <th>От</th>
+              <th>К</th>
+              <th>Влияние</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="relationsBody"></tbody>
+        </table>
+      `;
+
+      const fromType = wrap.querySelector('#relFromType');
+      const toType = wrap.querySelector('#relToType');
+      const fromId = wrap.querySelector('#relFromId');
+      const toId = wrap.querySelector('#relToId');
+      const influence = wrap.querySelector('#relInfluence');
+
+      const pairs = allowedLinkPairs();
+      const fromTypes = [...new Set(pairs.map((pair) => pair.from))];
+      fromType.innerHTML = fromTypes.map((type) => `<option value="${type}">${labelForNodeType(type)}</option>`).join('');
+
+      function refreshToTypes() {
+        const allowed = pairs.filter((pair) => pair.from === fromType.value).map((pair) => pair.to);
+        toType.innerHTML = allowed.map((type) => `<option value="${type}">${labelForNodeType(type)}</option>`).join('');
+      }
+
+      function refreshNodeSelects() {
+        const fromNodes = matrixNodesByType(matrix, fromType.value);
+        const toNodes = matrixNodesByType(matrix, toType.value);
+        fromId.innerHTML = fromNodes.map((node) => `<option value="${node.id}">${escapeHtml(node.title || node.name || '(без названия)')}</option>`).join('');
+        toId.innerHTML = toNodes.map((node) => `<option value="${node.id}">${escapeHtml(node.title || node.name || '(без названия)')}</option>`).join('');
+      }
+
+      influence.innerHTML = Object.entries(influenceMap).map(([level, data]) => `<option value="${level}">${data.icon} ${data.label}</option>`).join('');
+
+      fromType.addEventListener('change', () => {
+        refreshToTypes();
+        refreshNodeSelects();
+      });
+      toType.addEventListener('change', refreshNodeSelects);
+
+      refreshToTypes();
+      refreshNodeSelects();
+
+      wrap.querySelector('#addRelationBtn').addEventListener('click', () => {
+        if (!fromId.value || !toId.value) {
+          return;
+        }
+        matrix.links.push({
+          id: uid('link'),
+          fromType: fromType.value,
+          fromId: fromId.value,
+          toType: toType.value,
+          toId: toId.value,
+          influence: Number(influence.value)
+        });
+        renderMatrixPane();
+        saveState();
+      });
+
+      const body = wrap.querySelector('#relationsBody');
+      matrix.links.forEach((link) => {
+        const fromNode = matrixNodesByType(matrix, link.fromType).find((item) => item.id === link.fromId);
+        const toNode = matrixNodesByType(matrix, link.toType).find((item) => item.id === link.toId);
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${labelForNodeType(link.fromType)}: ${escapeHtml(fromNode?.title || fromNode?.name || '(удалено)')}</td>
+          <td>${labelForNodeType(link.toType)}: ${escapeHtml(toNode?.title || toNode?.name || '(удалено)')}</td>
+          <td>
+            <select data-rel="${link.id}">
+              ${Object.entries(influenceMap).map(([level, data]) => `<option value="${level}" ${Number(level) === Number(link.influence) ? 'selected' : ''}>${data.icon} ${data.label}</option>`).join('')}
+            </select>
+          </td>
+          <td><button class="btn warn" data-del="${link.id}" type="button">Удалить</button></td>
+        `;
+        body.appendChild(row);
+      });
+
+      body.querySelectorAll('select[data-rel]').forEach((select) => {
+        select.addEventListener('change', () => {
+          const link = matrix.links.find((item) => item.id === select.dataset.rel);
+          if (link) {
+            link.influence = Number(select.value);
+            saveState();
+          }
+        });
+      });
+
+      body.querySelectorAll('button[data-del]').forEach((button) => {
+        button.addEventListener('click', () => {
+          matrix.links = matrix.links.filter((item) => item.id !== button.dataset.del);
+          renderMatrixPane();
+          saveState();
+        });
+      });
+
+      return wrap;
+    }
+
+    function renderMatrixPane() {
+      const target = document.getElementById('matrixPanes');
+      target.innerHTML = '';
+      if (!activeSectorId) {
+        return;
+      }
+
+      if (activeMatrixPane === 'results') {
+        target.appendChild(renderEntityEditor('results', 'Результаты', 'Добавить результат'));
+      }
+      if (activeMatrixPane === 'strategies') {
+        target.appendChild(renderEntityEditor('strategies', 'Стратегии', 'Добавить стратегию'));
+      }
+      if (activeMatrixPane === 'tactics') {
+        target.appendChild(renderEntityEditor('tactics', 'Тактика', 'Добавить тактику'));
+      }
+      if (activeMatrixPane === 'processProjects') {
+        const block = document.createElement('div');
+        block.className = 'pane active';
+        const projects = renderEntityEditor('processProjects', 'Процесс/Проект', 'Добавить процесс/проект');
+        const owners = renderEntityEditor('owners', 'Исполнитель/Ответственный', 'Добавить исполнителя');
+        block.appendChild(projects);
+        block.appendChild(document.createElement('hr'));
+        block.appendChild(owners);
+        target.appendChild(block);
+      }
+      if (activeMatrixPane === 'relations') {
+        target.appendChild(renderRelationsEditor());
+      }
+    }
+
+    function renderAnthroForm() {
+      const fields = [
+        ['heightCm', 'Рост (см)'],
+        ['weightKg', 'Вес (кг)'],
+        ['chestCm', 'Окружность груди (см)'],
+        ['waistCm', 'Окружность талии (см)'],
+        ['hipsCm', 'Окружность бёдер (см)'],
+        ['neckCm', 'Окружность шеи (см)'],
+        ['headCm', 'Окружность головы (см)'],
+        ['armLengthCm', 'Длина рук (см)'],
+        ['legLengthCm', 'Длина ног (см)'],
+        ['shoulderWidthCm', 'Ширина плеч (см)'],
+        ['bmi', 'Индекс массы тела (ИМТ)']
+      ];
+
+      const anthro = appState.personality.anthropometry;
+      const form = document.getElementById('anthroForm');
+      form.innerHTML = '';
+
+      fields.forEach(([key, label]) => {
+        const item = document.createElement('div');
+        const readonly = key === 'bmi' ? 'readonly' : '';
+        item.innerHTML = `<label>${label}<input ${readonly} data-key="${key}" type="number" value="${anthro[key] ?? ''}" /></label>`;
+        form.appendChild(item);
+      });
+
+      form.querySelectorAll('input[data-key]').forEach((input) => {
+        input.addEventListener('change', () => {
+          const key = input.dataset.key;
+          appState.personality.anthropometry[key] = input.value === '' ? null : Number(input.value);
+          calculateBmi();
+          renderAnthroForm();
+          saveState();
+        });
+      });
+    }
+
+    function calculateBmi() {
+      const anthro = appState.personality.anthropometry;
+      const height = Number(anthro.heightCm);
+      const weight = Number(anthro.weightKg);
+      if (!height || !weight) {
+        anthro.bmi = null;
+        return;
+      }
+      const meters = height / 100;
+      anthro.bmi = Number((weight / (meters * meters)).toFixed(1));
+    }
+
+    function renderTestForm() {
+      const questions = [
+        'Саморегуляция',
+        'Стрессоустойчивость',
+        'Концентрация',
+        'Эмпатия',
+        'Гибкость мышления'
+      ];
+
+      const test = appState.personality.test;
+      const container = document.getElementById('testForm');
+      container.innerHTML = '';
+
+      questions.forEach((question, index) => {
+        const value = Number(test.responses[index] || 3);
+        const line = document.createElement('div');
+        line.style.marginBottom = '8px';
+        line.innerHTML = `
+          <label>${question}</label>
+          <input data-q="${index}" type="range" min="1" max="5" value="${value}" />
+          <span class="badge" id="qVal_${index}">${value}</span>
+        `;
+        container.appendChild(line);
+      });
+
+      container.querySelectorAll('input[type="range"]').forEach((range) => {
+        range.addEventListener('input', () => {
+          test.responses[range.dataset.q] = Number(range.value);
+          document.getElementById(`qVal_${range.dataset.q}`).textContent = range.value;
+          updateTestSummary();
+          saveState();
+        });
+      });
+
+      updateTestSummary();
+    }
+
+    function updateTestSummary() {
+      const responses = Object.values(appState.personality.test.responses).map(Number);
+      if (!responses.length) {
+        appState.personality.test.latestScore = null;
+        document.getElementById('testSummary').textContent = 'Тест пока не заполнен';
+        return;
+      }
+      const avg = responses.reduce((sum, value) => sum + value, 0) / responses.length;
+      appState.personality.test.latestScore = Number(avg.toFixed(2));
+      document.getElementById('testSummary').textContent = `Средний показатель: ${avg.toFixed(2)} / 5`;
+    }
+
+    function renderAnalysisResults() {
+      const list = document.getElementById('analysisList');
+      list.innerHTML = '';
+      safeArray(appState.personality.analysisResults).forEach((item) => {
+        const row = document.createElement('div');
+        row.className = 'list-item';
+        row.innerHTML = `
+          <div><strong>${escapeHtml(item.name)}</strong> <span class="small">${escapeHtml(item.date || '')}</span><div class="small">${escapeHtml(item.value || '')}</div></div>
+          <button class="btn warn" data-id="${item.id}" type="button">Удалить</button>
+        `;
+        list.appendChild(row);
+      });
+
+      list.querySelectorAll('button[data-id]').forEach((button) => {
+        button.addEventListener('click', () => {
+          appState.personality.analysisResults = appState.personality.analysisResults.filter((item) => item.id !== button.dataset.id);
+          renderAnalysisResults();
+          saveState();
+        });
+      });
+    }
+
+    function ensureRoutineTemplates() {
+      const items = appState.processes.items;
+      if (items.some((item) => item.seeded)) {
+        return;
+      }
+
+      processRegularityTemplates.daily.forEach((name) => {
+        items.push({
+          id: uid('proc'),
+          name,
+          hierarchyLevel: 2,
+          dailyMinutes: 15,
+          regularity: 'ежедневно',
+          category: 'Регулярно-циклические',
+          seeded: true
+        });
+      });
+
+      processRegularityTemplates.weekly.forEach((name) => {
+        items.push({
+          id: uid('proc'),
+          name,
+          hierarchyLevel: 3,
+          dailyMinutes: 45,
+          regularity: 'еженедельно',
+          category: 'Регулярно-циклические',
+          seeded: true
+        });
+      });
+
+      processRegularityTemplates.monthly.forEach((name) => {
+        items.push({
+          id: uid('proc'),
+          name,
+          hierarchyLevel: 4,
+          dailyMinutes: 25,
+          regularity: 'ежемесячно',
+          category: 'Регулярно-циклические',
+          seeded: true
+        });
+      });
+    }
+
+    function renderProcessCategories() {
+      const list = document.getElementById('processCategories');
+      list.innerHTML = '';
+      appState.processes.categories.forEach((category) => {
+        const row = document.createElement('div');
+        row.className = 'badge';
+        row.textContent = category;
+        list.appendChild(row);
+      });
+    }
+
+    function renderProcessTemplates() {
+      const list = document.getElementById('processTemplates');
+      list.innerHTML = '';
+      appState.processes.hierarchyTemplates.forEach((template) => {
+        const row = document.createElement('div');
+        row.className = 'process-item';
+        row.innerHTML = `<strong>${escapeHtml(template.name)}</strong><div class="small">Уровень: ${template.level} | Время в день: ${template.dailyMinutes} мин | Регулярность: ${escapeHtml(template.regularity)}</div>`;
+        list.appendChild(row);
+      });
+    }
+
+    function renderProcessItems() {
+      const container = document.getElementById('processItems');
+      container.innerHTML = '';
+
+      appState.processes.items.forEach((item) => {
+        const row = document.createElement('div');
+        row.className = 'process-item';
+        row.innerHTML = `
+          <div class="form-row">
+            <input data-id="${item.id}" data-key="name" value="${escapeHtml(item.name || '')}" placeholder="Название процесса" />
+            <select data-id="${item.id}" data-key="hierarchyLevel">
+              <option value="1" ${Number(item.hierarchyLevel) === 1 ? 'selected' : ''}>Уровень 1</option>
+              <option value="2" ${Number(item.hierarchyLevel) === 2 ? 'selected' : ''}>Уровень 2</option>
+              <option value="3" ${Number(item.hierarchyLevel) === 3 ? 'selected' : ''}>Уровень 3</option>
+              <option value="4" ${Number(item.hierarchyLevel) === 4 ? 'selected' : ''}>Уровень 4</option>
+            </select>
+            <input data-id="${item.id}" data-key="dailyMinutes" type="number" min="1" value="${Number(item.dailyMinutes || 30)}" placeholder="Минут в день" />
+            <input data-id="${item.id}" data-key="regularity" value="${escapeHtml(item.regularity || '')}" placeholder="Регулярность" />
+            <select data-id="${item.id}" data-key="category">${appState.processes.categories.map((category) => `<option value="${escapeHtml(category)}" ${category === item.category ? 'selected' : ''}>${escapeHtml(category)}</option>`).join('')}</select>
+            <button class="btn warn" data-del="${item.id}" type="button">Удалить</button>
+          </div>
+        `;
+        container.appendChild(row);
+      });
+
+      container.querySelectorAll('input[data-id], select[data-id]').forEach((field) => {
+        field.addEventListener('change', () => {
+          const item = appState.processes.items.find((entry) => entry.id === field.dataset.id);
+          if (!item) {
+            return;
+          }
+          const key = field.dataset.key;
+          item[key] = key === 'dailyMinutes' || key === 'hierarchyLevel' ? Number(field.value) : field.value;
+          saveState();
+        });
+      });
+
+      container.querySelectorAll('button[data-del]').forEach((button) => {
+        button.addEventListener('click', () => {
+          appState.processes.items = appState.processes.items.filter((item) => item.id !== button.dataset.del);
+          renderProcessItems();
+          saveState();
+        });
+      });
+    }
+
+    function processRunsOnDate(processItem, date) {
+      const day = date.getDay();
+      const dayOfMonth = date.getDate();
+      const rule = String(processItem.regularity || '').toLowerCase();
+      if (rule.includes('ежеднев')) return true;
+      if (rule.includes('будни')) return day >= 1 && day <= 5;
+      if (rule.includes('еженед')) return day === 6;
+      if (rule.includes('ежемесяч')) return dayOfMonth === 1;
+      return day >= 1 && day <= 5;
+    }
+
+    function ensureTaskShape(task) {
+      return {
+        id: task.id || uid('task'),
+        title: task.title || 'Задача',
+        date: task.date || todayIso(),
+        sectorId: task.sectorId || 'personal_growth',
+        minutes: Number(task.minutes || 30),
+        influence: Number(task.influence || 3),
+        checklist: safeArray(task.checklist),
+        checklistDone: safeArray(task.checklistDone),
+        status: task.status || 'pending',
+        reason: task.reason || '',
+        isRegular: Boolean(task.isRegular),
+        sourceProcessId: task.sourceProcessId || '',
+        readWithoutFill: Boolean(task.readWithoutFill)
+      };
+    }
+
+    function normalizeTasks() {
+      appState.tasks = appState.tasks.map(ensureTaskShape);
+    }
+
+    function generateProcessTasks() {
+      const now = new Date();
+      const newTasks = [];
+      appState.processes.items.forEach((processItem) => {
+        for (let shift = 0; shift < 14; shift += 1) {
+          const date = new Date(now);
+          date.setDate(now.getDate() + shift);
+          if (!processRunsOnDate(processItem, date)) {
+            continue;
+          }
+          const dateIso = date.toISOString().slice(0, 10);
+          const alreadyExists = appState.tasks.some((task) => task.sourceProcessId === processItem.id && task.date === dateIso);
+          if (alreadyExists) {
+            continue;
+          }
+          newTasks.push(ensureTaskShape({
+            title: processItem.name,
+            date: dateIso,
+            sectorId: 'personal_growth',
+            minutes: Number(processItem.dailyMinutes || 30),
+            influence: 3,
+            checklist: ['Подготовка', 'Выполнение', 'Фиксация результата'],
+            checklistDone: [],
+            status: 'pending',
+            isRegular: true,
+            sourceProcessId: processItem.id
+          }));
+        }
+      });
+
+      appState.tasks = [...appState.tasks, ...newTasks];
+      normalizeTasks();
+      renderTasks();
+      renderCalendar();
+      runAnalytics();
+      saveState();
+    }
+
+    function renderTaskSectorOptions() {
+      const select = document.getElementById('quickTaskSector');
+      select.innerHTML = sectorMeta.map((sector) => `<option value="${sector.id}">${sector.title}</option>`).join('');
+    }
+
+    function renderTaskInfluenceOptions() {
+      const select = document.getElementById('quickTaskInfluence');
+      select.innerHTML = Object.entries(influenceMap).map(([level, item]) => `<option value="${level}">${item.icon} ${item.label}</option>`).join('');
+      select.value = '3';
+    }
+
+    function createQuickTask() {
+      const date = document.getElementById('taskDateFilter').value || todayIso();
+      const freeMinutes = Number(document.getElementById('freeTimeInput').value || 0);
+      const title = document.getElementById('quickTaskTitle').value.trim();
+      const sectorId = document.getElementById('quickTaskSector').value;
+      const minutes = Number(document.getElementById('quickTaskMinutes').value || 0);
+      const influence = Number(document.getElementById('quickTaskInfluence').value || 3);
+
+      if (!title || minutes <= 0) {
+        return;
+      }
+
+      if (freeMinutes > 0 && minutes > freeMinutes) {
+        alert('Недостаточно оставшегося времени для этой функции.');
+        return;
+      }
+
+      appState.tasks.push(ensureTaskShape({
+        title,
+        date,
+        sectorId,
+        minutes,
+        influence,
+        checklist: ['Шаг 1'],
+        checklistDone: [],
+        status: 'pending',
+        isRegular: false
+      }));
+
+      document.getElementById('quickTaskTitle').value = '';
+      normalizeTasks();
+      renderTasks();
+      renderCalendar();
+      runAnalytics();
+      saveState();
+    }
+
+    function tasksByDate(dateIso) {
+      return appState.tasks.filter((task) => task.date === dateIso);
+    }
+
+    function taskIsOverdue(task) {
+      return task.status === 'pending' && task.date < todayIso();
+    }
+
+    function taskIsToday(task) {
+      return task.status === 'pending' && task.date === todayIso();
+    }
+
+    function renderTasks() {
+      const filterDateInput = document.getElementById('taskDateFilter');
+      if (!filterDateInput.value) {
+        filterDateInput.value = todayIso();
+      }
+
+      const date = filterDateInput.value;
+      const tasks = tasksByDate(date);
+      const container = document.getElementById('tasksContainer');
+      container.innerHTML = '';
+
+      const heading = document.createElement('div');
+      heading.className = 'badge';
+      heading.textContent = `Задач на ${date}: ${tasks.length}`;
+      container.appendChild(heading);
+
+      tasks.forEach((task) => {
+        const row = document.createElement('div');
+        row.className = `task-item ${taskIsOverdue(task) ? 'overdue' : ''} ${taskIsToday(task) ? 'today' : ''}`;
+        const sector = sectorMeta.find((item) => item.id === task.sectorId);
+        const influence = influenceMap[task.influence] || influenceMap[3];
+        row.innerHTML = `
+          <div class="task-head">
+            <strong>${escapeHtml(task.title)}</strong>
+            <span class="badge">${escapeHtml(sector?.title || task.sectorId)}</span>
+          </div>
+          <div class="small">${task.minutes} мин. | Влияние: ${influence.icon} | Статус: ${statusLabel(task.status)}</div>
+          <div class="small">${task.isRegular ? 'Регулярная задача' : 'Нестандартная задача'} ${task.reason ? `| Причина: ${escapeHtml(task.reason)}` : ''}</div>
+          <div style="margin-top: 8px; display: flex; gap: 6px; flex-wrap: wrap;">
+            <button class="btn" type="button" data-open="${task.id}">Открыть задачу</button>
+            <button class="btn primary" type="button" data-complete="${task.id}">Выполнить</button>
+            <button class="btn warn" type="button" data-reject="${task.id}">Отказаться</button>
+          </div>
+        `;
+        container.appendChild(row);
+      });
+
+      container.querySelectorAll('button[data-open]').forEach((button) => {
+        button.addEventListener('click', () => openTask(button.dataset.open));
+      });
+
+      container.querySelectorAll('button[data-complete]').forEach((button) => {
+        button.addEventListener('click', () => completeTask(button.dataset.complete));
+      });
+
+      container.querySelectorAll('button[data-reject]').forEach((button) => {
+        button.addEventListener('click', () => rejectTask(button.dataset.reject));
+      });
+    }
+
+    function statusLabel(status) {
+      if (status === 'done') return 'Выполнена';
+      if (status === 'rejected') return 'Отказ';
+      return 'Ожидает';
+    }
+
+    function openTask(taskId) {
+      selectedTaskId = taskId;
+      const task = appState.tasks.find((item) => item.id === taskId);
+      if (!task) {
+        return;
+      }
+      const modal = document.getElementById('taskModal');
+      const body = document.getElementById('taskModalBody');
+      document.getElementById('taskModalTitle').textContent = task.title;
+
+      body.innerHTML = `
+        <div class="small">Дата: ${task.date} | Время: ${task.minutes} мин. | Статус: ${statusLabel(task.status)}</div>
+        <h3 style="margin-top: 8px;">Чек-лист</h3>
+        <div id="checklistEditor" class="list"></div>
+        <button class="btn" type="button" id="addChecklistItemBtn">Добавить пункт чек-листа</button>
+      `;
+
+      renderChecklist(task);
+      modal.classList.add('active');
+    }
+
+    function renderChecklist(task) {
+      const editor = document.getElementById('checklistEditor');
+      editor.innerHTML = '';
+
+      task.checklist.forEach((item, index) => {
+        const checked = task.checklistDone.includes(index);
+        const row = document.createElement('div');
+        row.className = 'list-item';
+        row.innerHTML = `
+          <label><input type="checkbox" data-index="${index}" ${checked ? 'checked' : ''} /> ${escapeHtml(item)}</label>
+          <button class="btn warn" data-delete-index="${index}" type="button">Удалить</button>
+        `;
+        editor.appendChild(row);
+      });
+
+      editor.querySelectorAll('input[type="checkbox"]').forEach((checkbox) => {
+        checkbox.addEventListener('change', () => {
+          const index = Number(checkbox.dataset.index);
+          if (checkbox.checked) {
+            if (!task.checklistDone.includes(index)) task.checklistDone.push(index);
+          } else {
+            task.checklistDone = task.checklistDone.filter((doneIndex) => doneIndex !== index);
+          }
+          saveState();
+          renderTasks();
+          runAnalytics();
+        });
+      });
+
+      editor.querySelectorAll('button[data-delete-index]').forEach((button) => {
+        button.addEventListener('click', () => {
+          const index = Number(button.dataset.deleteIndex);
+          task.checklist.splice(index, 1);
+          task.checklistDone = task.checklistDone.filter((doneIndex) => doneIndex !== index).map((doneIndex) => (doneIndex > index ? doneIndex - 1 : doneIndex));
+          renderChecklist(task);
+          saveState();
+        });
+      });
+
+      const addButton = document.getElementById('addChecklistItemBtn');
+      addButton.onclick = () => {
+        const value = prompt('Новый пункт чек-листа');
+        if (!value) return;
+        task.checklist.push(value);
+        renderChecklist(task);
+        saveState();
+      };
+    }
+
+    function closeTaskModal() {
+      selectedTaskId = null;
+      document.getElementById('taskModal').classList.remove('active');
+    }
+
+    function markTaskReadWithoutFill() {
+      if (!selectedTaskId) {
+        return;
+      }
+      const task = appState.tasks.find((item) => item.id === selectedTaskId);
+      if (!task) {
+        return;
+      }
+      task.readWithoutFill = true;
+      if (!appState.readWithoutChecklist.includes(task.id)) {
+        appState.readWithoutChecklist.push(task.id);
+      }
+      closeTaskModal();
+      renderTasks();
+      saveState();
+    }
+
+    function completeTask(taskId) {
+      const task = appState.tasks.find((item) => item.id === taskId);
+      if (!task) {
+        return;
+      }
+      task.status = 'done';
+      renderTasks();
+      renderCalendar();
+      runAnalytics();
+      saveState();
+    }
+
+    function rejectTask(taskId) {
+      const task = appState.tasks.find((item) => item.id === taskId);
+      if (!task) {
+        return;
+      }
+
+      let reason = prompt('Укажите причину отказа');
+      if (task.isRegular && (!reason || !reason.trim())) {
+        alert('Для отказа от регулярной задачи требуется обоснованная причина (например, отпуск или болезнь).');
+        return;
+      }
+      if (!reason) {
+        reason = 'Не указана';
+      }
+
+      task.status = 'rejected';
+      task.reason = reason.trim();
+      renderTasks();
+      renderCalendar();
+      runAnalytics();
+      saveState();
+    }
+
+    function buildCalendarGrid(year, month) {
+      const first = new Date(year, month, 1);
+      const startDay = first.getDay() === 0 ? 6 : first.getDay() - 1;
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+      const rows = [];
+      let day = 1 - startDay;
+      for (let week = 0; week < 6; week += 1) {
+        const row = [];
+        for (let d = 0; d < 7; d += 1) {
+          row.push(new Date(year, month, day));
+          day += 1;
+        }
+        rows.push(row);
+      }
+      return { rows, daysInMonth };
+    }
+
+    function renderCalendar() {
+      const year = calendarDate.getFullYear();
+      const month = calendarDate.getMonth();
+      const monthLabel = calendarDate.toLocaleDateString('ru-RU', { month: 'long', year: 'numeric' });
+      document.getElementById('calendarMonthLabel').textContent = monthLabel;
+
+      const head = document.getElementById('calendarHead');
+      const body = document.getElementById('calendarBody');
+      head.innerHTML = '<tr><th>Пн</th><th>Вт</th><th>Ср</th><th>Чт</th><th>Пт</th><th>Сб</th><th>Вс</th></tr>';
+      body.innerHTML = '';
+
+      const { rows } = buildCalendarGrid(year, month);
+      rows.forEach((week) => {
+        const tr = document.createElement('tr');
+        week.forEach((date) => {
+          const td = document.createElement('td');
+          const dateIso = date.toISOString().slice(0, 10);
+          const isCurrentMonth = date.getMonth() === month;
+          const tasks = tasksByDate(dateIso);
+
+          td.innerHTML = `<strong style="opacity:${isCurrentMonth ? 1 : 0.35}">${date.getDate()}</strong>`;
+          if (tasks.length > 0) {
+            const pending = tasks.filter((task) => task.status === 'pending').length;
+            const done = tasks.filter((task) => task.status === 'done').length;
+            td.innerHTML += `<div class="dot">${tasks.length} задач</div><div class="small">Ожидают: ${pending}, выполнено: ${done}</div>`;
+          }
+
+          td.addEventListener('click', () => {
+            activateTab('tasks');
+            document.getElementById('taskDateFilter').value = dateIso;
+            renderTasks();
+          });
+          tr.appendChild(td);
+        });
+        body.appendChild(tr);
+      });
+    }
+
+    function runAnalytics() {
+      const fromInput = document.getElementById('analyticsFrom');
+      const toInput = document.getElementById('analyticsTo');
+      if (!fromInput.value) {
+        fromInput.value = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().slice(0, 10);
+      }
+      if (!toInput.value) {
+        toInput.value = todayIso();
+      }
+
+      const from = fromInput.value;
+      const to = toInput.value;
+      const filtered = appState.tasks.filter((task) => task.date >= from && task.date <= to);
+      const total = filtered.length;
+      const done = filtered.filter((task) => task.status === 'done').length;
+      const rejected = filtered.filter((task) => task.status === 'rejected').length;
+      const pending = filtered.filter((task) => task.status === 'pending').length;
+      const readWithoutFill = filtered.filter((task) => task.readWithoutFill).length;
+
+      const completion = total > 0 ? Math.round((done / total) * 100) : 0;
+      document.getElementById('analyticsProgress').style.width = `${completion}%`;
+      document.getElementById('analyticsText').innerHTML = `
+        Всего задач: <strong>${total}</strong>.<br>
+        Выполнено: <strong>${done}</strong> (${completion}%).<br>
+        Отказов: <strong>${rejected}</strong>.<br>
+        Ожидают: <strong>${pending}</strong>.<br>
+        Прочитано без заполнения: <strong>${readWithoutFill}</strong>.
+      `;
+    }
+
+    function escapeHtml(value) {
+      return String(value || '').replace(/[&<>"']/g, (symbol) => {
+        if (symbol === '&') return '&amp;';
+        if (symbol === '<') return '&lt;';
+        if (symbol === '>') return '&gt;';
+        if (symbol === '"') return '&quot;';
+        return '&#039;';
+      });
+    }
+
+    function bindEvents() {
+      document.querySelectorAll('.tab-btn').forEach((button) => {
+        button.addEventListener('click', () => activateTab(button.dataset.tab));
+      });
+
+      document.getElementById('syncNowBtn').addEventListener('click', saveState);
+      document.getElementById('closeMatrixBtn').addEventListener('click', closeMatrix);
+      document.getElementById('closeTaskBtn').addEventListener('click', closeTaskModal);
+      document.getElementById('markReadBtn').addEventListener('click', markTaskReadWithoutFill);
+
+      document.getElementById('saveAnthroBtn').addEventListener('click', () => {
+        calculateBmi();
+        renderAnthroForm();
+        saveState();
+      });
+
+      document.getElementById('addAnalysisBtn').addEventListener('click', () => {
+        const name = document.getElementById('analysisName').value.trim();
+        const value = document.getElementById('analysisValue').value.trim();
+        const date = document.getElementById('analysisDate').value;
+        if (!name) return;
+        appState.personality.analysisResults.push({ id: uid('analysis'), name, value, date });
+        document.getElementById('analysisName').value = '';
+        document.getElementById('analysisValue').value = '';
+        document.getElementById('analysisDate').value = '';
+        renderAnalysisResults();
+        saveState();
+      });
+
+      document.getElementById('addCategoryBtn').addEventListener('click', () => {
+        const next = document.getElementById('newCategoryInput').value.trim();
+        if (!next || appState.processes.categories.includes(next)) {
+          return;
+        }
+        appState.processes.categories.push(next);
+        document.getElementById('newCategoryInput').value = '';
+        renderProcessCategories();
+        renderProcessItems();
+        saveState();
+      });
+
+      document.getElementById('addProcessItemBtn').addEventListener('click', () => {
+        appState.processes.items.push({
+          id: uid('proc'),
+          name: 'Новый процесс',
+          hierarchyLevel: 2,
+          dailyMinutes: 30,
+          regularity: 'ежедневно',
+          category: appState.processes.categories[0] || 'Регулярно-циклические'
+        });
+        renderProcessItems();
+        saveState();
+      });
+
+      document.getElementById('generateScheduleBtn').addEventListener('click', generateProcessTasks);
+      document.getElementById('taskDateFilter').addEventListener('change', renderTasks);
+      document.getElementById('createQuickTaskBtn').addEventListener('click', createQuickTask);
+      document.getElementById('runAnalyticsBtn').addEventListener('click', runAnalytics);
+
+      document.getElementById('prevMonthBtn').addEventListener('click', () => {
+        calendarDate.setMonth(calendarDate.getMonth() - 1);
+        renderCalendar();
+      });
+      document.getElementById('nextMonthBtn').addEventListener('click', () => {
+        calendarDate.setMonth(calendarDate.getMonth() + 1);
+        renderCalendar();
+      });
+    }
+
+    function renderAll() {
+      normalizeTasks();
+      renderInfluenceLegend();
+      renderYearTab();
+      calculateBmi();
+      renderAnthroForm();
+      renderTestForm();
+      renderAnalysisResults();
+      ensureRoutineTemplates();
+      renderProcessCategories();
+      renderProcessTemplates();
+      renderProcessItems();
+      renderTaskSectorOptions();
+      renderTaskInfluenceOptions();
+      document.getElementById('taskDateFilter').value = todayIso();
+      renderTasks();
+      document.getElementById('analyticsFrom').value = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().slice(0, 10);
+      document.getElementById('analyticsTo').value = todayIso();
+      renderCalendar();
+      runAnalytics();
+    }
+
+    async function start() {
+      bindEvents();
+      await loadState();
+      renderAll();
+      activateTab('year');
+      setInterval(() => {
+        runAnalytics();
+      }, 5000);
+    }
+
+    start();
+  </script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+{
+  "name": "the-balance-wheel",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "dependencies": {
+    "@netlify/blobs": "^9.0.1"
+  }
+}

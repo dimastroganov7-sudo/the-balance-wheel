@@ -1,0 +1,176 @@
+import { getStore } from '@netlify/blobs';
+
+const STORE_NAME = 'balance-wheel-state';
+const DEFAULT_USER_ID = '69d7a4ce59d4646ae0dae714';
+
+const SECTORS = [
+  { id: 'career_business', title: '🧑‍💼 Карьера / Бизнес' },
+  { id: 'finance', title: '💰 Финансы' },
+  { id: 'health_fitness', title: '🩺 Здоровье и Фитнес' },
+  { id: 'family_friends', title: '👨‍👩‍👧‍👦 Семья и Друзья' },
+  { id: 'romantic_relations', title: '❤️ Романтические отношения' },
+  { id: 'physical_environment', title: '🏠 Физическое окружение' },
+  { id: 'rest_entertainment', title: '🎉 Отдых и Развлечения' },
+  { id: 'personal_growth', title: '📚 Личностный рост' },
+];
+
+const LINK_RULES = [
+  { from: 'results', to: 'strategies' },
+  { from: 'strategies', to: 'tactics' },
+  { from: 'tactics', to: 'processProjects' },
+  { from: 'tactics', to: 'owners' },
+  { from: 'processProjects', to: 'results' },
+  { from: 'processProjects', to: 'owners' },
+  { from: 'owners', to: 'results' },
+];
+
+function createDefaultSectorMatrix() {
+  return {
+    results: [],
+    strategies: [],
+    tactics: [],
+    processProjects: [],
+    owners: [],
+    links: [],
+  };
+}
+
+function createDefaultState() {
+  const sectors = {};
+  for (const sector of SECTORS) {
+    sectors[sector.id] = {
+      title: sector.title,
+      score: 5,
+      matrix: createDefaultSectorMatrix(),
+    };
+  }
+
+  return {
+    version: 1,
+    sectors,
+    linkRules: LINK_RULES,
+    influenceLevels: {
+      1: '○',
+      2: '◔',
+      3: '◑',
+      4: '◕',
+      5: '●',
+    },
+    personality: {
+      anthropometry: {
+        heightCm: null,
+        weightKg: null,
+        chestCm: null,
+        waistCm: null,
+        hipsCm: null,
+        neckCm: null,
+        headCm: null,
+        armLengthCm: null,
+        legLengthCm: null,
+        shoulderWidthCm: null,
+        bmi: null,
+      },
+      test: {
+        responses: {},
+        latestScore: null,
+      },
+      analysisResults: [],
+    },
+    processes: {
+      categories: ['Регулярно-циклические', 'Нестандартные (адаптивные / редкие)'],
+      hierarchyTemplates: [
+        {
+          id: 'employment',
+          name: 'Процесс работа в найме (основная)',
+          level: 1,
+          dailyMinutes: 480,
+          regularity: 'будни',
+          category: 'Регулярно-циклические',
+        },
+        {
+          id: 'sleep',
+          name: 'Процесс сон',
+          level: 1,
+          dailyMinutes: 480,
+          regularity: 'ежедневно',
+          category: 'Регулярно-циклические',
+        },
+        {
+          id: 'sport',
+          name: 'Процесс спорт',
+          level: 1,
+          dailyMinutes: 60,
+          regularity: '3 раза в неделю',
+          category: 'Регулярно-циклические',
+        },
+      ],
+      items: [],
+    },
+    tasks: [],
+    readWithoutChecklist: [],
+    updatedAt: new Date().toISOString(),
+  };
+}
+
+function response(statusCode, payload) {
+  return {
+    statusCode,
+    headers: {
+      'content-type': 'application/json; charset=utf-8',
+      'cache-control': 'no-store',
+    },
+    body: JSON.stringify(payload),
+  };
+}
+
+function resolveUserId(event) {
+  const query = event.queryStringParameters || {};
+  const rawUserId = query.userId || DEFAULT_USER_ID;
+  return String(rawUserId).trim() || DEFAULT_USER_ID;
+}
+
+export default async (event) => {
+  try {
+    const store = getStore(STORE_NAME);
+    const userId = resolveUserId(event);
+    const key = `user/${userId}/state`;
+
+    if (event.httpMethod === 'GET') {
+      const state = await store.get(key, { type: 'json' });
+      if (state) {
+        return response(200, { ok: true, state });
+      }
+      const fallback = createDefaultState();
+      await store.setJSON(key, fallback);
+      return response(200, { ok: true, state: fallback });
+    }
+
+    if (event.httpMethod === 'PUT') {
+      if (!event.body) {
+        return response(400, { ok: false, error: 'Request body is required.' });
+      }
+
+      const parsed = JSON.parse(event.body);
+      if (!parsed || typeof parsed !== 'object') {
+        return response(400, { ok: false, error: 'State must be a JSON object.' });
+      }
+
+      const nextState = {
+        ...createDefaultState(),
+        ...parsed,
+        updatedAt: new Date().toISOString(),
+      };
+
+      await store.setJSON(key, nextState);
+      return response(200, { ok: true, state: nextState });
+    }
+
+    return response(405, { ok: false, error: 'Method not allowed.' });
+  } catch (error) {
+    return response(500, {
+      ok: false,
+      error: 'Failed to handle state request.',
+      details: error instanceof Error ? error.message : 'Unknown error',
+    });
+  }
+};
