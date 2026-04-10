@@ -129,12 +129,20 @@ function deepMerge(target, source) {
   return result;
 }
 
+// Общие CORS-заголовки
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*', // можно заменить на конкретный домен фронта
+  'Access-Control-Allow-Methods': 'GET, PUT, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type',
+};
+
 function response(statusCode, payload) {
   return {
     statusCode,
     headers: {
       'content-type': 'application/json; charset=utf-8',
       'cache-control': 'no-store',
+      ...corsHeaders,
     },
     body: JSON.stringify(payload),
   };
@@ -147,6 +155,18 @@ function resolveUserId(event) {
 }
 
 export default async (event) => {
+  // Обработка preflight (OPTIONS)
+  if (event.httpMethod === 'OPTIONS') {
+    return {
+      statusCode: 204,
+      headers: {
+        ...corsHeaders,
+        'cache-control': 'no-store',
+      },
+      body: '',
+    };
+  }
+
   try {
     const store = getStore(STORE_NAME);
     const userId = resolveUserId(event);
