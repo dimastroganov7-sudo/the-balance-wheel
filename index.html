@@ -417,22 +417,7 @@
       color: var(--muted);
     }
 
-    @media (max-width: 900px) {
-      .matrix-layout,
-      .grid-2 {
-        grid-template-columns: 1fr;
-      }
-
-      .app {
-        padding: 14px 10px 24px;
-      }
-
-      .calendar th,
-      .calendar td {
-        height: 74px;
-        font-size: 0.76rem;
-      }
-      }
+    /* Стили для будильника */
     .alarm-section {
       background: #f5f5f5;
       border-radius: 16px;
@@ -455,6 +440,172 @@
       color: white;
       font-size: 28px;
       cursor: pointer;
+    }
+    .alarm-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .alarm-item {
+      background: white;
+      border-radius: 12px;
+      padding: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .alarm-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .alarm-time {
+      font-size: 20px;
+      font-weight: bold;
+    }
+    .day-badge {
+      width: 32px;
+      text-align: center;
+      font-size: 12px;
+      padding: 4px 0;
+      border-radius: 20px;
+      background: #e0e0e0;
+      display: inline-block;
+      margin: 0 2px;
+    }
+    .day-badge.active {
+      background: #ff8c42;
+      color: white;
+    }
+    .mission-badge, .snooze-badge {
+      background: #e0e0e0;
+      border-radius: 12px;
+      padding: 2px 8px;
+      font-size: 12px;
+    }
+    .modal-content {
+      background: white;
+      border-radius: 24px;
+      width: 400px;
+      max-width: 90%;
+      padding: 20px;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+    .modal-content.small {
+      width: 300px;
+    }
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 16px;
+    }
+    .daily-checkbox {
+      margin: 12px 0;
+    }
+    .days-row {
+      display: flex;
+      gap: 8px;
+      margin: 12px 0;
+      flex-wrap: wrap;
+    }
+    .day-btn {
+      width: 44px;
+      padding: 8px 0;
+      border: 1px solid #ccc;
+      background: white;
+      border-radius: 40px;
+      cursor: pointer;
+    }
+    .day-btn.selected {
+      background: #ff8c42;
+      color: white;
+    }
+    .mission-section, .sound-section, .snooze-section {
+      margin: 16px 0;
+      border-top: 1px solid #ddd;
+      padding-top: 12px;
+    }
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .add-small-btn {
+      background: #ff8c42;
+      border: none;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      color: white;
+      font-size: 18px;
+      cursor: pointer;
+    }
+    .selected-mission {
+      background: #f0f0f0;
+      padding: 8px;
+      border-radius: 8px;
+      margin-top: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .math-example {
+      font-size: 24px;
+      text-align: center;
+      margin: 20px 0;
+    }
+    .snooze-options {
+      margin-top: 8px;
+    }
+    .snooze-field {
+      margin: 10px 0;
+    }
+    .snooze-buttons {
+      display: flex;
+      gap: 8px;
+      margin-top: 6px;
+    }
+    .interval-btn, .limit-btn {
+      background: #e0e0e0;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 20px;
+      cursor: pointer;
+    }
+    .interval-btn.active, .limit-btn.active {
+      background: #ff8c42;
+      color: white;
+    }
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      margin-top: 20px;
+    }
+    .remove-mission {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    @media (max-width: 900px) {
+      .matrix-layout,
+      .grid-2 {
+        grid-template-columns: 1fr;
+      }
+      .app {
+        padding: 14px 10px 24px;
+      }
+      .calendar th,
+      .calendar td {
+        height: 74px;
+        font-size: 0.76rem;
+      }
     }
   </style>
 </head>
@@ -482,24 +633,13 @@
       <p class="meta">Откройте сектор и заполните 5 вкладок: результаты, стратегии, тактика, процесс/проект, взаимосвязи.</p>
       <div id="sectorCards" class="sector-grid"></div>
       <table class="level-legend">
-        <thead>
-          <tr>
-            <th>Уровень влияния</th>
-            <th>Значок</th>
-          </tr>
-        </thead>
+        <thead><tr><th>Уровень влияния</th><th>Значок</th></tr></thead>
         <tbody id="influenceLegendBody"></tbody>
       </table>
       <div class="card" style="margin-top: 12px;">
         <h3>Таблица взаимосвязей (базовые правила)</h3>
         <table class="relations-table">
-          <thead>
-            <tr>
-              <th>№</th>
-              <th>Что связываем</th>
-              <th>С чем связываем</th>
-            </tr>
-          </thead>
+          <thead><tr><th>№</th><th>Что связываем</th><th>С чем связываем</th></tr></thead>
           <tbody>
             <tr><td>1</td><td>Результаты</td><td>Стратегии</td></tr>
             <tr><td>2</td><td>Стратегии</td><td>Тактика</td></tr>
@@ -536,102 +676,97 @@
         </div>
         <button class="btn" type="button" id="addAnalysisBtn">Добавить результат</button>
       </article>
+
+      <!-- Раздел будильника -->
       <div id="alarm-settings" class="alarm-section">
-  <div class="alarm-header">
-    <span>⏰ Будильник</span>
-    <button id="add-alarm-btn" class="add-btn">+</button>
-  </div>
-  <div id="alarm-list" class="alarm-list"></div>
-</div>
-
-<!-- Модальное окно (скрыто по умолчанию) -->
-<div id="alarm-modal" class="modal" style="display:none;">
-  <div class="modal-content">
-    <div class="modal-header">
-      <span id="modal-title">Новый будильник</span>
-      <button class="close-modal">&times;</button>
-    </div>
-    <div class="modal-body">
-      <label>Время:</label>
-      <input type="time" id="alarm-time" value="07:00">
-
-      <div class="daily-checkbox">
-        <label>
-          <input type="checkbox" id="daily-checkbox" checked> Ежедневно
-        </label>
-      </div>
-
-      <div class="days-row" id="days-row"></div>
-
-      <!-- Раздел Миссия -->
-      <div class="mission-section">
-        <div class="section-header">
-          <span>Миссия</span>
-          <button id="add-mission-btn" class="add-small-btn">+</button>
+        <div class="alarm-header">
+          <span>⏰ Будильник</span>
+          <button id="add-alarm-btn" class="add-btn">+</button>
         </div>
-        <div id="selected-mission" class="selected-mission">Не выбрано</div>
+        <div id="alarm-list" class="alarm-list"></div>
       </div>
 
-      <!-- Звук -->
-      <div class="sound-section">
-        <label>Звук будильника:</label>
-        <select id="alarm-sound">
-          <option value="default">Классический</option>
-          <option value="birds">Птицы</option>
-          <option value="piano">Фортепиано</option>
-        </select>
-        <button id="play-sound-btn" type="button">▶ Прослушать</button>
-      </div>
+      <!-- Модальное окно будильника -->
+      <div id="alarm-modal" class="modal" style="display:none;">
+        <div class="modal-content">
+          <div class="modal-header">
+            <span id="modal-title">Новый будильник</span>
+            <button class="close-modal">&times;</button>
+          </div>
+          <div class="modal-body">
+            <label>Время:</label>
+            <input type="time" id="alarm-time" value="07:00">
 
-      <!-- Отложить -->
-      <div class="snooze-section">
-        <label>
-          <input type="checkbox" id="snooze-enabled" checked> Отложить
-        </label>
-        <div id="snooze-options" style="margin-top: 8px; display: none;">
-          <div class="snooze-field">
-            <label>Интервал:</label>
-            <div class="snooze-buttons">
-              <button data-interval="1" class="interval-btn">1 мин</button>
-              <button data-interval="3" class="interval-btn">3 мин</button>
-              <button data-interval="5" class="interval-btn active">5 мин</button>
+            <div class="daily-checkbox">
+              <label><input type="checkbox" id="daily-checkbox" checked> Ежедневно</label>
+            </div>
+
+            <div class="days-row" id="days-row"></div>
+
+            <div class="mission-section">
+              <div class="section-header">
+                <span>Миссия</span>
+                <button id="add-mission-btn" class="add-small-btn">+</button>
+              </div>
+              <div id="selected-mission" class="selected-mission">Не выбрано</div>
+            </div>
+
+            <div class="sound-section">
+              <label>Звук будильника:</label>
+              <select id="alarm-sound">
+                <option value="default">Классический</option>
+                <option value="birds">Птицы</option>
+                <option value="piano">Фортепиано</option>
+              </select>
+              <button id="play-sound-btn" type="button">▶ Прослушать</button>
+            </div>
+
+            <div class="snooze-section">
+              <label><input type="checkbox" id="snooze-enabled" checked> Отложить</label>
+              <div id="snooze-options" style="margin-top: 8px; display: none;">
+                <div class="snooze-field">
+                  <label>Интервал:</label>
+                  <div class="snooze-buttons">
+                    <button data-interval="1" class="interval-btn">1 мин</button>
+                    <button data-interval="3" class="interval-btn">3 мин</button>
+                    <button data-interval="5" class="interval-btn active">5 мин</button>
+                  </div>
+                </div>
+                <div class="snooze-field">
+                  <label>Количество откладываний:</label>
+                  <div class="snooze-buttons">
+                    <button data-limit="unlimited" class="limit-btn active">Неограничено</button>
+                    <button data-limit="1" class="limit-btn">1 раз</button>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-          <div class="snooze-field">
-            <label>Количество откладываний:</label>
-            <div class="snooze-buttons">
-              <button data-limit="unlimited" class="limit-btn active">Неограничено</button>
-              <button data-limit="1" class="limit-btn">1 раз</button>
-            </div>
+          <div class="modal-footer">
+            <button id="save-alarm-btn">Сохранить</button>
+            <button class="close-modal">Отмена</button>
           </div>
         </div>
       </div>
-    </div>
-    <div class="modal-footer">
-      <button id="save-alarm-btn">Сохранить</button>
-      <button class="close-modal">Отмена</button>
-    </div>
-  </div>
-</div>
 
-<!-- Модалка выбора миссии (математика) -->
-<div id="mission-modal" class="modal" style="display:none;">
-  <div class="modal-content small">
-    <div class="modal-header">
-      <span>Математические задачи</span>
-      <button class="close-mission-modal">&times;</button>
-    </div>
-    <div class="modal-body">
-      <p>Пример лёгкого математического примера:</p>
-      <div id="math-example" class="math-example"></div>
-      <p>Добавить эту миссию к будильнику?</p>
-    </div>
-    <div class="modal-footer">
-      <button id="confirm-mission-btn">Готово</button>
-      <button class="close-mission-modal">Отмена</button>
-    </div>
-  </div>
-</div>
+      <!-- Модалка выбора миссии (математика) -->
+      <div id="mission-modal" class="modal" style="display:none;">
+        <div class="modal-content small">
+          <div class="modal-header">
+            <span>Математические задачи</span>
+            <button class="close-mission-modal">&times;</button>
+          </div>
+          <div class="modal-body">
+            <p>Пример лёгкого математического примера:</p>
+            <div id="math-example" class="math-example"></div>
+            <p>Добавить эту миссию к будильнику?</p>
+          </div>
+          <div class="modal-footer">
+            <button id="confirm-mission-btn">Готово</button>
+            <button class="close-mission-modal">Отмена</button>
+          </div>
+        </div>
+      </div>
     </section>
 
     <section class="panel" id="panel-processes">
@@ -704,14 +839,8 @@
       <div class="card" style="margin-top: 12px;">
         <h3>Аналитика за период</h3>
         <div class="form-row">
-          <div>
-            <label for="analyticsFrom">От</label>
-            <input id="analyticsFrom" type="date" />
-          </div>
-          <div>
-            <label for="analyticsTo">До</label>
-            <input id="analyticsTo" type="date" />
-          </div>
+          <div><label for="analyticsFrom">От</label><input id="analyticsFrom" type="date" /></div>
+          <div><label for="analyticsTo">До</label><input id="analyticsTo" type="date" /></div>
           <button class="btn" type="button" id="runAnalyticsBtn">Рассчитать</button>
         </div>
         <div id="analyticsText" class="meta"></div>
@@ -727,9 +856,7 @@
         <div class="matrix-tabs" id="matrixTabs"></div>
         <div id="matrixPanes"></div>
       </div>
-      <div class="close-row">
-        <button class="btn" type="button" id="closeMatrixBtn">Закрыть</button>
-      </div>
+      <div class="close-row"><button class="btn" type="button" id="closeMatrixBtn">Закрыть</button></div>
     </div>
   </section>
 
@@ -776,31 +903,9 @@
     };
 
     const processRegularityTemplates = {
-      daily: [
-        'Подъем по будильнику',
-        'Утренний туалет',
-        'Быстрый завтрак',
-        'Коммутация',
-        'Рабочие процессы',
-        'Перекур / кофе-брейк',
-        'Обед по расписанию',
-        'Дорога домой',
-        'Вечерний ритуал',
-        'Засыпание'
-      ],
-      weekly: [
-        'Закупка продуктов',
-        'Стирка',
-        'Уборка',
-        'Подготовка еды',
-        'Ремонт/обслуживание',
-        'Психологическая разгрузка'
-      ],
-      monthly: [
-        'Оплата ЖКХ',
-        'Пополнение счетов',
-        'Закрытие кредита/рассрочки'
-      ]
+      daily: ['Подъем по будильнику','Утренний туалет','Быстрый завтрак','Коммутация','Рабочие процессы','Перекур / кофе-брейк','Обед по расписанию','Дорога домой','Вечерний ритуал','Засыпание'],
+      weekly: ['Закупка продуктов','Стирка','Уборка','Подготовка еды','Ремонт/обслуживание','Психологическая разгрузка'],
+      monthly: ['Оплата ЖКХ','Пополнение счетов','Закрытие кредита/рассрочки']
     };
 
     let appState = null;
@@ -829,14 +934,7 @@
         sectors[sector.id] = {
           title: sector.title,
           score: 5,
-          matrix: {
-            results: [],
-            strategies: [],
-            tactics: [],
-            processProjects: [],
-            owners: [],
-            links: []
-          }
+          matrix: { results: [], strategies: [], tactics: [], processProjects: [], owners: [], links: [] }
         };
       }
       return {
@@ -844,21 +942,12 @@
         influenceLevels: influenceMap,
         personality: {
           anthropometry: {
-            heightCm: null,
-            weightKg: null,
-            chestCm: null,
-            waistCm: null,
-            hipsCm: null,
-            neckCm: null,
-            headCm: null,
-            armLengthCm: null,
-            legLengthCm: null,
-            shoulderWidthCm: null,
-            bmi: null
+            heightCm: null, weightKg: null, chestCm: null, waistCm: null, hipsCm: null,
+            neckCm: null, headCm: null, armLengthCm: null, legLengthCm: null, shoulderWidthCm: null, bmi: null
           },
           test: { responses: {}, latestScore: null },
-          analysisResults: []
-          alarms: [],
+          analysisResults: [],
+          alarms: []    // добавлено поле для будильников
         },
         processes: {
           categories: ['Регулярно-циклические', 'Нестандартные (адаптивные / редкие)'],
@@ -901,22 +990,17 @@
       merged.personality = {
         ...getDefaultState().personality,
         ...(state?.personality || {}),
-        anthropometry: {
-          ...getDefaultState().personality.anthropometry,
-          ...(state?.personality?.anthropometry || {})
-        },
-        test: {
-          ...getDefaultState().personality.test,
-          ...(state?.personality?.test || {}),
-          responses: { ...(state?.personality?.test?.responses || {}) }
-        },
-        analysisResults: safeArray(state?.personality?.analysisResults)
+        anthropometry: { ...getDefaultState().personality.anthropometry, ...(state?.personality?.anthropometry || {}) },
+        test: { ...getDefaultState().personality.test, ...(state?.personality?.test || {}), responses: { ...(state?.personality?.test?.responses || {}) } },
+        analysisResults: safeArray(state?.personality?.analysisResults),
+        alarms: safeArray(state?.personality?.alarms)
       };
       return merged;
     }
 
     function setSaveStatus(text) {
-      document.getElementById('saveStateLabel').textContent = `Статус: ${text}`;
+      const el = document.getElementById('saveStateLabel');
+      if (el) el.textContent = `Статус: ${text}`;
     }
 
     async function loadState() {
@@ -924,9 +1008,7 @@
       try {
         const response = await fetch(stateEndpoint, { method: 'GET' });
         const payload = await response.json();
-        if (!response.ok || !payload?.state) {
-          throw new Error(payload?.error || 'Не удалось загрузить состояние');
-        }
+        if (!response.ok || !payload?.state) throw new Error(payload?.error || 'Не удалось загрузить состояние');
         appState = mergeState(payload.state);
         setSaveStatus('данные загружены');
       } catch (error) {
@@ -936,9 +1018,7 @@
     }
 
     async function saveState() {
-      if (!appState || saveInFlight) {
-        return;
-      }
+      if (!appState || saveInFlight) return;
       saveInFlight = true;
       setSaveStatus('сохранение...');
       try {
@@ -948,9 +1028,7 @@
           body: JSON.stringify({ ...appState, updatedAt: new Date().toISOString() })
         });
         const payload = await response.json();
-        if (!response.ok || !payload.ok) {
-          throw new Error(payload?.error || 'Ошибка сохранения');
-        }
+        if (!response.ok || !payload.ok) throw new Error(payload?.error || 'Ошибка сохранения');
         appState = mergeState(payload.state);
         setSaveStatus(`сохранено ${new Date().toLocaleTimeString('ru-RU')}`);
       } catch (error) {
@@ -962,23 +1040,15 @@
 
     function activateTab(tabName) {
       currentTab = tabName;
-      document.querySelectorAll('.tab-btn').forEach((button) => {
-        button.classList.toggle('active', button.dataset.tab === tabName);
-      });
-      document.querySelectorAll('.panel').forEach((panel) => {
-        panel.classList.toggle('active', panel.id === `panel-${tabName}`);
-      });
-      if (tabName === 'tasks') {
-        renderTasks();
-      }
-      if (tabName === 'analytics') {
-        renderCalendar();
-        runAnalytics();
-      }
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.tab === tabName));
+      document.querySelectorAll('.panel').forEach(panel => panel.classList.toggle('active', panel.id === `panel-${tabName}`));
+      if (tabName === 'tasks') renderTasks();
+      if (tabName === 'analytics') { renderCalendar(); runAnalytics(); }
     }
 
     function renderInfluenceLegend() {
       const body = document.getElementById('influenceLegendBody');
+      if (!body) return;
       body.innerHTML = '';
       Object.entries(influenceMap).forEach(([level, item]) => {
         const row = document.createElement('tr');
@@ -989,6 +1059,7 @@
 
     function renderYearTab() {
       const container = document.getElementById('sectorCards');
+      if (!container) return;
       container.innerHTML = '';
       for (const sector of sectorMeta) {
         const matrix = appState.sectors[sector.id]?.matrix || {};
@@ -1027,6 +1098,7 @@
 
     function renderMatrixTabs() {
       const tabs = document.getElementById('matrixTabs');
+      if (!tabs) return;
       tabs.innerHTML = '';
       matrixPanesMeta.forEach((item) => {
         const button = document.createElement('button');
@@ -1043,9 +1115,7 @@
     }
 
     function addMatrixItem(sectionKey) {
-      if (!activeSectorId) {
-        return;
-      }
+      if (!activeSectorId) return;
       const nextId = uid(sectionKey);
       const matrix = appState.sectors[activeSectorId].matrix;
       if (sectionKey === 'processProjects') {
@@ -1061,27 +1131,27 @@
     function updateMatrixText(sectionKey, id, value, subKey = 'title') {
       const matrix = appState.sectors[activeSectorId].matrix;
       const list = sectionKey === 'processProjects' ? matrix.processProjects : sectionKey === 'owners' ? matrix.owners : matrix[sectionKey];
-      const index = list.findIndex((item) => item.id === id);
-      if (index >= 0) {
-        list[index][subKey] = value;
-      }
+      const idx = list.findIndex(item => item.id === id);
+      if (idx >= 0) list[idx][subKey] = value;
     }
 
     function removeMatrixItem(sectionKey, id) {
       const matrix = appState.sectors[activeSectorId].matrix;
       const targetKey = sectionKey === 'processProjects' ? 'processProjects' : sectionKey;
-      matrix[targetKey] = matrix[targetKey].filter((item) => item.id !== id);
-      matrix.links = matrix.links.filter((link) => link.fromId !== id && link.toId !== id);
+      matrix[targetKey] = matrix[targetKey].filter(item => item.id !== id);
+      matrix.links = matrix.links.filter(link => link.fromId !== id && link.toId !== id);
       renderMatrixPane();
     }
 
     function labelForNodeType(nodeType) {
-      if (nodeType === 'results') return 'Результаты';
-      if (nodeType === 'strategies') return 'Стратегии';
-      if (nodeType === 'tactics') return 'Тактика';
-      if (nodeType === 'processProjects') return 'Процесс/Проект';
-      if (nodeType === 'owners') return 'Исполнитель/Ответственный';
-      return nodeType;
+      const map = {
+        results: 'Результаты',
+        strategies: 'Стратегии',
+        tactics: 'Тактика',
+        processProjects: 'Процесс/Проект',
+        owners: 'Исполнитель/Ответственный'
+      };
+      return map[nodeType] || nodeType;
     }
 
     function allowedLinkPairs() {
@@ -1109,7 +1179,6 @@
       list.forEach((item) => {
         const row = document.createElement('div');
         row.className = 'list-item';
-
         if (sectionKey === 'processProjects') {
           row.innerHTML = `
             <div>
@@ -1117,7 +1186,7 @@
               <div class="small" style="margin-top: 6px;">Исполнитель/ответственный</div>
               <select data-id="${item.id}" data-key="ownerId">
                 <option value="">Не выбран</option>
-                ${ownerOptions.map((owner) => `<option value="${owner.id}" ${owner.id === item.ownerId ? 'selected' : ''}>${escapeHtml(owner.name || '(без имени)')}</option>`).join('')}
+                ${ownerOptions.map(owner => `<option value="${owner.id}" ${owner.id === item.ownerId ? 'selected' : ''}>${escapeHtml(owner.name || '(без имени)')}</option>`).join('')}
               </select>
             </div>
             <button class="btn warn" data-del="${item.id}" type="button">Удалить</button>
@@ -1130,31 +1199,27 @@
             <button class="btn warn" data-del="${item.id}" type="button">Удалить</button>
           `;
         }
-
         listContainer.appendChild(row);
       });
 
-      listContainer.querySelectorAll('input, select').forEach((control) => {
-        control.addEventListener('change', () => {
-          const id = control.dataset.id;
-          const key = control.dataset.key;
-          updateMatrixText(sectionKey, id, control.value, key);
+      listContainer.querySelectorAll('input, select').forEach(ctrl => {
+        ctrl.addEventListener('change', () => {
+          const id = ctrl.dataset.id;
+          const key = ctrl.dataset.key;
+          updateMatrixText(sectionKey, id, ctrl.value, key);
           saveState();
         });
       });
-
-      listContainer.querySelectorAll('button[data-del]').forEach((button) => {
-        button.addEventListener('click', () => {
-          removeMatrixItem(sectionKey, button.dataset.del);
+      listContainer.querySelectorAll('button[data-del]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          removeMatrixItem(sectionKey, btn.dataset.del);
           saveState();
         });
       });
-
       wrap.querySelector(`#add_${sectionKey}`).addEventListener('click', () => {
         addMatrixItem(sectionKey);
         saveState();
       });
-
       return wrap;
     }
 
@@ -1183,14 +1248,7 @@
           <button class="btn" type="button" id="addRelationBtn">Добавить связь</button>
         </div>
         <table class="relations-table">
-          <thead>
-            <tr>
-              <th>От</th>
-              <th>К</th>
-              <th>Влияние</th>
-              <th></th>
-            </tr>
-          </thead>
+          <thead><tr><th>От</th><th>К</th><th>Влияние</th><th></th></tr></thead>
           <tbody id="relationsBody"></tbody>
         </table>
       `;
@@ -1202,36 +1260,28 @@
       const influence = wrap.querySelector('#relInfluence');
 
       const pairs = allowedLinkPairs();
-      const fromTypes = [...new Set(pairs.map((pair) => pair.from))];
-      fromType.innerHTML = fromTypes.map((type) => `<option value="${type}">${labelForNodeType(type)}</option>`).join('');
+      const fromTypes = [...new Set(pairs.map(p => p.from))];
+      fromType.innerHTML = fromTypes.map(t => `<option value="${t}">${labelForNodeType(t)}</option>`).join('');
 
       function refreshToTypes() {
-        const allowed = pairs.filter((pair) => pair.from === fromType.value).map((pair) => pair.to);
-        toType.innerHTML = allowed.map((type) => `<option value="${type}">${labelForNodeType(type)}</option>`).join('');
+        const allowed = pairs.filter(p => p.from === fromType.value).map(p => p.to);
+        toType.innerHTML = allowed.map(t => `<option value="${t}">${labelForNodeType(t)}</option>`).join('');
       }
-
       function refreshNodeSelects() {
         const fromNodes = matrixNodesByType(matrix, fromType.value);
         const toNodes = matrixNodesByType(matrix, toType.value);
-        fromId.innerHTML = fromNodes.map((node) => `<option value="${node.id}">${escapeHtml(node.title || node.name || '(без названия)')}</option>`).join('');
-        toId.innerHTML = toNodes.map((node) => `<option value="${node.id}">${escapeHtml(node.title || node.name || '(без названия)')}</option>`).join('');
+        fromId.innerHTML = fromNodes.map(node => `<option value="${node.id}">${escapeHtml(node.title || node.name || '(без названия)')}</option>`).join('');
+        toId.innerHTML = toNodes.map(node => `<option value="${node.id}">${escapeHtml(node.title || node.name || '(без названия)')}</option>`).join('');
       }
-
       influence.innerHTML = Object.entries(influenceMap).map(([level, data]) => `<option value="${level}">${data.icon} ${data.label}</option>`).join('');
 
-      fromType.addEventListener('change', () => {
-        refreshToTypes();
-        refreshNodeSelects();
-      });
+      fromType.addEventListener('change', () => { refreshToTypes(); refreshNodeSelects(); });
       toType.addEventListener('change', refreshNodeSelects);
-
       refreshToTypes();
       refreshNodeSelects();
 
       wrap.querySelector('#addRelationBtn').addEventListener('click', () => {
-        if (!fromId.value || !toId.value) {
-          return;
-        }
+        if (!fromId.value || !toId.value) return;
         matrix.links.push({
           id: uid('link'),
           fromType: fromType.value,
@@ -1245,61 +1295,44 @@
       });
 
       const body = wrap.querySelector('#relationsBody');
-      matrix.links.forEach((link) => {
-        const fromNode = matrixNodesByType(matrix, link.fromType).find((item) => item.id === link.fromId);
-        const toNode = matrixNodesByType(matrix, link.toType).find((item) => item.id === link.toId);
+      matrix.links.forEach(link => {
+        const fromNode = matrixNodesByType(matrix, link.fromType).find(item => item.id === link.fromId);
+        const toNode = matrixNodesByType(matrix, link.toType).find(item => item.id === link.toId);
         const row = document.createElement('tr');
         row.innerHTML = `
           <td>${labelForNodeType(link.fromType)}: ${escapeHtml(fromNode?.title || fromNode?.name || '(удалено)')}</td>
           <td>${labelForNodeType(link.toType)}: ${escapeHtml(toNode?.title || toNode?.name || '(удалено)')}</td>
-          <td>
-            <select data-rel="${link.id}">
-              ${Object.entries(influenceMap).map(([level, data]) => `<option value="${level}" ${Number(level) === Number(link.influence) ? 'selected' : ''}>${data.icon} ${data.label}</option>`).join('')}
-            </select>
-          </td>
+          <td><select data-rel="${link.id}">${Object.entries(influenceMap).map(([level, data]) => `<option value="${level}" ${Number(level) === Number(link.influence) ? 'selected' : ''}>${data.icon} ${data.label}</option>`).join('')}</select></td>
           <td><button class="btn warn" data-del="${link.id}" type="button">Удалить</button></td>
         `;
         body.appendChild(row);
       });
-
-      body.querySelectorAll('select[data-rel]').forEach((select) => {
+      body.querySelectorAll('select[data-rel]').forEach(select => {
         select.addEventListener('change', () => {
-          const link = matrix.links.find((item) => item.id === select.dataset.rel);
-          if (link) {
-            link.influence = Number(select.value);
-            saveState();
-          }
+          const link = matrix.links.find(l => l.id === select.dataset.rel);
+          if (link) link.influence = Number(select.value);
+          saveState();
         });
       });
-
-      body.querySelectorAll('button[data-del]').forEach((button) => {
-        button.addEventListener('click', () => {
-          matrix.links = matrix.links.filter((item) => item.id !== button.dataset.del);
+      body.querySelectorAll('button[data-del]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          matrix.links = matrix.links.filter(l => l.id !== btn.dataset.del);
           renderMatrixPane();
           saveState();
         });
       });
-
       return wrap;
     }
 
     function renderMatrixPane() {
       const target = document.getElementById('matrixPanes');
+      if (!target) return;
       target.innerHTML = '';
-      if (!activeSectorId) {
-        return;
-      }
-
-      if (activeMatrixPane === 'results') {
-        target.appendChild(renderEntityEditor('results', 'Результаты', 'Добавить результат'));
-      }
-      if (activeMatrixPane === 'strategies') {
-        target.appendChild(renderEntityEditor('strategies', 'Стратегии', 'Добавить стратегию'));
-      }
-      if (activeMatrixPane === 'tactics') {
-        target.appendChild(renderEntityEditor('tactics', 'Тактика', 'Добавить тактику'));
-      }
-      if (activeMatrixPane === 'processProjects') {
+      if (!activeSectorId) return;
+      if (activeMatrixPane === 'results') target.appendChild(renderEntityEditor('results', 'Результаты', 'Добавить результат'));
+      else if (activeMatrixPane === 'strategies') target.appendChild(renderEntityEditor('strategies', 'Стратегии', 'Добавить стратегию'));
+      else if (activeMatrixPane === 'tactics') target.appendChild(renderEntityEditor('tactics', 'Тактика', 'Добавить тактику'));
+      else if (activeMatrixPane === 'processProjects') {
         const block = document.createElement('div');
         block.className = 'pane active';
         const projects = renderEntityEditor('processProjects', 'Процесс/Проект', 'Добавить процесс/проект');
@@ -1308,39 +1341,28 @@
         block.appendChild(document.createElement('hr'));
         block.appendChild(owners);
         target.appendChild(block);
-      }
-      if (activeMatrixPane === 'relations') {
-        target.appendChild(renderRelationsEditor());
-      }
+      } else if (activeMatrixPane === 'relations') target.appendChild(renderRelationsEditor());
     }
 
+    // --- Антропометрия, тесты, анализы ---
     function renderAnthroForm() {
       const fields = [
-        ['heightCm', 'Рост (см)'],
-        ['weightKg', 'Вес (кг)'],
-        ['chestCm', 'Окружность груди (см)'],
-        ['waistCm', 'Окружность талии (см)'],
-        ['hipsCm', 'Окружность бёдер (см)'],
-        ['neckCm', 'Окружность шеи (см)'],
-        ['headCm', 'Окружность головы (см)'],
-        ['armLengthCm', 'Длина рук (см)'],
-        ['legLengthCm', 'Длина ног (см)'],
-        ['shoulderWidthCm', 'Ширина плеч (см)'],
-        ['bmi', 'Индекс массы тела (ИМТ)']
+        ['heightCm','Рост (см)'],['weightKg','Вес (кг)'],['chestCm','Окружность груди (см)'],
+        ['waistCm','Окружность талии (см)'],['hipsCm','Окружность бёдер (см)'],['neckCm','Окружность шеи (см)'],
+        ['headCm','Окружность головы (см)'],['armLengthCm','Длина рук (см)'],['legLengthCm','Длина ног (см)'],
+        ['shoulderWidthCm','Ширина плеч (см)'],['bmi','Индекс массы тела (ИМТ)']
       ];
-
       const anthro = appState.personality.anthropometry;
       const form = document.getElementById('anthroForm');
+      if (!form) return;
       form.innerHTML = '';
-
       fields.forEach(([key, label]) => {
         const item = document.createElement('div');
         const readonly = key === 'bmi' ? 'readonly' : '';
         item.innerHTML = `<label>${label}<input ${readonly} data-key="${key}" type="number" value="${anthro[key] ?? ''}" /></label>`;
         form.appendChild(item);
       });
-
-      form.querySelectorAll('input[data-key]').forEach((input) => {
+      form.querySelectorAll('input[data-key]').forEach(input => {
         input.addEventListener('change', () => {
           const key = input.dataset.key;
           appState.personality.anthropometry[key] = input.value === '' ? null : Number(input.value);
@@ -1355,40 +1377,25 @@
       const anthro = appState.personality.anthropometry;
       const height = Number(anthro.heightCm);
       const weight = Number(anthro.weightKg);
-      if (!height || !weight) {
-        anthro.bmi = null;
-        return;
-      }
+      if (!height || !weight) { anthro.bmi = null; return; }
       const meters = height / 100;
       anthro.bmi = Number((weight / (meters * meters)).toFixed(1));
     }
 
     function renderTestForm() {
-      const questions = [
-        'Саморегуляция',
-        'Стрессоустойчивость',
-        'Концентрация',
-        'Эмпатия',
-        'Гибкость мышления'
-      ];
-
+      const questions = ['Саморегуляция','Стрессоустойчивость','Концентрация','Эмпатия','Гибкость мышления'];
       const test = appState.personality.test;
       const container = document.getElementById('testForm');
+      if (!container) return;
       container.innerHTML = '';
-
-      questions.forEach((question, index) => {
-        const value = Number(test.responses[index] || 3);
+      questions.forEach((q, idx) => {
+        const val = Number(test.responses[idx] || 3);
         const line = document.createElement('div');
         line.style.marginBottom = '8px';
-        line.innerHTML = `
-          <label>${question}</label>
-          <input data-q="${index}" type="range" min="1" max="5" value="${value}" />
-          <span class="badge" id="qVal_${index}">${value}</span>
-        `;
+        line.innerHTML = `<label>${q}</label><input data-q="${idx}" type="range" min="1" max="5" value="${val}" /><span class="badge" id="qVal_${idx}">${val}</span>`;
         container.appendChild(line);
       });
-
-      container.querySelectorAll('input[type="range"]').forEach((range) => {
+      container.querySelectorAll('input[type="range"]').forEach(range => {
         range.addEventListener('input', () => {
           test.responses[range.dataset.q] = Number(range.value);
           document.getElementById(`qVal_${range.dataset.q}`).textContent = range.value;
@@ -1396,7 +1403,6 @@
           saveState();
         });
       });
-
       updateTestSummary();
     }
 
@@ -1407,138 +1413,87 @@
         document.getElementById('testSummary').textContent = 'Тест пока не заполнен';
         return;
       }
-      const avg = responses.reduce((sum, value) => sum + value, 0) / responses.length;
+      const avg = responses.reduce((s,v)=>s+v,0)/responses.length;
       appState.personality.test.latestScore = Number(avg.toFixed(2));
       document.getElementById('testSummary').textContent = `Средний показатель: ${avg.toFixed(2)} / 5`;
     }
 
     function renderAnalysisResults() {
       const list = document.getElementById('analysisList');
+      if (!list) return;
       list.innerHTML = '';
-      safeArray(appState.personality.analysisResults).forEach((item) => {
+      safeArray(appState.personality.analysisResults).forEach(item => {
         const row = document.createElement('div');
         row.className = 'list-item';
-        row.innerHTML = `
-          <div><strong>${escapeHtml(item.name)}</strong> <span class="small">${escapeHtml(item.date || '')}</span><div class="small">${escapeHtml(item.value || '')}</div></div>
-          <button class="btn warn" data-id="${item.id}" type="button">Удалить</button>
-        `;
+        row.innerHTML = `<div><strong>${escapeHtml(item.name)}</strong> <span class="small">${escapeHtml(item.date||'')}</span><div class="small">${escapeHtml(item.value||'')}</div></div><button class="btn warn" data-id="${item.id}" type="button">Удалить</button>`;
         list.appendChild(row);
       });
-
-      list.querySelectorAll('button[data-id]').forEach((button) => {
-        button.addEventListener('click', () => {
-          appState.personality.analysisResults = appState.personality.analysisResults.filter((item) => item.id !== button.dataset.id);
+      list.querySelectorAll('button[data-id]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          appState.personality.analysisResults = appState.personality.analysisResults.filter(i => i.id !== btn.dataset.id);
           renderAnalysisResults();
           saveState();
         });
       });
     }
 
+    // --- Процессы ---
     function ensureRoutineTemplates() {
       const items = appState.processes.items;
-      if (items.some((item) => item.seeded)) {
-        return;
-      }
-
-      processRegularityTemplates.daily.forEach((name) => {
-        items.push({
-          id: uid('proc'),
-          name,
-          hierarchyLevel: 2,
-          dailyMinutes: 15,
-          regularity: 'ежедневно',
-          category: 'Регулярно-циклические',
-          seeded: true
-        });
-      });
-
-      processRegularityTemplates.weekly.forEach((name) => {
-        items.push({
-          id: uid('proc'),
-          name,
-          hierarchyLevel: 3,
-          dailyMinutes: 45,
-          regularity: 'еженедельно',
-          category: 'Регулярно-циклические',
-          seeded: true
-        });
-      });
-
-      processRegularityTemplates.monthly.forEach((name) => {
-        items.push({
-          id: uid('proc'),
-          name,
-          hierarchyLevel: 4,
-          dailyMinutes: 25,
-          regularity: 'ежемесячно',
-          category: 'Регулярно-циклические',
-          seeded: true
-        });
-      });
+      if (items.some(i => i.seeded)) return;
+      processRegularityTemplates.daily.forEach(name => items.push({ id: uid('proc'), name, hierarchyLevel: 2, dailyMinutes: 15, regularity: 'ежедневно', category: 'Регулярно-циклические', seeded: true }));
+      processRegularityTemplates.weekly.forEach(name => items.push({ id: uid('proc'), name, hierarchyLevel: 3, dailyMinutes: 45, regularity: 'еженедельно', category: 'Регулярно-циклические', seeded: true }));
+      processRegularityTemplates.monthly.forEach(name => items.push({ id: uid('proc'), name, hierarchyLevel: 4, dailyMinutes: 25, regularity: 'ежемесячно', category: 'Регулярно-циклические', seeded: true }));
     }
 
     function renderProcessCategories() {
       const list = document.getElementById('processCategories');
+      if (!list) return;
       list.innerHTML = '';
-      appState.processes.categories.forEach((category) => {
-        const row = document.createElement('div');
-        row.className = 'badge';
-        row.textContent = category;
-        list.appendChild(row);
-      });
+      appState.processes.categories.forEach(cat => { const div = document.createElement('div'); div.className = 'badge'; div.textContent = cat; list.appendChild(div); });
     }
 
     function renderProcessTemplates() {
       const list = document.getElementById('processTemplates');
+      if (!list) return;
       list.innerHTML = '';
-      appState.processes.hierarchyTemplates.forEach((template) => {
-        const row = document.createElement('div');
-        row.className = 'process-item';
-        row.innerHTML = `<strong>${escapeHtml(template.name)}</strong><div class="small">Уровень: ${template.level} | Время в день: ${template.dailyMinutes} мин | Регулярность: ${escapeHtml(template.regularity)}</div>`;
-        list.appendChild(row);
+      appState.processes.hierarchyTemplates.forEach(t => {
+        const div = document.createElement('div');
+        div.className = 'process-item';
+        div.innerHTML = `<strong>${escapeHtml(t.name)}</strong><div class="small">Уровень: ${t.level} | Время в день: ${t.dailyMinutes} мин | Регулярность: ${escapeHtml(t.regularity)}</div>`;
+        list.appendChild(div);
       });
     }
 
     function renderProcessItems() {
       const container = document.getElementById('processItems');
+      if (!container) return;
       container.innerHTML = '';
-
-      appState.processes.items.forEach((item) => {
+      appState.processes.items.forEach(item => {
         const row = document.createElement('div');
         row.className = 'process-item';
         row.innerHTML = `
           <div class="form-row">
-            <input data-id="${item.id}" data-key="name" value="${escapeHtml(item.name || '')}" placeholder="Название процесса" />
-            <select data-id="${item.id}" data-key="hierarchyLevel">
-              <option value="1" ${Number(item.hierarchyLevel) === 1 ? 'selected' : ''}>Уровень 1</option>
-              <option value="2" ${Number(item.hierarchyLevel) === 2 ? 'selected' : ''}>Уровень 2</option>
-              <option value="3" ${Number(item.hierarchyLevel) === 3 ? 'selected' : ''}>Уровень 3</option>
-              <option value="4" ${Number(item.hierarchyLevel) === 4 ? 'selected' : ''}>Уровень 4</option>
-            </select>
-            <input data-id="${item.id}" data-key="dailyMinutes" type="number" min="1" value="${Number(item.dailyMinutes || 30)}" placeholder="Минут в день" />
-            <input data-id="${item.id}" data-key="regularity" value="${escapeHtml(item.regularity || '')}" placeholder="Регулярность" />
-            <select data-id="${item.id}" data-key="category">${appState.processes.categories.map((category) => `<option value="${escapeHtml(category)}" ${category === item.category ? 'selected' : ''}>${escapeHtml(category)}</option>`).join('')}</select>
+            <input data-id="${item.id}" data-key="name" value="${escapeHtml(item.name||'')}" placeholder="Название процесса" />
+            <select data-id="${item.id}" data-key="hierarchyLevel"><option value="1" ${item.hierarchyLevel===1?'selected':''}>Уровень 1</option><option value="2" ${item.hierarchyLevel===2?'selected':''}>Уровень 2</option><option value="3" ${item.hierarchyLevel===3?'selected':''}>Уровень 3</option><option value="4" ${item.hierarchyLevel===4?'selected':''}>Уровень 4</option></select>
+            <input data-id="${item.id}" data-key="dailyMinutes" type="number" min="1" value="${Number(item.dailyMinutes||30)}" placeholder="Минут в день" />
+            <input data-id="${item.id}" data-key="regularity" value="${escapeHtml(item.regularity||'')}" placeholder="Регулярность" />
+            <select data-id="${item.id}" data-key="category">${appState.processes.categories.map(c => `<option value="${escapeHtml(c)}" ${c===item.category?'selected':''}>${escapeHtml(c)}</option>`).join('')}</select>
             <button class="btn warn" data-del="${item.id}" type="button">Удалить</button>
           </div>
         `;
         container.appendChild(row);
       });
-
-      container.querySelectorAll('input[data-id], select[data-id]').forEach((field) => {
+      container.querySelectorAll('input[data-id], select[data-id]').forEach(field => {
         field.addEventListener('change', () => {
-          const item = appState.processes.items.find((entry) => entry.id === field.dataset.id);
-          if (!item) {
-            return;
-          }
-          const key = field.dataset.key;
-          item[key] = key === 'dailyMinutes' || key === 'hierarchyLevel' ? Number(field.value) : field.value;
+          const it = appState.processes.items.find(i => i.id === field.dataset.id);
+          if (it) it[field.dataset.key] = field.dataset.key === 'dailyMinutes' || field.dataset.key === 'hierarchyLevel' ? Number(field.value) : field.value;
           saveState();
         });
       });
-
-      container.querySelectorAll('button[data-del]').forEach((button) => {
-        button.addEventListener('click', () => {
-          appState.processes.items = appState.processes.items.filter((item) => item.id !== button.dataset.del);
+      container.querySelectorAll('button[data-del]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          appState.processes.items = appState.processes.items.filter(i => i.id !== btn.dataset.del);
           renderProcessItems();
           saveState();
         });
@@ -1581,33 +1536,18 @@
     function generateProcessTasks() {
       const now = new Date();
       const newTasks = [];
-      appState.processes.items.forEach((processItem) => {
-        for (let shift = 0; shift < 14; shift += 1) {
-          const date = new Date(now);
-          date.setDate(now.getDate() + shift);
-          if (!processRunsOnDate(processItem, date)) {
-            continue;
-          }
-          const dateIso = date.toISOString().slice(0, 10);
-          const alreadyExists = appState.tasks.some((task) => task.sourceProcessId === processItem.id && task.date === dateIso);
-          if (alreadyExists) {
-            continue;
-          }
+      appState.processes.items.forEach(proc => {
+        for (let shift=0; shift<14; shift++) {
+          const date = new Date(now); date.setDate(now.getDate()+shift);
+          if (!processRunsOnDate(proc, date)) continue;
+          const dateIso = date.toISOString().slice(0,10);
+          if (appState.tasks.some(t => t.sourceProcessId === proc.id && t.date === dateIso)) continue;
           newTasks.push(ensureTaskShape({
-            title: processItem.name,
-            date: dateIso,
-            sectorId: 'personal_growth',
-            minutes: Number(processItem.dailyMinutes || 30),
-            influence: 3,
-            checklist: ['Подготовка', 'Выполнение', 'Фиксация результата'],
-            checklistDone: [],
-            status: 'pending',
-            isRegular: true,
-            sourceProcessId: processItem.id
+            title: proc.name, date: dateIso, sectorId: 'personal_growth', minutes: Number(proc.dailyMinutes||30), influence: 3,
+            checklist: ['Подготовка','Выполнение','Фиксация результата'], checklistDone: [], status: 'pending', isRegular: true, sourceProcessId: proc.id
           }));
         }
       });
-
       appState.tasks = [...appState.tasks, ...newTasks];
       normalizeTasks();
       renderTasks();
@@ -1617,14 +1557,13 @@
     }
 
     function renderTaskSectorOptions() {
-      const select = document.getElementById('quickTaskSector');
-      select.innerHTML = sectorMeta.map((sector) => `<option value="${sector.id}">${sector.title}</option>`).join('');
+      const sel = document.getElementById('quickTaskSector');
+      if (sel) sel.innerHTML = sectorMeta.map(s => `<option value="${s.id}">${s.title}</option>`).join('');
     }
-
     function renderTaskInfluenceOptions() {
-      const select = document.getElementById('quickTaskInfluence');
-      select.innerHTML = Object.entries(influenceMap).map(([level, item]) => `<option value="${level}">${item.icon} ${item.label}</option>`).join('');
-      select.value = '3';
+      const sel = document.getElementById('quickTaskInfluence');
+      if (sel) sel.innerHTML = Object.entries(influenceMap).map(([l,d]) => `<option value="${l}">${d.icon} ${d.label}</option>`).join('');
+      if (sel) sel.value = '3';
     }
 
     function createQuickTask() {
@@ -1634,28 +1573,9 @@
       const sectorId = document.getElementById('quickTaskSector').value;
       const minutes = Number(document.getElementById('quickTaskMinutes').value || 0);
       const influence = Number(document.getElementById('quickTaskInfluence').value || 3);
-
-      if (!title || minutes <= 0) {
-        return;
-      }
-
-      if (freeMinutes > 0 && minutes > freeMinutes) {
-        alert('Недостаточно оставшегося времени для этой функции.');
-        return;
-      }
-
-      appState.tasks.push(ensureTaskShape({
-        title,
-        date,
-        sectorId,
-        minutes,
-        influence,
-        checklist: ['Шаг 1'],
-        checklistDone: [],
-        status: 'pending',
-        isRegular: false
-      }));
-
+      if (!title || minutes<=0) return;
+      if (freeMinutes>0 && minutes>freeMinutes) { alert('Недостаточно оставшегося времени.'); return; }
+      appState.tasks.push(ensureTaskShape({ title, date, sectorId, minutes, influence, checklist: ['Шаг 1'], checklistDone: [], status: 'pending', isRegular: false }));
       document.getElementById('quickTaskTitle').value = '';
       normalizeTasks();
       renderTasks();
@@ -1665,43 +1585,27 @@
     }
 
     function tasksByDate(dateIso) {
-      return appState.tasks.filter((task) => task.date === dateIso);
+      return appState.tasks.filter(t => t.date === dateIso);
     }
-
-    function taskIsOverdue(task) {
-      return task.status === 'pending' && task.date < todayIso();
-    }
-
-    function taskIsToday(task) {
-      return task.status === 'pending' && task.date === todayIso();
-    }
+    function taskIsOverdue(task) { return task.status === 'pending' && task.date < todayIso(); }
+    function taskIsToday(task) { return task.status === 'pending' && task.date === todayIso(); }
+    function statusLabel(status) { return status==='done'?'Выполнена':status==='rejected'?'Отказ':'Ожидает'; }
 
     function renderTasks() {
       const filterDateInput = document.getElementById('taskDateFilter');
-      if (!filterDateInput.value) {
-        filterDateInput.value = todayIso();
-      }
-
-      const date = filterDateInput.value;
+      if (filterDateInput && !filterDateInput.value) filterDateInput.value = todayIso();
+      const date = filterDateInput ? filterDateInput.value : todayIso();
       const tasks = tasksByDate(date);
       const container = document.getElementById('tasksContainer');
-      container.innerHTML = '';
-
-      const heading = document.createElement('div');
-      heading.className = 'badge';
-      heading.textContent = `Задач на ${date}: ${tasks.length}`;
-      container.appendChild(heading);
-
-      tasks.forEach((task) => {
-        const row = document.createElement('div');
-        row.className = `task-item ${taskIsOverdue(task) ? 'overdue' : ''} ${taskIsToday(task) ? 'today' : ''}`;
-        const sector = sectorMeta.find((item) => item.id === task.sectorId);
+      if (!container) return;
+      container.innerHTML = `<div class="badge">Задач на ${date}: ${tasks.length}</div>`;
+      tasks.forEach(task => {
+        const sector = sectorMeta.find(s => s.id === task.sectorId);
         const influence = influenceMap[task.influence] || influenceMap[3];
+        const row = document.createElement('div');
+        row.className = `task-item ${taskIsOverdue(task)?'overdue':''} ${taskIsToday(task)?'today':''}`;
         row.innerHTML = `
-          <div class="task-head">
-            <strong>${escapeHtml(task.title)}</strong>
-            <span class="badge">${escapeHtml(sector?.title || task.sectorId)}</span>
-          </div>
+          <div class="task-head"><strong>${escapeHtml(task.title)}</strong><span class="badge">${escapeHtml(sector?.title || task.sectorId)}</span></div>
           <div class="small">${task.minutes} мин. | Влияние: ${influence.icon} | Статус: ${statusLabel(task.status)}</div>
           <div class="small">${task.isRegular ? 'Регулярная задача' : 'Нестандартная задача'} ${task.reason ? `| Причина: ${escapeHtml(task.reason)}` : ''}</div>
           <div style="margin-top: 8px; display: flex; gap: 6px; flex-wrap: wrap;">
@@ -1712,166 +1616,90 @@
         `;
         container.appendChild(row);
       });
-
-      container.querySelectorAll('button[data-open]').forEach((button) => {
-        button.addEventListener('click', () => openTask(button.dataset.open));
-      });
-
-      container.querySelectorAll('button[data-complete]').forEach((button) => {
-        button.addEventListener('click', () => completeTask(button.dataset.complete));
-      });
-
-      container.querySelectorAll('button[data-reject]').forEach((button) => {
-        button.addEventListener('click', () => rejectTask(button.dataset.reject));
-      });
-    }
-
-    function statusLabel(status) {
-      if (status === 'done') return 'Выполнена';
-      if (status === 'rejected') return 'Отказ';
-      return 'Ожидает';
+      container.querySelectorAll('button[data-open]').forEach(btn => btn.addEventListener('click',()=>openTask(btn.dataset.open)));
+      container.querySelectorAll('button[data-complete]').forEach(btn => btn.addEventListener('click',()=>completeTask(btn.dataset.complete)));
+      container.querySelectorAll('button[data-reject]').forEach(btn => btn.addEventListener('click',()=>rejectTask(btn.dataset.reject)));
     }
 
     function openTask(taskId) {
       selectedTaskId = taskId;
-      const task = appState.tasks.find((item) => item.id === taskId);
-      if (!task) {
-        return;
-      }
+      const task = appState.tasks.find(t => t.id === taskId);
+      if (!task) return;
       const modal = document.getElementById('taskModal');
       const body = document.getElementById('taskModalBody');
       document.getElementById('taskModalTitle').textContent = task.title;
-
-      body.innerHTML = `
-        <div class="small">Дата: ${task.date} | Время: ${task.minutes} мин. | Статус: ${statusLabel(task.status)}</div>
-        <h3 style="margin-top: 8px;">Чек-лист</h3>
-        <div id="checklistEditor" class="list"></div>
-        <button class="btn" type="button" id="addChecklistItemBtn">Добавить пункт чек-листа</button>
-      `;
-
+      body.innerHTML = `<div class="small">Дата: ${task.date} | Время: ${task.minutes} мин. | Статус: ${statusLabel(task.status)}</div><h3 style="margin-top: 8px;">Чек-лист</h3><div id="checklistEditor" class="list"></div><button class="btn" type="button" id="addChecklistItemBtn">Добавить пункт чек-листа</button>`;
       renderChecklist(task);
       modal.classList.add('active');
     }
 
     function renderChecklist(task) {
       const editor = document.getElementById('checklistEditor');
+      if (!editor) return;
       editor.innerHTML = '';
-
-      task.checklist.forEach((item, index) => {
-        const checked = task.checklistDone.includes(index);
+      task.checklist.forEach((item, idx) => {
+        const checked = task.checklistDone.includes(idx);
         const row = document.createElement('div');
         row.className = 'list-item';
-        row.innerHTML = `
-          <label><input type="checkbox" data-index="${index}" ${checked ? 'checked' : ''} /> ${escapeHtml(item)}</label>
-          <button class="btn warn" data-delete-index="${index}" type="button">Удалить</button>
-        `;
+        row.innerHTML = `<label><input type="checkbox" data-index="${idx}" ${checked?'checked':''} /> ${escapeHtml(item)}</label><button class="btn warn" data-delete-index="${idx}" type="button">Удалить</button>`;
         editor.appendChild(row);
       });
-
-      editor.querySelectorAll('input[type="checkbox"]').forEach((checkbox) => {
-        checkbox.addEventListener('change', () => {
-          const index = Number(checkbox.dataset.index);
-          if (checkbox.checked) {
-            if (!task.checklistDone.includes(index)) task.checklistDone.push(index);
-          } else {
-            task.checklistDone = task.checklistDone.filter((doneIndex) => doneIndex !== index);
-          }
+      editor.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+        cb.addEventListener('change', () => {
+          const index = Number(cb.dataset.index);
+          if (cb.checked) { if (!task.checklistDone.includes(index)) task.checklistDone.push(index); }
+          else { task.checklistDone = task.checklistDone.filter(i => i !== index); }
           saveState();
           renderTasks();
           runAnalytics();
         });
       });
-
-      editor.querySelectorAll('button[data-delete-index]').forEach((button) => {
-        button.addEventListener('click', () => {
-          const index = Number(button.dataset.deleteIndex);
-          task.checklist.splice(index, 1);
-          task.checklistDone = task.checklistDone.filter((doneIndex) => doneIndex !== index).map((doneIndex) => (doneIndex > index ? doneIndex - 1 : doneIndex));
+      editor.querySelectorAll('button[data-delete-index]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const index = Number(btn.dataset.deleteIndex);
+          task.checklist.splice(index,1);
+          task.checklistDone = task.checklistDone.filter(i => i !== index).map(i => i>index ? i-1 : i);
           renderChecklist(task);
           saveState();
         });
       });
-
-      const addButton = document.getElementById('addChecklistItemBtn');
-      addButton.onclick = () => {
-        const value = prompt('Новый пункт чек-листа');
-        if (!value) return;
-        task.checklist.push(value);
-        renderChecklist(task);
-        saveState();
-      };
+      const addBtn = document.getElementById('addChecklistItemBtn');
+      if (addBtn) addBtn.onclick = () => { const val = prompt('Новый пункт чек-листа'); if(val) { task.checklist.push(val); renderChecklist(task); saveState(); } };
     }
 
-    function closeTaskModal() {
-      selectedTaskId = null;
-      document.getElementById('taskModal').classList.remove('active');
-    }
-
+    function closeTaskModal() { document.getElementById('taskModal').classList.remove('active'); selectedTaskId=null; }
     function markTaskReadWithoutFill() {
-      if (!selectedTaskId) {
-        return;
-      }
-      const task = appState.tasks.find((item) => item.id === selectedTaskId);
-      if (!task) {
-        return;
-      }
-      task.readWithoutFill = true;
-      if (!appState.readWithoutChecklist.includes(task.id)) {
-        appState.readWithoutChecklist.push(task.id);
-      }
+      if (!selectedTaskId) return;
+      const task = appState.tasks.find(t => t.id === selectedTaskId);
+      if (task) { task.readWithoutFill = true; if(!appState.readWithoutChecklist.includes(task.id)) appState.readWithoutChecklist.push(task.id); }
       closeTaskModal();
       renderTasks();
       saveState();
     }
-
     function completeTask(taskId) {
-      const task = appState.tasks.find((item) => item.id === taskId);
-      if (!task) {
-        return;
-      }
-      task.status = 'done';
-      renderTasks();
-      renderCalendar();
-      runAnalytics();
-      saveState();
+      const task = appState.tasks.find(t => t.id === taskId);
+      if (task) { task.status = 'done'; renderTasks(); renderCalendar(); runAnalytics(); saveState(); }
     }
-
     function rejectTask(taskId) {
-      const task = appState.tasks.find((item) => item.id === taskId);
-      if (!task) {
-        return;
-      }
-
+      const task = appState.tasks.find(t => t.id === taskId);
+      if (!task) return;
       let reason = prompt('Укажите причину отказа');
-      if (task.isRegular && (!reason || !reason.trim())) {
-        alert('Для отказа от регулярной задачи требуется обоснованная причина (например, отпуск или болезнь).');
-        return;
-      }
-      if (!reason) {
-        reason = 'Не указана';
-      }
-
+      if (task.isRegular && (!reason || !reason.trim())) { alert('Для отказа от регулярной задачи требуется обоснованная причина.'); return; }
+      if (!reason) reason = 'Не указана';
       task.status = 'rejected';
       task.reason = reason.trim();
-      renderTasks();
-      renderCalendar();
-      runAnalytics();
-      saveState();
+      renderTasks(); renderCalendar(); runAnalytics(); saveState();
     }
 
     function buildCalendarGrid(year, month) {
       const first = new Date(year, month, 1);
-      const startDay = first.getDay() === 0 ? 6 : first.getDay() - 1;
-      const daysInMonth = new Date(year, month + 1, 0).getDate();
-
+      const startDay = first.getDay()===0 ? 6 : first.getDay()-1;
+      const daysInMonth = new Date(year, month+1, 0).getDate();
       const rows = [];
       let day = 1 - startDay;
-      for (let week = 0; week < 6; week += 1) {
+      for (let w=0; w<6; w++) {
         const row = [];
-        for (let d = 0; d < 7; d += 1) {
-          row.push(new Date(year, month, day));
-          day += 1;
-        }
+        for (let d=0; d<7; d++) { row.push(new Date(year, month, day)); day++; }
         rows.push(row);
       }
       return { rows, daysInMonth };
@@ -1880,98 +1708,214 @@
     function renderCalendar() {
       const year = calendarDate.getFullYear();
       const month = calendarDate.getMonth();
-      const monthLabel = calendarDate.toLocaleDateString('ru-RU', { month: 'long', year: 'numeric' });
-      document.getElementById('calendarMonthLabel').textContent = monthLabel;
-
+      document.getElementById('calendarMonthLabel').textContent = calendarDate.toLocaleDateString('ru-RU', { month: 'long', year: 'numeric' });
       const head = document.getElementById('calendarHead');
       const body = document.getElementById('calendarBody');
-      head.innerHTML = '<tr><th>Пн</th><th>Вт</th><th>Ср</th><th>Чт</th><th>Пт</th><th>Сб</th><th>Вс</th></tr>';
-      body.innerHTML = '';
-
+      if (head) head.innerHTML = '<tr><th>Пн</th><th>Вт</th><th>Ср</th><th>Чт</th><th>Пт</th><th>Сб</th><th>Вс</th></tr>';
+      if (body) body.innerHTML = '';
       const { rows } = buildCalendarGrid(year, month);
-      rows.forEach((week) => {
+      rows.forEach(week => {
         const tr = document.createElement('tr');
-        week.forEach((date) => {
+        week.forEach(date => {
           const td = document.createElement('td');
-          const dateIso = date.toISOString().slice(0, 10);
+          const dateIso = date.toISOString().slice(0,10);
           const isCurrentMonth = date.getMonth() === month;
           const tasks = tasksByDate(dateIso);
-
-          td.innerHTML = `<strong style="opacity:${isCurrentMonth ? 1 : 0.35}">${date.getDate()}</strong>`;
-          if (tasks.length > 0) {
-            const pending = tasks.filter((task) => task.status === 'pending').length;
-            const done = tasks.filter((task) => task.status === 'done').length;
+          td.innerHTML = `<strong style="opacity:${isCurrentMonth?1:0.35}">${date.getDate()}</strong>`;
+          if (tasks.length) {
+            const pending = tasks.filter(t=>t.status==='pending').length;
+            const done = tasks.filter(t=>t.status==='done').length;
             td.innerHTML += `<div class="dot">${tasks.length} задач</div><div class="small">Ожидают: ${pending}, выполнено: ${done}</div>`;
           }
-
-          td.addEventListener('click', () => {
-            activateTab('tasks');
-            document.getElementById('taskDateFilter').value = dateIso;
-            renderTasks();
-          });
+          td.addEventListener('click', () => { activateTab('tasks'); const df = document.getElementById('taskDateFilter'); if(df) df.value = dateIso; renderTasks(); });
           tr.appendChild(td);
         });
-        body.appendChild(tr);
+        if (body) body.appendChild(tr);
       });
     }
 
     function runAnalytics() {
       const fromInput = document.getElementById('analyticsFrom');
       const toInput = document.getElementById('analyticsTo');
-      if (!fromInput.value) {
-        fromInput.value = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().slice(0, 10);
-      }
-      if (!toInput.value) {
-        toInput.value = todayIso();
-      }
-
-      const from = fromInput.value;
-      const to = toInput.value;
-      const filtered = appState.tasks.filter((task) => task.date >= from && task.date <= to);
+      if (fromInput && !fromInput.value) fromInput.value = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().slice(0,10);
+      if (toInput && !toInput.value) toInput.value = todayIso();
+      const from = fromInput ? fromInput.value : '';
+      const to = toInput ? toInput.value : '';
+      const filtered = appState.tasks.filter(t => t.date >= from && t.date <= to);
       const total = filtered.length;
-      const done = filtered.filter((task) => task.status === 'done').length;
-      const rejected = filtered.filter((task) => task.status === 'rejected').length;
-      const pending = filtered.filter((task) => task.status === 'pending').length;
-      const readWithoutFill = filtered.filter((task) => task.readWithoutFill).length;
-
-      const completion = total > 0 ? Math.round((done / total) * 100) : 0;
-      document.getElementById('analyticsProgress').style.width = `${completion}%`;
-      document.getElementById('analyticsText').innerHTML = `
-        Всего задач: <strong>${total}</strong>.<br>
-        Выполнено: <strong>${done}</strong> (${completion}%).<br>
-        Отказов: <strong>${rejected}</strong>.<br>
-        Ожидают: <strong>${pending}</strong>.<br>
-        Прочитано без заполнения: <strong>${readWithoutFill}</strong>.
-      `;
+      const done = filtered.filter(t=>t.status==='done').length;
+      const rejected = filtered.filter(t=>t.status==='rejected').length;
+      const pending = filtered.filter(t=>t.status==='pending').length;
+      const readWithoutFill = filtered.filter(t=>t.readWithoutFill).length;
+      const completion = total>0 ? Math.round((done/total)*100) : 0;
+      const progressDiv = document.getElementById('analyticsProgress');
+      if (progressDiv) progressDiv.style.width = `${completion}%`;
+      const textDiv = document.getElementById('analyticsText');
+      if (textDiv) textDiv.innerHTML = `Всего задач: <strong>${total}</strong>.<br>Выполнено: <strong>${done}</strong> (${completion}%).<br>Отказов: <strong>${rejected}</strong>.<br>Ожидают: <strong>${pending}</strong>.<br>Прочитано без заполнения: <strong>${readWithoutFill}</strong>.`;
     }
 
-    function escapeHtml(value) {
-      return String(value || '').replace(/[&<>"']/g, (symbol) => {
-        if (symbol === '&') return '&amp;';
-        if (symbol === '<') return '&lt;';
-        if (symbol === '>') return '&gt;';
-        if (symbol === '"') return '&quot;';
-        return '&#039;';
-      });
+    function escapeHtml(value) { return String(value || '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[m]); }
+
+    // --- Будильник ---
+    let currentAlarms = [];
+    let editingAlarmId = null;
+    let tempMission = null;
+    let currentSound = null;
+
+    function renderAlarms() {
+      const container = document.getElementById('alarm-list');
+      if (!container) return;
+      if (currentAlarms.length === 0) {
+        container.innerHTML = '<div class="no-alarms">Нет будильников. Нажмите + чтобы добавить.</div>';
+        return;
+      }
+      container.innerHTML = currentAlarms.map(alarm => `
+        <div class="alarm-item" data-id="${alarm.id}">
+          <div class="alarm-info">
+            <input type="checkbox" class="alarm-toggle" ${alarm.enabled ? 'checked' : ''}>
+            <span class="alarm-time" style="text-decoration: ${alarm.enabled ? 'none' : 'line-through'}">${alarm.time}</span>
+            <div class="alarm-days">
+              ${['Вс','Пн','Вт','Ср','Чт','Пт','Сб'].map((day, idx) => `<span class="day-badge ${alarm.days.includes(idx) ? 'active' : ''}">${day}</span>`).join('')}
+            </div>
+            ${alarm.mission ? `<span class="mission-badge">📚 Математика</span>` : ''}
+            ${alarm.snoozeEnabled ? `<span class="snooze-badge">⏱️ Отложить ${alarm.snoozeInterval} мин, ${alarm.snoozeLimit === 'unlimited' ? '∞' : alarm.snoozeLimit + ' раз'}</span>` : ''}
+          </div>
+          <div>
+            <button class="edit-alarm" data-id="${alarm.id}">✏️</button>
+            <button class="delete-alarm" data-id="${alarm.id}">🗑️</button>
+          </div>
+        </div>
+      `).join('');
+      document.querySelectorAll('.alarm-toggle').forEach((cb, i) => cb.addEventListener('change', () => { const na = [...currentAlarms]; na[i].enabled = cb.checked; saveAlarmsToState(na); }));
+      document.querySelectorAll('.edit-alarm').forEach(btn => btn.addEventListener('click', () => { const id = btn.dataset.id; const a = currentAlarms.find(al => al.id === id); if(a) openModal(a); }));
+      document.querySelectorAll('.delete-alarm').forEach(btn => btn.addEventListener('click', () => { const id = btn.dataset.id; const na = currentAlarms.filter(a => a.id !== id); saveAlarmsToState(na); }));
     }
 
+    function saveAlarmsToState(newAlarms) {
+      currentAlarms = newAlarms;
+      appState.personality.alarms = currentAlarms;
+      saveState();
+      renderAlarms();
+    }
+
+    function openModal(alarm = null) {
+      editingAlarmId = alarm ? alarm.id : null;
+      const modal = document.getElementById('alarm-modal');
+      document.getElementById('modal-title').innerText = alarm ? 'Редактировать будильник' : 'Новый будильник';
+      document.getElementById('alarm-time').value = alarm ? alarm.time : '07:00';
+      const days = alarm ? alarm.days : [0,1,2,3,4,5,6];
+      document.getElementById('daily-checkbox').checked = days.length === 7;
+      renderDaysRow(days);
+      const missionDiv = document.getElementById('selected-mission');
+      if (alarm && alarm.mission) {
+        missionDiv.innerHTML = `<span>📐 Математические задачи</span><button class="remove-mission">✖</button>`;
+        missionDiv.querySelector('.remove-mission')?.addEventListener('click', () => { missionDiv.innerHTML = 'Не выбрано'; tempMission = null; });
+      } else missionDiv.innerHTML = 'Не выбрано';
+      document.getElementById('alarm-sound').value = alarm?.sound || 'default';
+      const snoozeEnabled = alarm ? alarm.snoozeEnabled : true;
+      document.getElementById('snooze-enabled').checked = snoozeEnabled;
+      document.getElementById('snooze-options').style.display = snoozeEnabled ? 'block' : 'none';
+      if (alarm) {
+        document.querySelectorAll('.interval-btn').forEach(btn => { btn.classList.remove('active'); if(parseInt(btn.dataset.interval)===alarm.snoozeInterval) btn.classList.add('active'); });
+        document.querySelectorAll('.limit-btn').forEach(btn => { btn.classList.remove('active'); if(btn.dataset.limit===alarm.snoozeLimit) btn.classList.add('active'); });
+      } else {
+        document.querySelector('.interval-btn[data-interval="5"]')?.classList.add('active');
+        document.querySelector('.limit-btn[data-limit="unlimited"]')?.classList.add('active');
+      }
+      modal.style.display = 'flex';
+    }
+
+    function renderDaysRow(selectedDays) {
+      const container = document.getElementById('days-row');
+      const daysShort = ['Вс','Пн','Вт','Ср','Чт','Пт','Сб'];
+      container.innerHTML = daysShort.map((day, idx) => `<button type="button" class="day-btn ${selectedDays.includes(idx) ? 'selected' : ''}" data-day="${idx}">${day}</button>`).join('');
+      document.querySelectorAll('.day-btn').forEach(btn => btn.addEventListener('click', () => {
+        const dayIdx = parseInt(btn.dataset.day);
+        const current = getCurrentSelectedDays();
+        const newDays = current.includes(dayIdx) ? current.filter(d => d !== dayIdx) : [...current, dayIdx].sort();
+        updateDaysRow(newDays);
+      }));
+    }
+
+    function getCurrentSelectedDays() {
+      const btns = document.querySelectorAll('.day-btn.selected');
+      return Array.from(btns).map(btn => parseInt(btn.dataset.day));
+    }
+
+    function updateDaysRow(newDays) {
+      document.querySelectorAll('.day-btn').forEach(btn => { const day = parseInt(btn.dataset.day); if(newDays.includes(day)) btn.classList.add('selected'); else btn.classList.remove('selected'); });
+      document.getElementById('daily-checkbox').checked = newDays.length === 7;
+    }
+
+    document.getElementById('daily-checkbox')?.addEventListener('change', e => e.target.checked ? updateDaysRow([0,1,2,3,4,5,6]) : updateDaysRow([]));
+    document.getElementById('add-mission-btn')?.addEventListener('click', () => {
+      const a = Math.floor(Math.random()*20)+1, b = Math.floor(Math.random()*20)+1;
+      document.getElementById('math-example').innerText = `${a} + ${b} = ?`;
+      tempMission = { type: 'math', example: `${a} + ${b} = ?` };
+      document.getElementById('mission-modal').style.display = 'flex';
+    });
+    document.getElementById('confirm-mission-btn')?.addEventListener('click', () => {
+      if (tempMission) {
+        const missionDiv = document.getElementById('selected-mission');
+        missionDiv.innerHTML = `<span>📐 Математические задачи</span><button class="remove-mission">✖</button>`;
+        missionDiv.querySelector('.remove-mission')?.addEventListener('click', () => { missionDiv.innerHTML = 'Не выбрано'; tempMission = null; });
+      }
+      document.getElementById('mission-modal').style.display = 'none';
+    });
+    document.querySelectorAll('.close-mission-modal').forEach(btn => btn.addEventListener('click', () => { document.getElementById('mission-modal').style.display = 'none'; tempMission = null; }));
+    document.getElementById('play-sound-btn')?.addEventListener('click', () => {
+      const soundId = document.getElementById('alarm-sound').value;
+      let url = '';
+      if (soundId === 'default') url = '/sounds/default.mp3';
+      else if (soundId === 'birds') url = '/sounds/birds.mp3';
+      else if (soundId === 'piano') url = '/sounds/piano.mp3';
+      if (url && currentSound) { currentSound.pause(); currentSound.currentTime = 0; }
+      currentSound = new Audio(url);
+      currentSound.play().catch(e => console.log);
+    });
+    document.getElementById('snooze-enabled')?.addEventListener('change', e => { document.getElementById('snooze-options').style.display = e.target.checked ? 'block' : 'none'; });
+    document.querySelectorAll('.interval-btn').forEach(btn => btn.addEventListener('click', () => { document.querySelectorAll('.interval-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); }));
+    document.querySelectorAll('.limit-btn').forEach(btn => btn.addEventListener('click', () => { document.querySelectorAll('.limit-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); }));
+    document.getElementById('save-alarm-btn')?.addEventListener('click', () => {
+      const time = document.getElementById('alarm-time').value;
+      const selectedDays = getCurrentSelectedDays();
+      if (selectedDays.length === 0) { alert('Выберите хотя бы один день'); return; }
+      const missionElem = document.getElementById('selected-mission');
+      let mission = null;
+      if (missionElem.innerHTML !== 'Не выбрано') mission = tempMission || { type: 'math', example: '5 + 3 = ?' };
+      const sound = document.getElementById('alarm-sound').value;
+      const snoozeEnabled = document.getElementById('snooze-enabled').checked;
+      let snoozeInterval = 5, snoozeLimit = 'unlimited';
+      const activeInterval = document.querySelector('.interval-btn.active');
+      if (activeInterval) snoozeInterval = parseInt(activeInterval.dataset.interval);
+      const activeLimit = document.querySelector('.limit-btn.active');
+      if (activeLimit) snoozeLimit = activeLimit.dataset.limit;
+      const alarmData = {
+        id: editingAlarmId || Date.now().toString(),
+        time, days: selectedDays, enabled: true, mission, sound, snoozeEnabled,
+        snoozeInterval, snoozeLimit: snoozeLimit === 'unlimited' ? 'unlimited' : parseInt(snoozeLimit)
+      };
+      let newAlarms;
+      if (editingAlarmId) newAlarms = currentAlarms.map(a => a.id === editingAlarmId ? alarmData : a);
+      else newAlarms = [...currentAlarms, alarmData];
+      saveAlarmsToState(newAlarms);
+      document.getElementById('alarm-modal').style.display = 'none';
+      editingAlarmId = null;
+    });
+    document.querySelectorAll('.close-modal').forEach(btn => btn.addEventListener('click', () => { document.getElementById('alarm-modal').style.display = 'none'; editingAlarmId = null; }));
+    document.getElementById('add-alarm-btn')?.addEventListener('click', () => openModal());
+
+    function initAlarms() { currentAlarms = appState.personality.alarms || []; renderAlarms(); }
+
+    // --- Основные функции рендера и старта ---
     function bindEvents() {
-      document.querySelectorAll('.tab-btn').forEach((button) => {
-        button.addEventListener('click', () => activateTab(button.dataset.tab));
-      });
-
-      document.getElementById('syncNowBtn').addEventListener('click', saveState);
-      document.getElementById('closeMatrixBtn').addEventListener('click', closeMatrix);
-      document.getElementById('closeTaskBtn').addEventListener('click', closeTaskModal);
-      document.getElementById('markReadBtn').addEventListener('click', markTaskReadWithoutFill);
-
-      document.getElementById('saveAnthroBtn').addEventListener('click', () => {
-        calculateBmi();
-        renderAnthroForm();
-        saveState();
-      });
-
-      document.getElementById('addAnalysisBtn').addEventListener('click', () => {
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.addEventListener('click', () => activateTab(btn.dataset.tab)));
+      document.getElementById('syncNowBtn')?.addEventListener('click', saveState);
+      document.getElementById('closeMatrixBtn')?.addEventListener('click', closeMatrix);
+      document.getElementById('closeTaskBtn')?.addEventListener('click', closeTaskModal);
+      document.getElementById('markReadBtn')?.addEventListener('click', markTaskReadWithoutFill);
+      document.getElementById('saveAnthroBtn')?.addEventListener('click', () => { calculateBmi(); renderAnthroForm(); saveState(); });
+      document.getElementById('addAnalysisBtn')?.addEventListener('click', () => {
         const name = document.getElementById('analysisName').value.trim();
         const value = document.getElementById('analysisValue').value.trim();
         const date = document.getElementById('analysisDate').value;
@@ -1983,45 +1927,27 @@
         renderAnalysisResults();
         saveState();
       });
-
-      document.getElementById('addCategoryBtn').addEventListener('click', () => {
+      document.getElementById('addCategoryBtn')?.addEventListener('click', () => {
         const next = document.getElementById('newCategoryInput').value.trim();
-        if (!next || appState.processes.categories.includes(next)) {
-          return;
+        if (next && !appState.processes.categories.includes(next)) {
+          appState.processes.categories.push(next);
+          document.getElementById('newCategoryInput').value = '';
+          renderProcessCategories();
+          renderProcessItems();
+          saveState();
         }
-        appState.processes.categories.push(next);
-        document.getElementById('newCategoryInput').value = '';
-        renderProcessCategories();
+      });
+      document.getElementById('addProcessItemBtn')?.addEventListener('click', () => {
+        appState.processes.items.push({ id: uid('proc'), name: 'Новый процесс', hierarchyLevel: 2, dailyMinutes: 30, regularity: 'ежедневно', category: appState.processes.categories[0] || 'Регулярно-циклические' });
         renderProcessItems();
         saveState();
       });
-
-      document.getElementById('addProcessItemBtn').addEventListener('click', () => {
-        appState.processes.items.push({
-          id: uid('proc'),
-          name: 'Новый процесс',
-          hierarchyLevel: 2,
-          dailyMinutes: 30,
-          regularity: 'ежедневно',
-          category: appState.processes.categories[0] || 'Регулярно-циклические'
-        });
-        renderProcessItems();
-        saveState();
-      });
-
-      document.getElementById('generateScheduleBtn').addEventListener('click', generateProcessTasks);
-      document.getElementById('taskDateFilter').addEventListener('change', renderTasks);
-      document.getElementById('createQuickTaskBtn').addEventListener('click', createQuickTask);
-      document.getElementById('runAnalyticsBtn').addEventListener('click', runAnalytics);
-
-      document.getElementById('prevMonthBtn').addEventListener('click', () => {
-        calendarDate.setMonth(calendarDate.getMonth() - 1);
-        renderCalendar();
-      });
-      document.getElementById('nextMonthBtn').addEventListener('click', () => {
-        calendarDate.setMonth(calendarDate.getMonth() + 1);
-        renderCalendar();
-      });
+      document.getElementById('generateScheduleBtn')?.addEventListener('click', generateProcessTasks);
+      document.getElementById('taskDateFilter')?.addEventListener('change', renderTasks);
+      document.getElementById('createQuickTaskBtn')?.addEventListener('click', createQuickTask);
+      document.getElementById('runAnalyticsBtn')?.addEventListener('click', runAnalytics);
+      document.getElementById('prevMonthBtn')?.addEventListener('click', () => { calendarDate.setMonth(calendarDate.getMonth()-1); renderCalendar(); });
+      document.getElementById('nextMonthBtn')?.addEventListener('click', () => { calendarDate.setMonth(calendarDate.getMonth()+1); renderCalendar(); });
     }
 
     function renderAll() {
@@ -2038,12 +1964,16 @@
       renderProcessItems();
       renderTaskSectorOptions();
       renderTaskInfluenceOptions();
-      document.getElementById('taskDateFilter').value = todayIso();
+      const df = document.getElementById('taskDateFilter');
+      if (df) df.value = todayIso();
       renderTasks();
-      document.getElementById('analyticsFrom').value = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().slice(0, 10);
-      document.getElementById('analyticsTo').value = todayIso();
+      const af = document.getElementById('analyticsFrom');
+      if (af) af.value = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().slice(0,10);
+      const at = document.getElementById('analyticsTo');
+      if (at) at.value = todayIso();
       renderCalendar();
       runAnalytics();
+      initAlarms();
     }
 
     async function start() {
@@ -2051,11 +1981,8 @@
       await loadState();
       renderAll();
       activateTab('year');
-      setInterval(() => {
-        runAnalytics();
-      }, 5000);
+      setInterval(() => runAnalytics(), 5000);
     }
-
     start();
   </script>
 </body>
