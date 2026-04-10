@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Balance Wheel</title>
+  <title>Balance Wheel | Погода в Москве</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&family=IBM+Plex+Mono:wght@400;600&display=swap');
 
@@ -593,6 +593,53 @@
       font-size: 16px;
     }
 
+    /* Стили для виджета погоды (внутри панели календаря) */
+    .weather-card {
+      background: #f4faf7;
+      border: 1px solid #cde1d7;
+      border-radius: 28px;
+      padding: 12px 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    .weather-card .city {
+      font-weight: 700;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .weather-main {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 8px 0 4px;
+    }
+    .weather-temp {
+      font-size: 2rem;
+      font-weight: 800;
+    }
+    .weather-desc {
+      text-transform: capitalize;
+      font-size: 0.9rem;
+    }
+    .weather-details {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      font-size: 0.8rem;
+      margin-top: 6px;
+    }
+    .weather-link {
+      font-size: 0.7rem;
+      margin-top: 6px;
+    }
+    .weather-link a {
+      color: #116466;
+      text-decoration: none;
+      border-bottom: 1px dashed #116466;
+    }
+
     @media (max-width: 900px) {
       .matrix-layout,
       .grid-2 {
@@ -825,6 +872,21 @@
 
     <section class="panel" id="panel-analytics">
       <h2>Календарь, прогресс и первичная аналитика</h2>
+      
+      <!-- ВИДЖЕТ ПОГОДЫ РАСПОЛОЖЕН ЗДЕСЬ, СВЕРХУ КАЛЕНДАРЯ -->
+      <div class="weather-card" id="weatherWidget">
+        <div class="city">📍 Москва <span>🌍</span></div>
+        <div class="weather-main">
+          <span class="weather-temp" id="weatherTemp">--°</span>
+          <span id="weatherIcon">⛅</span>
+        </div>
+        <div class="weather-desc" id="weatherDesc">загрузка...</div>
+        <div class="weather-details" id="weatherDetails"></div>
+        <div class="weather-link">
+          <a href="https://yandex.ru/pogoda/ru/moscow" target="_blank" rel="noopener noreferrer">Подробнее на Яндекс.Погоде →</a>
+        </div>
+      </div>
+
       <div class="form-row">
         <button class="btn" id="prevMonthBtn" type="button">Предыдущий месяц</button>
         <div id="calendarMonthLabel" class="badge" style="justify-self: center;"></div>
@@ -947,7 +1009,7 @@
           },
           test: { responses: {}, latestScore: null },
           analysisResults: [],
-          alarms: []    // добавлено поле для будильников
+          alarms: []
         },
         processes: {
           categories: ['Регулярно-циклические', 'Нестандартные (адаптивные / редкие)'],
@@ -1052,7 +1114,7 @@
       body.innerHTML = '';
       Object.entries(influenceMap).forEach(([level, item]) => {
         const row = document.createElement('tr');
-        row.innerHTML = `<td>${item.label}</td><td class="mono">${item.icon} (${level})</td>`;
+        row.innerHTML = `<td>${item.label}</td><td class="mono">${item.icon} (${level})<\/td>`;
         body.appendChild(row);
       });
     }
@@ -1756,6 +1818,50 @@
 
     function escapeHtml(value) { return String(value || '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[m]); }
 
+    // --- Погода (Open-Meteo, Москва) ---
+    const MOSCOW_LAT = 55.7558;
+    const MOSCOW_LON = 37.6173;
+    let weatherUpdateTimer = null;
+
+    async function fetchWeather() {
+      const weatherDiv = document.getElementById('weatherWidget');
+      if (!weatherDiv) return;
+      try {
+        const url = `https://api.open-meteo.com/v1/forecast?latitude=${MOSCOW_LAT}&longitude=${MOSCOW_LON}&current_weather=true&timezone=Europe/Moscow&forecast_days=1`;
+        const resp = await fetch(url);
+        if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+        const data = await resp.json();
+        if (!data.current_weather) throw new Error('Нет данных');
+        const temp = Math.round(data.current_weather.temperature);
+        const weatherCode = data.current_weather.weathercode;
+        const windSpeed = data.current_weather.windspeed;
+        let icon = '☀️';
+        let desc = 'Ясно';
+        if (weatherCode === 0) { icon = '☀️'; desc = 'Ясно'; }
+        else if (weatherCode === 1 || weatherCode === 2) { icon = '⛅'; desc = 'Малооблачно'; }
+        else if (weatherCode === 3) { icon = '☁️'; desc = 'Пасмурно'; }
+        else if ((weatherCode >= 45 && weatherCode <= 48)) { icon = '🌫️'; desc = 'Туман'; }
+        else if ((weatherCode >= 51 && weatherCode <= 67)) { icon = '🌧️'; desc = 'Дождь'; }
+        else if ((weatherCode >= 71 && weatherCode <= 77)) { icon = '❄️'; desc = 'Снег'; }
+        else if ((weatherCode >= 80 && weatherCode <= 99)) { icon = '⛈️'; desc = 'Гроза/ливень'; }
+        document.getElementById('weatherTemp').innerHTML = `${temp}°`;
+        document.getElementById('weatherIcon').innerHTML = icon;
+        document.getElementById('weatherDesc').innerHTML = desc;
+        document.getElementById('weatherDetails').innerHTML = `<span>💨 ${Math.round(windSpeed)} м/с</span><span>💧 влажность —</span>`;
+      } catch (err) {
+        console.warn('Ошибка погоды:', err);
+        document.getElementById('weatherTemp').innerHTML = '--°';
+        document.getElementById('weatherDesc').innerHTML = 'нет данных';
+        document.getElementById('weatherDetails').innerHTML = '<span>🌐 ошибка загрузки</span>';
+      }
+    }
+
+    function startWeatherUpdates() {
+      fetchWeather();
+      if (weatherUpdateTimer) clearInterval(weatherUpdateTimer);
+      weatherUpdateTimer = setInterval(fetchWeather, 30 * 60 * 1000);
+    }
+
     // --- Будильник ---
     let currentAlarms = [];
     let editingAlarmId = null;
@@ -1974,6 +2080,7 @@
       renderCalendar();
       runAnalytics();
       initAlarms();
+      startWeatherUpdates();
     }
 
     async function start() {
