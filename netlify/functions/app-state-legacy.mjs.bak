@@ -76,6 +76,13 @@ function createDefaultState() {
       },
       analysisResults: [],
       alarms: [],
+      characterSettings: {
+        photoDataUrl: null,
+        scale: 1,
+        offsetX: 0,
+        offsetY: 0,
+        crystalEnabled: true,
+      },
     },
     processes: {
       categories: ['Регулярно-циклические', 'Нестандартные (адаптивные / редкие)'],
@@ -113,7 +120,6 @@ function createDefaultState() {
   };
 }
 
-// Глубокое слияние объектов (массивы заменяются, объекты сливаются)
 function deepMerge(target, source) {
   if (!source || typeof source !== 'object') return target;
   const result = Array.isArray(target) ? [...target] : { ...target };
@@ -129,9 +135,8 @@ function deepMerge(target, source) {
   return result;
 }
 
-// Общие CORS-заголовки
 const corsHeaders = {
-  'Access-Control-Allow-Origin': '*', // можно заменить на конкретный домен фронта
+  'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'GET, PUT, OPTIONS',
   'Access-Control-Allow-Headers': 'Content-Type',
 };
@@ -155,7 +160,6 @@ function resolveUserId(event) {
 }
 
 export default async (event) => {
-  // Обработка preflight (OPTIONS)
   if (event.httpMethod === 'OPTIONS') {
     return {
       statusCode: 204,
@@ -198,15 +202,12 @@ export default async (event) => {
         return response(400, { ok: false, error: 'State must be a JSON object.' });
       }
 
-      // Загружаем текущее состояние (если есть) и сливаем с новыми данными
       let currentState = await store.get(key, { type: 'json' });
       if (!currentState) {
         currentState = createDefaultState();
       }
 
-      // Глубокое слияние: переданные поля заменяют или дополняют существующие
       const mergedState = deepMerge(currentState, parsed);
-      // Обязательно обновляем timestamp
       mergedState.updatedAt = new Date().toISOString();
 
       await store.setJSON(key, mergedState);
