@@ -513,6 +513,102 @@
         </div>
         <button class="btn" type="button" id="addAnalysisBtn">Добавить результат</button>
       </article>
+      <div id="alarm-settings" class="alarm-section">
+  <div class="alarm-header">
+    <span>⏰ Будильник</span>
+    <button id="add-alarm-btn" class="add-btn">+</button>
+  </div>
+  <div id="alarm-list" class="alarm-list"></div>
+</div>
+
+<!-- Модальное окно (скрыто по умолчанию) -->
+<div id="alarm-modal" class="modal" style="display:none;">
+  <div class="modal-content">
+    <div class="modal-header">
+      <span id="modal-title">Новый будильник</span>
+      <button class="close-modal">&times;</button>
+    </div>
+    <div class="modal-body">
+      <label>Время:</label>
+      <input type="time" id="alarm-time" value="07:00">
+
+      <div class="daily-checkbox">
+        <label>
+          <input type="checkbox" id="daily-checkbox" checked> Ежедневно
+        </label>
+      </div>
+
+      <div class="days-row" id="days-row"></div>
+
+      <!-- Раздел Миссия -->
+      <div class="mission-section">
+        <div class="section-header">
+          <span>Миссия</span>
+          <button id="add-mission-btn" class="add-small-btn">+</button>
+        </div>
+        <div id="selected-mission" class="selected-mission">Не выбрано</div>
+      </div>
+
+      <!-- Звук -->
+      <div class="sound-section">
+        <label>Звук будильника:</label>
+        <select id="alarm-sound">
+          <option value="default">Классический</option>
+          <option value="birds">Птицы</option>
+          <option value="piano">Фортепиано</option>
+        </select>
+        <button id="play-sound-btn" type="button">▶ Прослушать</button>
+      </div>
+
+      <!-- Отложить -->
+      <div class="snooze-section">
+        <label>
+          <input type="checkbox" id="snooze-enabled" checked> Отложить
+        </label>
+        <div id="snooze-options" style="margin-top: 8px; display: none;">
+          <div class="snooze-field">
+            <label>Интервал:</label>
+            <div class="snooze-buttons">
+              <button data-interval="1" class="interval-btn">1 мин</button>
+              <button data-interval="3" class="interval-btn">3 мин</button>
+              <button data-interval="5" class="interval-btn active">5 мин</button>
+            </div>
+          </div>
+          <div class="snooze-field">
+            <label>Количество откладываний:</label>
+            <div class="snooze-buttons">
+              <button data-limit="unlimited" class="limit-btn active">Неограничено</button>
+              <button data-limit="1" class="limit-btn">1 раз</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button id="save-alarm-btn">Сохранить</button>
+      <button class="close-modal">Отмена</button>
+    </div>
+  </div>
+</div>
+
+<!-- Модалка выбора миссии (математика) -->
+<div id="mission-modal" class="modal" style="display:none;">
+  <div class="modal-content small">
+    <div class="modal-header">
+      <span>Математические задачи</span>
+      <button class="close-mission-modal">&times;</button>
+    </div>
+    <div class="modal-body">
+      <p>Пример лёгкого математического примера:</p>
+      <div id="math-example" class="math-example"></div>
+      <p>Добавить эту миссию к будильнику?</p>
+    </div>
+    <div class="modal-footer">
+      <button id="confirm-mission-btn">Готово</button>
+      <button class="close-mission-modal">Отмена</button>
+    </div>
+  </div>
+</div>
     </section>
 
     <section class="panel" id="panel-processes">
