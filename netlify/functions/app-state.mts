@@ -26,7 +26,7 @@ function createDefaultSectorMatrix() {
 }
 
 function createDefaultState() {
-  const sectorState: Record<string, any> = {}
+  const sectorState = {}
   for (const sector of sectors) {
     sectorState[sector.id] = {
       title: sector.title,
@@ -65,6 +65,13 @@ function createDefaultState() {
       },
       analysisResults: [],
       alarms: [],
+      characterSettings: {
+        photoDataUrl: null,
+        scale: 1,
+        offsetX: 0,
+        offsetY: 0,
+        crystalEnabled: true
+      }
     },
     processes: {
       categories: ['Регулярно-циклические', 'Нестандартные (адаптивные / редкие)'],
@@ -102,26 +109,36 @@ function createDefaultState() {
   }
 }
 
-function getUserId(req: Request) {
+function getUserId(req) {
   const queryUserId = new URL(req.url).searchParams.get('userId')
   return queryUserId?.trim() || DEFAULT_USER_ID
 }
 
-// Общие заголовки CORS для всех ответов
 const corsHeaders = {
-  'Access-Control-Allow-Origin': '*', // при необходимости ограничьте доменом вашего фронта
+  'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'GET, PUT, OPTIONS',
   'Access-Control-Allow-Headers': 'Content-Type',
   'cache-control': 'no-store',
 }
 
-export default async (req: Request) => {
-  // 1. Обработка preflight-запроса (OPTIONS)
+function deepMerge(target, source) {
+  if (!source || typeof source !== 'object') return target
+  const result = Array.isArray(target) ? [...target] : { ...target }
+  for (const key of Object.keys(source)) {
+    const srcVal = source[key]
+    const tgtVal = result[key]
+    if (srcVal && typeof srcVal === 'object' && !Array.isArray(srcVal) && tgtVal && typeof tgtVal === 'object' && !Array.isArray(tgtVal)) {
+      result[key] = deepMerge(tgtVal, srcVal)
+    } else {
+      result[key] = srcVal
+    }
+  }
+  return result
+}
+
+export default async (req) => {
   if (req.method === 'OPTIONS') {
-    return new Response(null, {
-      status: 204,
-      headers: corsHeaders,
-    })
+    return new Response(null, { status: 204, headers: corsHeaders })
   }
 
   try {
@@ -131,47 +148,34 @@ export default async (req: Request) => {
     if (req.method === 'GET') {
       const saved = await store.get(key, { type: 'json' })
       if (saved) {
-        return Response.json(
-          { ok: true, state: saved },
-          { headers: corsHeaders }
-        )
+        return Response.json({ ok: true, state: saved }, { headers: corsHeaders })
       }
-
       const fallback = createDefaultState()
       await store.setJSON(key, fallback)
-      return Response.json(
-        { ok: true, state: fallback },
-        { headers: corsHeaders }
-      )
+      return Response.json({ ok: true, state: fallback }, { headers: corsHeaders })
     }
 
     if (req.method === 'PUT') {
       const body = await req.json().catch(() => null)
       if (!body || typeof body !== 'object') {
-        return Response.json(
-          { ok: false, error: 'State must be a JSON object.' },
-          { status: 400, headers: corsHeaders }
-        )
+        return Response.json({ ok: false, error: 'State must be a JSON object.' }, { status: 400, headers: corsHeaders })
       }
 
-      const nextState = {
-        ...createDefaultState(),
-        ...body,
-        updatedAt: new Date().toISOString(),
+      let currentState = await store.get(key, { type: 'json' })
+      if (!currentState) {
+        currentState = createDefaultState()
       }
 
-      await store.setJSON(key, nextState)
-      return Response.json(
-        { ok: true, state: nextState },
-        { headers: corsHeaders }
-      )
+      const mergedState = deepMerge(currentState, body)
+      mergedState.updatedAt = new Date().toISOString()
+
+      await store.setJSON(key, mergedState)
+      return Response.json({ ok: true, state: mergedState }, { headers: corsHeaders })
     }
 
-    return Response.json(
-      { ok: false, error: 'Method not allowed.' },
-      { status: 405, headers: corsHeaders }
-    )
+    return Response.json({ ok: false, error: 'Method not allowed.' }, { status: 405, headers: corsHeaders })
   } catch (error) {
+    console.error('State function error:', error)
     return Response.json(
       {
         ok: false,
