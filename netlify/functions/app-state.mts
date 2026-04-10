@@ -64,7 +64,7 @@ function createDefaultState() {
         latestScore: null,
       },
       analysisResults: [],
-      alarms: [],  // <-- добавлено для хранения будильников
+      alarms: [],
     },
     processes: {
       categories: ['Регулярно-циклические', 'Нестандартные (адаптивные / редкие)'],
@@ -107,7 +107,23 @@ function getUserId(req: Request) {
   return queryUserId?.trim() || DEFAULT_USER_ID
 }
 
+// Общие заголовки CORS для всех ответов
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*', // при необходимости ограничьте доменом вашего фронта
+  'Access-Control-Allow-Methods': 'GET, PUT, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type',
+  'cache-control': 'no-store',
+}
+
 export default async (req: Request) => {
+  // 1. Обработка preflight-запроса (OPTIONS)
+  if (req.method === 'OPTIONS') {
+    return new Response(null, {
+      status: 204,
+      headers: corsHeaders,
+    })
+  }
+
   try {
     const store = getStore(STORE_NAME)
     const key = `user/${getUserId(req)}/state`
@@ -115,12 +131,18 @@ export default async (req: Request) => {
     if (req.method === 'GET') {
       const saved = await store.get(key, { type: 'json' })
       if (saved) {
-        return Response.json({ ok: true, state: saved }, { headers: { 'cache-control': 'no-store' } })
+        return Response.json(
+          { ok: true, state: saved },
+          { headers: corsHeaders }
+        )
       }
 
       const fallback = createDefaultState()
       await store.setJSON(key, fallback)
-      return Response.json({ ok: true, state: fallback }, { headers: { 'cache-control': 'no-store' } })
+      return Response.json(
+        { ok: true, state: fallback },
+        { headers: corsHeaders }
+      )
     }
 
     if (req.method === 'PUT') {
@@ -128,7 +150,7 @@ export default async (req: Request) => {
       if (!body || typeof body !== 'object') {
         return Response.json(
           { ok: false, error: 'State must be a JSON object.' },
-          { status: 400, headers: { 'cache-control': 'no-store' } },
+          { status: 400, headers: corsHeaders }
         )
       }
 
@@ -139,12 +161,15 @@ export default async (req: Request) => {
       }
 
       await store.setJSON(key, nextState)
-      return Response.json({ ok: true, state: nextState }, { headers: { 'cache-control': 'no-store' } })
+      return Response.json(
+        { ok: true, state: nextState },
+        { headers: corsHeaders }
+      )
     }
 
     return Response.json(
       { ok: false, error: 'Method not allowed.' },
-      { status: 405, headers: { 'cache-control': 'no-store' } },
+      { status: 405, headers: corsHeaders }
     )
   } catch (error) {
     return Response.json(
@@ -153,7 +178,7 @@ export default async (req: Request) => {
         error: 'Failed to handle state request.',
         details: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500, headers: { 'cache-control': 'no-store' } },
+      { status: 500, headers: corsHeaders }
     )
   }
 }
