@@ -64,6 +64,7 @@ function createDefaultState() {
         latestScore: null,
       },
       analysisResults: [],
+      alarms: [],  // <-- добавлено для хранения будильников
     },
     processes: {
       categories: ['Регулярно-циклические', 'Нестандартные (адаптивные / редкие)'],
