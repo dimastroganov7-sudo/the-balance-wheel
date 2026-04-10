@@ -8,15 +8,15 @@
     @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&family=IBM+Plex+Mono:wght@400;600&display=swap');
 
     :root {
-      --ink: #10242e;
-      --muted: #56717d;
-      --paper: #f8faf7;
+      --ink: #090909;
+      --muted: #898989;
+      --paper: #F2F1F6;
       --card: #ffffff;
-      --line: #cde1d7;
-      --accent: #116466;
+      --line: #FFFFFF;
+      --accent: #111111;
       --accent-2: #ff8f3f;
-      --danger: #bf2f39;
-      --ok: #1f7a46;
+      --danger: #FD393E;
+      --ok: #65D97F;
       --today: #ffffff;
       --shadow: 0 12px 28px rgba(10, 33, 28, 0.09);
     }
@@ -32,7 +32,7 @@
       background:
         radial-gradient(circle at 6% 0%, rgba(17, 100, 102, 0.16), transparent 35%),
         radial-gradient(circle at 100% 10%, rgba(255, 143, 63, 0.18), transparent 40%),
-        linear-gradient(180deg, #f5fbf9, #eff7f3 62%, #edf6f1);
+        linear-gradient(180deg, #f5fbf9, #F2F1F6 62%, #F2F1F6);
       min-height: 100vh;
     }
 
@@ -46,7 +46,7 @@
       background: linear-gradient(110deg, rgba(17, 100, 102, 0.95), rgba(17, 100, 102, 0.74)), url('assets/hero-image.png') center/cover;
       border-radius: 24px;
       padding: 24px;
-      color: #f2fffb;
+      color: #0B0A0F;
       box-shadow: var(--shadow);
     }
 
@@ -86,7 +86,7 @@
     }
 
     .tab-btn {
-      border: 1px solid var(--line);
+      border: 1px solid #FFFFFF;
       border-radius: 999px;
       padding: 10px 14px;
       background: rgba(255, 255, 255, 0.8);
@@ -139,7 +139,7 @@
 
     .card {
       background: var(--card);
-      border: 1px solid #ddebe3;
+      border: 1px solid #F2F1F6;
       border-radius: 16px;
       padding: 12px;
     }
@@ -152,8 +152,8 @@
 
     .sector-card {
       text-align: left;
-      border: 1px solid #cfe3d7;
-      background: linear-gradient(145deg, #fff, #f4fbf7);
+      border: 1px solid #FFFFFF;
+      background: linear-gradient(145deg, #fff, #F2F1F6);
       border-radius: 15px;
       padding: 10px;
       cursor: pointer;
@@ -193,7 +193,7 @@
     select,
     textarea {
       width: 100%;
-      border: 1px solid #c9ddd2;
+      border: 1px solid #FFFFFF;
       border-radius: 10px;
       padding: 8px;
       font-family: 'Manrope', sans-serif;
@@ -212,13 +212,13 @@
     }
 
     .btn {
-      border: 1px solid #c8dfd1;
+      border: 1px solid #FFFFFF;
       background: #fff;
       border-radius: 999px;
       padding: 8px 12px;
       cursor: pointer;
       font-weight: 700;
-      color: #183741;
+      color: #131313;
     }
 
     .btn.primary {
@@ -228,9 +228,9 @@
     }
 
     .btn.warn {
-      background: #fff6f6;
-      border-color: #f0c9cd;
-      color: #9d2530;
+      background: #FC393F;
+      border-color: #F83A3C;
+      color: #FD393E;
     }
 
     .list {
@@ -241,14 +241,14 @@
     }
 
     .list-item {
-      border: 1px solid #d8e8df;
+      border: 1px solid #FFFFFF;
       border-radius: 12px;
       padding: 8px;
       display: grid;
       grid-template-columns: 1fr auto;
       gap: 6px;
       align-items: center;
-      background: #fbfffd;
+      background: #FFFFFF;
     }
 
     .matrix-layout {
@@ -267,7 +267,7 @@
       text-align: left;
       padding: 10px;
       border-radius: 10px;
-      border: 1px solid #d5e6dc;
+      border: 1px solid #FFFFFF;
       background: #fff;
       cursor: pointer;
       font-weight: 700;
@@ -301,7 +301,7 @@
 
     .badge {
       background: #e5f4ed;
-      color: #255948;
+      color: #FFFFFF;
       border-radius: 999px;
       padding: 4px 8px;
       font-size: 0.78rem;
@@ -311,7 +311,7 @@
 
     .process-item,
     .task-item {
-      border: 1px solid #dae9e2;
+      border: 1px solid #FFFFFF;
       border-radius: 14px;
       padding: 10px;
       background: #fff;
@@ -324,8 +324,8 @@
     }
 
     .task-item.overdue {
-      border-color: #f2c4ca;
-      background: #fff4f5;
+      border-color: #F83A3C;
+      background: #FC393F;
     }
 
     .task-head {
@@ -344,7 +344,7 @@
 
     .calendar th,
     .calendar td {
-      border: 1px solid #dceae2;
+      border: 1px solid #C5C5C7;
       padding: 6px;
       text-align: left;
       vertical-align: top;
@@ -377,7 +377,7 @@
 
     .progress {
       height: 100%;
-      background: linear-gradient(90deg, #1f7a46, #4cb970);
+      background: linear-gradient(90deg, #65D97F, #4cb970);
       width: 0;
     }
 
@@ -1136,7 +1136,7 @@
             <select data-rel="${link.id}">
               ${Object.entries(influenceMap).map(([level, data]) => `<option value="${level}" ${Number(level) === Number(link.influence) ? 'selected' : ''}>${data.icon} ${data.label}</option>`).join('')}
             </select>
-          </td>
+           </td>
           <td><button class="btn warn" data-del="${link.id}" type="button">Удалить</button></td>
         `;
         body.appendChild(row);
@@ -1418,7 +1418,7 @@
 
       container.querySelectorAll('button[data-del]').forEach((button) => {
         button.addEventListener('click', () => {
-          appState.processes.items = appState.processes.items.filter((item) => item.id !== button.dataset.del);
+          appState.processes.items = appState.processes.items.filter((item) => item.id !== button.dataset.id);
           renderProcessItems();
           saveState();
         });
@@ -1936,6 +1936,10 @@
       }, 5000);
     }
 
+    start();
+  </script>
+</body>
+</html>
     start();
   </script>
 </body>
