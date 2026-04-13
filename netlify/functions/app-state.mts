@@ -1,3 +1,4 @@
+
 import { getStore } from '@netlify/blobs'
 
 const STORE_NAME = 'balance-wheel-state'
@@ -105,8 +106,8 @@ function createDefaultState() {
     },
     tasks: [],
     readWithoutChecklist: [],
-    contacts: [],   // добавлено
-    chats: [],      // добавлено
+    contacts: [],
+    chats: [],
     updatedAt: new Date().toISOString(),
   }
 }
