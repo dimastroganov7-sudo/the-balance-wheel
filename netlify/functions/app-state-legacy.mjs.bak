@@ -1,9 +1,10 @@
-import { getStore } from '@netlify/blobs';
 
-const STORE_NAME = 'balance-wheel-state';
-const DEFAULT_USER_ID = '69d7a4ce59d4646ae0dae714';
+import { getStore } from '@netlify/blobs'
 
-const SECTORS = [
+const STORE_NAME = 'balance-wheel-state'
+const DEFAULT_USER_ID = '69d7a4ce59d4646ae0dae714'
+
+const sectors = [
   { id: 'career_business', title: '🧑‍💼 Карьера / Бизнес' },
   { id: 'finance', title: '💰 Финансы' },
   { id: 'health_fitness', title: '🩺 Здоровье и Фитнес' },
@@ -12,17 +13,7 @@ const SECTORS = [
   { id: 'physical_environment', title: '🏠 Физическое окружение' },
   { id: 'rest_entertainment', title: '🎉 Отдых и Развлечения' },
   { id: 'personal_growth', title: '📚 Личностный рост' },
-];
-
-const LINK_RULES = [
-  { from: 'results', to: 'strategies' },
-  { from: 'strategies', to: 'tactics' },
-  { from: 'tactics', to: 'processProjects' },
-  { from: 'tactics', to: 'owners' },
-  { from: 'processProjects', to: 'results' },
-  { from: 'processProjects', to: 'owners' },
-  { from: 'owners', to: 'results' },
-];
+]
 
 function createDefaultSectorMatrix() {
   return {
@@ -32,29 +23,29 @@ function createDefaultSectorMatrix() {
     processProjects: [],
     owners: [],
     links: [],
-  };
+  }
 }
 
 function createDefaultState() {
-  const sectors = {};
-  for (const sector of SECTORS) {
-    sectors[sector.id] = {
+  const sectorState = {}
+  for (const sector of sectors) {
+    sectorState[sector.id] = {
       title: sector.title,
       score: 5,
       matrix: createDefaultSectorMatrix(),
-    };
+    }
   }
 
   return {
     version: 1,
-    sectors,
-    linkRules: LINK_RULES,
+    sectors: sectorState,
+    // Формат influenceLevels синхронизирован с клиентским influenceMap
     influenceLevels: {
-      1: '○',
-      2: '◔',
-      3: '◑',
-      4: '◕',
-      5: '●',
+      1: { icon: '○', label: 'Самое слабое влияние' },
+      2: { icon: '◔', label: 'Слабое влияние' },
+      3: { icon: '◑', label: 'Среднее влияние' },
+      4: { icon: '◕', label: 'Сильное влияние' },
+      5: { icon: '●', label: 'Самое сильное влияние' },
     },
     personality: {
       anthropometry: {
@@ -119,110 +110,123 @@ function createDefaultState() {
     contacts: [],
     chats: [],
     updatedAt: new Date().toISOString(),
-  };
+  }
 }
 
-function deepMerge(target, source) {
-  if (!source || typeof source !== 'object') return target;
-  const result = Array.isArray(target) ? [...target] : { ...target };
-  for (const key of Object.keys(source)) {
-    const srcVal = source[key];
-    const tgtVal = result[key];
-    if (srcVal && typeof srcVal === 'object' && !Array.isArray(srcVal) && tgtVal && typeof tgtVal === 'object' && !Array.isArray(tgtVal)) {
-      result[key] = deepMerge(tgtVal, srcVal);
-    } else {
-      result[key] = srcVal;
-    }
-  }
-  return result;
+function getUserId(req) {
+  const url = new URL(req.url)
+  const queryUserId = url.searchParams.get('userId')
+  return queryUserId?.trim() || DEFAULT_USER_ID
 }
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'GET, PUT, OPTIONS',
   'Access-Control-Allow-Headers': 'Content-Type',
-};
-
-function response(statusCode, payload) {
-  return {
-    statusCode,
-    headers: {
-      'content-type': 'application/json; charset=utf-8',
-      'cache-control': 'no-store',
-      ...corsHeaders,
-    },
-    body: JSON.stringify(payload),
-  };
+  'Cache-Control': 'no-store',
 }
 
-function resolveUserId(event) {
-  const query = event.queryStringParameters || {};
-  const rawUserId = query.userId || DEFAULT_USER_ID;
-  return String(rawUserId).trim() || DEFAULT_USER_ID;
+/**
+ * Глубокое слияние двух объектов.
+ * - Примитивы и массивы заменяются полностью.
+ * - Объекты сливаются рекурсивно.
+ */
+function deepMerge(target, source) {
+  if (!source || typeof source !== 'object') {
+    return source
+  }
+  if (Array.isArray(source)) {
+    return [...source]
+  }
+  const result = { ...target }
+  for (const key of Object.keys(source)) {
+    const srcVal = source[key]
+    const tgtVal = result[key]
+    if (
+      srcVal &&
+      typeof srcVal === 'object' &&
+      !Array.isArray(srcVal) &&
+      tgtVal &&
+      typeof tgtVal === 'object' &&
+      !Array.isArray(tgtVal)
+    ) {
+      result[key] = deepMerge(tgtVal, srcVal)
+    } else {
+      result[key] = srcVal
+    }
+  }
+  return result
 }
 
-export default async (event) => {
-  if (event.httpMethod === 'OPTIONS') {
-    return {
-      statusCode: 204,
-      headers: {
-        ...corsHeaders,
-        'cache-control': 'no-store',
-      },
-      body: '',
-    };
+export default async (req) => {
+  if (req.method === 'OPTIONS') {
+    return new Response(null, { status: 204, headers: corsHeaders })
   }
 
   try {
-    const store = getStore(STORE_NAME);
-    const userId = resolveUserId(event);
-    const key = `user/${userId}/state`;
+    const store = getStore(STORE_NAME)
+    const key = `user/${getUserId(req)}/state`
 
-    if (event.httpMethod === 'GET') {
-      const state = await store.get(key, { type: 'json' });
-      if (state) {
-        return response(200, { ok: true, state });
-      }
-      const fallback = createDefaultState();
-      await store.setJSON(key, fallback);
-      return response(200, { ok: true, state: fallback });
-    }
-
-    if (event.httpMethod === 'PUT') {
-      if (!event.body) {
-        return response(400, { ok: false, error: 'Request body is required.' });
-      }
-
-      let parsed;
+    if (req.method === 'GET') {
+      let saved
       try {
-        parsed = JSON.parse(event.body);
-      } catch (e) {
-        return response(400, { ok: false, error: 'Invalid JSON.' });
+        saved = await store.get(key, { type: 'json' })
+      } catch (err) {
+        console.warn('Failed to read from blob store, using default state', err)
+        saved = null
       }
-
-      if (!parsed || typeof parsed !== 'object') {
-        return response(400, { ok: false, error: 'State must be a JSON object.' });
+      if (saved) {
+        return Response.json({ ok: true, state: saved }, { headers: corsHeaders })
       }
-
-      let currentState = await store.get(key, { type: 'json' });
-      if (!currentState) {
-        currentState = createDefaultState();
+      const fallback = createDefaultState()
+      try {
+        await store.setJSON(key, fallback)
+      } catch (err) {
+        console.warn('Failed to write default state to blob store', err)
       }
-
-      const mergedState = deepMerge(currentState, parsed);
-      mergedState.updatedAt = new Date().toISOString();
-
-      await store.setJSON(key, mergedState);
-      return response(200, { ok: true, state: mergedState });
+      return Response.json({ ok: true, state: fallback }, { headers: corsHeaders })
     }
 
-    return response(405, { ok: false, error: 'Method not allowed.' });
+    if (req.method === 'PUT') {
+      const body = await req.json().catch(() => null)
+      if (!body || typeof body !== 'object') {
+        return Response.json(
+          { ok: false, error: 'State must be a JSON object.' },
+          { status: 400, headers: corsHeaders }
+        )
+      }
+
+      let currentState
+      try {
+        currentState = await store.get(key, { type: 'json' })
+      } catch (err) {
+        console.warn('Failed to read from blob store, starting with default state', err)
+        currentState = null
+      }
+      if (!currentState) {
+        currentState = createDefaultState()
+      }
+
+      const mergedState = deepMerge(currentState, body)
+      mergedState.updatedAt = new Date().toISOString()
+
+      await store.setJSON(key, mergedState)
+      return Response.json({ ok: true, state: mergedState }, { headers: corsHeaders })
+    }
+
+    return Response.json(
+      { ok: false, error: 'Method not allowed.' },
+      { status: 405, headers: corsHeaders }
+    )
   } catch (error) {
-    console.error('State function error:', error);
-    return response(500, {
-      ok: false,
-      error: 'Failed to handle state request.',
-      details: error instanceof Error ? error.message : 'Unknown error',
-    });
+    console.error('State function error:', error)
+    return Response.json(
+      {
+        ok: false,
+        error: 'Failed to handle state request.',
+        details: error instanceof Error ? error.message : 'Unknown error',
+      },
+      { status: 500, headers: corsHeaders }
+    )
   }
-};
+}
