@@ -33,10 +33,35 @@
       min-height: 100vh;
     }
     .app { max-width: 1280px; margin: 0 auto; padding: 24px 18px 40px; }
-    .hero {
-      background: linear-gradient(110deg, rgba(17,100,102,0.95), rgba(17,100,102,0.74)), url('assets/hero-image.png') center/cover;
-      border-radius: 24px; padding: 24px; color: #f2fffb; box-shadow: var(--shadow);
-    }
+    hero {
+  background: transparent;
+  border-radius: 0;
+  padding: 8px 0 4px;
+  color: var(--ink);
+  box-shadow: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.logo {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 800;
+  font-size: 2.4rem;
+  letter-spacing: -0.02em;
+  background: linear-gradient(135deg, #1e3a3a 0%, #116466 80%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  margin: 0;
+  line-height: 1.2;
+}
+.hero-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
     .hero h1 { margin: 0 0 6px; font-size: clamp(1.3rem,2.4vw,2rem); }
     .toolbar { margin-top: 14px; display: flex; flex-wrap: wrap; gap: 10px; }
     .status-pill { background: rgba(255,255,255,0.16); border: 1px solid rgba(255,255,255,0.4); border-radius: 999px; padding: 8px 12px; font-size: 0.86rem; }
@@ -208,14 +233,12 @@
 <body>
 <main class="app">
   <section class="hero">
-    <h1>Годовая настройка, процессы и выполнение задач</h1>
-    <p>Для каждого из 8 секторов поддерживается отдельная X-матрица. Пользователь работает с интерфейсом сектора, а матрицы хранятся скрыто как отдельные структуры данных.</p>
-    <div class="toolbar">
-      <span class="status-pill" id="saveStateLabel">Статус: синхронизация...</span>
-      <button class="btn" id="syncNowBtn" type="button">Синхронизировать сейчас</button>
-    </div>
-  </section>
-
+  <div class="logo">D.Log</div>
+  <div class="hero-actions">
+    <span class="status-pill" id="saveStateLabel">Статус: синхронизация...</span>
+    <button class="btn" id="syncNowBtn" type="button">Синхронизировать сейчас</button>
+  </div>
+</section>
   <nav class="tabs">
     <button class="tab-btn active" data-tab="contacts" type="button">
       <span class="material-symbols-outlined">contacts</span>
