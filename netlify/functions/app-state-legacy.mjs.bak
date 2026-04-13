@@ -1,7 +1,7 @@
-import { getStore } from '@netlify/blobs'
+import { getStore } from '@netlify/blobs';
 
-const STORE_NAME = 'balance-wheel-state'
-const DEFAULT_USER_ID = '69d7a4ce59d4646ae0dae714'
+const STORE_NAME = 'balance-wheel-state';
+const DEFAULT_USER_ID = '69d7a4ce59d4646ae0dae714';
 
 const SECTORS = [
   { id: 'career_business', title: '🧑‍💼 Карьера / Бизнес' },
@@ -12,7 +12,7 @@ const SECTORS = [
   { id: 'physical_environment', title: '🏠 Физическое окружение' },
   { id: 'rest_entertainment', title: '🎉 Отдых и Развлечения' },
   { id: 'personal_growth', title: '📚 Личностный рост' },
-]
+];
 
 const LINK_RULES = [
   { from: 'results', to: 'strategies' },
@@ -22,7 +22,7 @@ const LINK_RULES = [
   { from: 'processProjects', to: 'results' },
   { from: 'processProjects', to: 'owners' },
   { from: 'owners', to: 'results' },
-]
+];
 
 function createDefaultSectorMatrix() {
   return {
@@ -32,17 +32,17 @@ function createDefaultSectorMatrix() {
     processProjects: [],
     owners: [],
     links: [],
-  }
+  };
 }
 
 function createDefaultState() {
-  const sectors = {}
+  const sectors = {};
   for (const sector of SECTORS) {
     sectors[sector.id] = {
       title: sector.title,
       score: 5,
       matrix: createDefaultSectorMatrix(),
-    }
+    };
   }
 
   return {
@@ -116,36 +116,30 @@ function createDefaultState() {
     },
     tasks: [],
     readWithoutChecklist: [],
-    contacts: [],
-    chats: [],
-    messages: {},
     updatedAt: new Date().toISOString(),
-  }
+  };
 }
 
 function deepMerge(target, source) {
-  if (!source || typeof source !== 'object') return target
-  if (Array.isArray(target) && Array.isArray(source)) {
-    return source
-  }
-  const result = Array.isArray(target) ? [...target] : { ...target }
+  if (!source || typeof source !== 'object') return target;
+  const result = Array.isArray(target) ? [...target] : { ...target };
   for (const key of Object.keys(source)) {
-    const srcVal = source[key]
-    const tgtVal = result[key]
+    const srcVal = source[key];
+    const tgtVal = result[key];
     if (srcVal && typeof srcVal === 'object' && !Array.isArray(srcVal) && tgtVal && typeof tgtVal === 'object' && !Array.isArray(tgtVal)) {
-      result[key] = deepMerge(tgtVal, srcVal)
+      result[key] = deepMerge(tgtVal, srcVal);
     } else {
-      result[key] = srcVal
+      result[key] = srcVal;
     }
   }
-  return result
+  return result;
 }
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'GET, PUT, OPTIONS',
   'Access-Control-Allow-Headers': 'Content-Type',
-}
+};
 
 function response(statusCode, payload) {
   return {
@@ -156,13 +150,13 @@ function response(statusCode, payload) {
       ...corsHeaders,
     },
     body: JSON.stringify(payload),
-  }
+  };
 }
 
 function resolveUserId(event) {
-  const query = event.queryStringParameters || {}
-  const rawUserId = query.userId || DEFAULT_USER_ID
-  return String(rawUserId).trim() || DEFAULT_USER_ID
+  const query = event.queryStringParameters || {};
+  const rawUserId = query.userId || DEFAULT_USER_ID;
+  return String(rawUserId).trim() || DEFAULT_USER_ID;
 }
 
 export default async (event) => {
@@ -174,59 +168,59 @@ export default async (event) => {
         'cache-control': 'no-store',
       },
       body: '',
-    }
+    };
   }
 
   try {
-    const store = getStore(STORE_NAME)
-    const userId = resolveUserId(event)
-    const key = `user/${userId}/state`
+    const store = getStore(STORE_NAME);
+    const userId = resolveUserId(event);
+    const key = `user/${userId}/state`;
 
     if (event.httpMethod === 'GET') {
-      const state = await store.get(key, { type: 'json' })
+      const state = await store.get(key, { type: 'json' });
       if (state) {
-        return response(200, { ok: true, state })
+        return response(200, { ok: true, state });
       }
-      const fallback = createDefaultState()
-      await store.setJSON(key, fallback)
-      return response(200, { ok: true, state: fallback })
+      const fallback = createDefaultState();
+      await store.setJSON(key, fallback);
+      return response(200, { ok: true, state: fallback });
     }
 
     if (event.httpMethod === 'PUT') {
       if (!event.body) {
-        return response(400, { ok: false, error: 'Request body is required.' })
+        return response(400, { ok: false, error: 'Request body is required.' });
       }
 
-      let parsed
+      let parsed;
       try {
-        parsed = JSON.parse(event.body)
+        parsed = JSON.parse(event.body);
       } catch (e) {
-        return response(400, { ok: false, error: 'Invalid JSON.' })
+        return response(400, { ok: false, error: 'Invalid JSON.' });
       }
 
       if (!parsed || typeof parsed !== 'object') {
-        return response(400, { ok: false, error: 'State must be a JSON object.' })
+        return response(400, { ok: false, error: 'State must be a JSON object.' });
       }
 
-      let currentState = await store.get(key, { type: 'json' })
+      let currentState = await store.get(key, { type: 'json' });
       if (!currentState) {
-        currentState = createDefaultState()
+        currentState = createDefaultState();
       }
 
-      const mergedState = deepMerge(currentState, parsed)
-      mergedState.updatedAt = new Date().toISOString()
+      const mergedState = deepMerge(currentState, parsed);
+      mergedState.updatedAt = new Date().toISOString();
 
-      await store.setJSON(key, mergedState)
-      return response(200, { ok: true, state: mergedState })
+      await store.setJSON(key, mergedState);
+      return response(200, { ok: true, state: mergedState });
     }
 
-    return response(405, { ok: false, error: 'Method not allowed.' })
+    return response(405, { ok: false, error: 'Method not allowed.' });
   } catch (error) {
-    console.error('State function error:', error)
+    console.error('State function error:', error);
     return response(500, {
       ok: false,
       error: 'Failed to handle state request.',
       details: error instanceof Error ? error.message : 'Unknown error',
-    })
+    });
   }
-}
+};
