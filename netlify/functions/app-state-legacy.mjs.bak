@@ -116,8 +116,6 @@ function createDefaultState() {
     },
     tasks: [],
     readWithoutChecklist: [],
-    contacts: [], // Новое поле для контактов
-    chats: [],    // Новое поле для чатов
     updatedAt: new Date().toISOString(),
   };
 }
