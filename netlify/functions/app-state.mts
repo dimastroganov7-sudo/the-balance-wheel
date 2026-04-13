@@ -1,3 +1,4 @@
+
 import { getStore } from '@netlify/blobs'
 
 const STORE_NAME = 'balance-wheel-state'
@@ -105,14 +106,15 @@ function createDefaultState() {
     },
     tasks: [],
     readWithoutChecklist: [],
-    contacts: [],   // добавлено
-    chats: [],      // добавлено
+    contacts: [],
+    chats: [],
     updatedAt: new Date().toISOString(),
   }
 }
 
 function getUserId(req) {
-  const queryUserId = new URL(req.url).searchParams.get('userId')
+  const url = new URL(req.url)
+  const queryUserId = url.searchParams.get('userId')
   return queryUserId?.trim() || DEFAULT_USER_ID
 }
 
@@ -120,16 +122,29 @@ const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'GET, PUT, OPTIONS',
   'Access-Control-Allow-Headers': 'Content-Type',
-  'cache-control': 'no-store',
+  'Cache-Control': 'no-store',
 }
 
 function deepMerge(target, source) {
-  if (!source || typeof source !== 'object') return target
-  const result = Array.isArray(target) ? [...target] : { ...target }
+  if (!source || typeof source !== 'object') {
+    return source
+  }
+  // Если исходное значение — массив, заменяем полностью (не сливаем поэлементно)
+  if (Array.isArray(source)) {
+    return [...source]
+  }
+  const result = { ...target }
   for (const key of Object.keys(source)) {
     const srcVal = source[key]
     const tgtVal = result[key]
-    if (srcVal && typeof srcVal === 'object' && !Array.isArray(srcVal) && tgtVal && typeof tgtVal === 'object' && !Array.isArray(tgtVal)) {
+    if (
+      srcVal &&
+      typeof srcVal === 'object' &&
+      !Array.isArray(srcVal) &&
+      tgtVal &&
+      typeof tgtVal === 'object' &&
+      !Array.isArray(tgtVal)
+    ) {
       result[key] = deepMerge(tgtVal, srcVal)
     } else {
       result[key] = srcVal
@@ -148,22 +163,41 @@ export default async (req) => {
     const key = `user/${getUserId(req)}/state`
 
     if (req.method === 'GET') {
-      const saved = await store.get(key, { type: 'json' })
+      let saved
+      try {
+        saved = await store.get(key, { type: 'json' })
+      } catch (err) {
+        console.warn('Failed to read from blob store, using default state', err)
+        saved = null
+      }
       if (saved) {
         return Response.json({ ok: true, state: saved }, { headers: corsHeaders })
       }
       const fallback = createDefaultState()
-      await store.setJSON(key, fallback)
+      try {
+        await store.setJSON(key, fallback)
+      } catch (err) {
+        console.warn('Failed to write default state to blob store', err)
+      }
       return Response.json({ ok: true, state: fallback }, { headers: corsHeaders })
     }
 
     if (req.method === 'PUT') {
       const body = await req.json().catch(() => null)
       if (!body || typeof body !== 'object') {
-        return Response.json({ ok: false, error: 'State must be a JSON object.' }, { status: 400, headers: corsHeaders })
+        return Response.json(
+          { ok: false, error: 'State must be a JSON object.' },
+          { status: 400, headers: corsHeaders }
+        )
       }
 
-      let currentState = await store.get(key, { type: 'json' })
+      let currentState
+      try {
+        currentState = await store.get(key, { type: 'json' })
+      } catch (err) {
+        console.warn('Failed to read from blob store, starting with default state', err)
+        currentState = null
+      }
       if (!currentState) {
         currentState = createDefaultState()
       }
@@ -175,7 +209,10 @@ export default async (req) => {
       return Response.json({ ok: true, state: mergedState }, { headers: corsHeaders })
     }
 
-    return Response.json({ ok: false, error: 'Method not allowed.' }, { status: 405, headers: corsHeaders })
+    return Response.json(
+      { ok: false, error: 'Method not allowed.' },
+      { status: 405, headers: corsHeaders }
+    )
   } catch (error) {
     console.error('State function error:', error)
     return Response.json(
