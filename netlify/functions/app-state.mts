@@ -105,6 +105,8 @@ function createDefaultState() {
     },
     tasks: [],
     readWithoutChecklist: [],
+    contacts: [],   // добавлено
+    chats: [],      // добавлено
     updatedAt: new Date().toISOString(),
   }
 }
