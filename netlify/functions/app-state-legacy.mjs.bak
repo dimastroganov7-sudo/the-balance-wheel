@@ -1,4 +1,3 @@
-
 import { getStore } from '@netlify/blobs';
 
 const STORE_NAME = 'balance-wheel-state';
