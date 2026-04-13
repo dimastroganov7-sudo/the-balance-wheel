@@ -286,7 +286,66 @@
       border-radius: 40px;
       border: 1px solid var(--line);
     }
+/* Нижняя навигация (плитки) */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(255,255,255,0.96);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid var(--line);
+  display: flex;
+  justify-content: space-around;
+  padding: 8px 12px 12px;
+  z-index: 100;
+  box-shadow: 0 -4px 12px rgba(0,0,0,0.05);
+}
+.nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 30px;
+  transition: 0.2s;
+  color: var(--muted);
+  font-size: 0.7rem;
+  font-weight: 500;
+}
+.nav-item.active {
+  color: var(--accent);
+  background: #e9f8f1;
+}
+.nav-icon { font-size: 1.6rem; }
+.nav-label { font-size: 0.7rem; }
 
+/* Подвкладки внутри Настройки */
+.settings-subtabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 8px;
+}
+.settings-subtab {
+  background: none;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 40px;
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--muted);
+}
+.settings-subtab.active {
+  background: var(--accent);
+  color: white;
+}
+.settings-pane { display: none; }
+.settings-pane.active { display: block; }
     @media (max-width: 900px) {
       .weather-map-row { flex-direction: column; }
       .crop-preview { flex-direction: column; align-items: center; }
@@ -304,103 +363,6 @@
       <button class="btn" id="syncNowBtn" type="button">Синхронизировать сейчас</button>
     </div>
   </section>
-
-<nav class="tabs">
-  <button class="tab-btn active" data-tab="year" type="button">Настройка на год</button>
-  <button class="tab-btn" data-tab="personality" type="button">Настройка личности</button>
-  <button class="tab-btn" data-tab="processes" type="button">Процессы</button>
-  <button class="tab-btn" data-tab="tasks" type="button">Задачи</button>
-  <button class="tab-btn" data-tab="analytics" type="button">Календарь и аналитика</button>
-  <button class="tab-btn" data-tab="contacts" type="button">Контакты</button>
-  <button class="tab-btn" data-tab="chats" type="button">Чаты</button>
-</nav>
-
-  <section class="panel active" id="panel-year">
-    <h2>Сектора года</h2>
-    <p class="meta">Откройте сектор и заполните 5 вкладок: результаты, стратегии, тактика, процесс/проект, взаимосвязи.</p>
-    <div id="sectorCards" class="sector-grid"></div>
-    <table class="level-legend">
-      <thead><tr><th>Уровень влияния</th><th>Значок</th></tr></thead>
-      <tbody id="influenceLegendBody"></tbody>
-    </table>
-    <div class="card" style="margin-top: 12px;">
-      <h3>Таблица взаимосвязей (базовые правила)</h3>
-      <table class="relations-table">
-        <thead><tr><th>№</th><th>Что связываем</th><th>С чем связываем</th></tr></thead>
-        <tbody>
-          <tr><td>1</td><td>Результаты</td><td>Стратегии</td></tr>
-          <tr><td>2</td><td>Стратегии</td><td>Тактика</td></tr>
-          <tr><td>3</td><td>Тактика</td><td>Процесс/Проект, Исполнитель/Ответственный</td></tr>
-          <tr><td>4</td><td>Процесс/Проект</td><td>Результаты, Исполнитель/Ответственный</td></tr>
-          <tr><td>5</td><td>Исполнитель/Ответственный</td><td>Результаты</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </section>
-
-  <section class="panel" id="panel-personality">
-    <h2>Антропометрия и оценка личности</h2>
-    <div class="grid-2">
-      <article class="card">
-        <h3>Антропометрические параметры (InBody / DDX)</h3>
-        <div id="anthroForm" class="form-row"></div>
-        <button class="btn primary" type="button" id="saveAnthroBtn">Сохранить антропометрию</button>
-        <p class="small">Параметры используются для анализа спортивных достижений и здоровья. Раздел анализов расширяемый.</p>
-      </article>
-      <article class="card">
-        <h3>Психологическое тестирование</h3>
-        <div id="testForm"></div>
-        <div style="margin-top: 8px;" id="testSummary" class="badge"></div>
-      </article>
-    </div>
-    <article class="card" style="margin-top: 12px;">
-      <h3>Результаты анализов</h3>
-      <div id="analysisList" class="list"></div>
-      <div class="form-row" style="margin-top: 8px;">
-        <input id="analysisName" placeholder="Название анализа" />
-        <input id="analysisValue" placeholder="Значение" />
-        <input id="analysisDate" type="date" />
-      </div>
-      <button class="btn" type="button" id="addAnalysisBtn">Добавить результат</button>
-    </article>
-
-    <div id="alarm-settings" class="alarm-section">
-      <div class="alarm-header"><span>⏰ Будильник</span><button id="add-alarm-btn" class="add-btn">+</button></div>
-      <div id="alarm-list" class="alarm-list"></div>
-    </div>
-
-    <div id="alarm-modal" class="modal" style="display:none;">
-      <div class="modal-content">
-        <div class="modal-header"><span id="modal-title">Новый будильник</span><button class="close-modal">&times;</button></div>
-        <div class="modal-body">
-          <label>Время:</label><input type="time" id="alarm-time" value="07:00">
-          <div class="daily-checkbox"><label><input type="checkbox" id="daily-checkbox" checked> Ежедневно</label></div>
-          <div class="days-row" id="days-row"></div>
-          <div class="mission-section"><div class="section-header"><span>Миссия</span><button id="add-mission-btn" class="add-small-btn">+</button></div><div id="selected-mission" class="selected-mission">Не выбрано</div></div>
-          <div class="sound-section"><label>Звук будильника:</label><select id="alarm-sound"><option value="default">Классический</option><option value="birds">Птицы</option><option value="piano">Фортепиано</option></select><button id="play-sound-btn" type="button">▶ Прослушать</button></div>
-          <div class="snooze-section"><label><input type="checkbox" id="snooze-enabled" checked> Отложить</label><div id="snooze-options"><div class="snooze-field"><label>Интервал:</label><div class="snooze-buttons"><button data-interval="1" class="interval-btn">1 мин</button><button data-interval="3" class="interval-btn">3 мин</button><button data-interval="5" class="interval-btn active">5 мин</button></div></div><div class="snooze-field"><label>Количество откладываний:</label><div class="snooze-buttons"><button data-limit="unlimited" class="limit-btn active">Неограничено</button><button data-limit="1" class="limit-btn">1 раз</button></div></div></div></div>
-        </div>
-        <div class="modal-footer"><button id="save-alarm-btn">Сохранить</button><button class="close-modal">Отмена</button></div>
-      </div>
-    </div>
-
-    <div id="mission-modal" class="modal" style="display:none;">
-      <div class="modal-content small">
-        <div class="modal-header"><span>Математические задачи</span><button class="close-mission-modal">&times;</button></div>
-        <div class="modal-body"><p>Пример лёгкого математического примера:</p><div id="math-example" class="math-example"></div><p>Добавить эту миссию к будильнику?</p></div>
-        <div class="modal-footer"><button id="confirm-mission-btn">Готово</button><button class="close-mission-modal">Отмена</button></div>
-      </div>
-    </div>
-  </section>
-
-  <section class="panel" id="panel-processes">
-    <h2>Процессы (4 уровня иерархии)</h2>
-    <div class="card"><h3>Категории процессов</h3><div id="processCategories" class="list"></div><div class="form-row"><input id="newCategoryInput" placeholder="Новая категория" /><button class="btn" id="addCategoryBtn">Добавить категорию</button></div></div>
-    <div class="card"><h3>Шаблоны верхнеуровневых процессов</h3><div id="processTemplates" class="list"></div></div>
-    <div class="card"><h3>Процессы пользователя</h3><div id="processItems"></div><button class="btn primary" id="addProcessItemBtn">Добавить процесс</button></div>
-    <div class="card"><h3>Генерация календаря процессов</h3><p class="small">Ежесуточные, еженедельные, ежемесячные процессы формируют регулярные задачи. Генерация добавляет задачи на 14 дней вперед.</p><button class="btn" id="generateScheduleBtn">Сформировать календарь процессов</button></div>
-  </section>
-
   <section class="panel" id="panel-tasks">
     <h2>Задачи по дням</h2>
     <div class="form-row"><div><label for="taskDateFilter">Дата</label><input id="taskDateFilter" type="date" /></div><div><label for="freeTimeInput">Оставшееся время (мин.)</label><input id="freeTimeInput" type="number" min="0" value="90" /></div></div>
@@ -428,6 +390,87 @@
     <div style="overflow-x:auto;"><table class="calendar"><thead id="calendarHead"></thead><tbody id="calendarBody"></tbody></table></div>
     <div class="card"><h3>Аналитика за период</h3><div class="form-row"><div><label for="analyticsFrom">От</label><input id="analyticsFrom" type="date" /></div><div><label for="analyticsTo">До</label><input id="analyticsTo" type="date" /></div><button class="btn" id="runAnalyticsBtn">Рассчитать</button></div><div id="analyticsText" class="meta"></div><div class="progress-wrap"><div id="analyticsProgress" class="progress"></div></div></div>
   </section>
+      <section class="panel" id="panel-settings">
+  <div class="settings-subtabs">
+    <button class="settings-subtab active" data-subtab="year">Настройка на год</button>
+    <button class="settings-subtab" data-subtab="personality">Настройка личности</button>
+    <button class="settings-subtab" data-subtab="processes">Процессы</button>
+  </div>
+   <div id="settings-year" class="settings-pane active">
+  <h2>Сектора года</h2>
+  <p class="meta">Откройте сектор и заполните 5 вкладок: результаты, стратегии, тактика, процесс/проект, взаимосвязи.</p>
+  <div id="sectorCards" class="sector-grid"></div>
+  <table class="level-legend">
+    <thead><tr><th>Уровень влияния</th><th>Значок</th></tr></thead>
+    <tbody id="influenceLegendBody"></tbody>
+  </table>
+  <div class="card" style="margin-top: 12px;">
+    <h3>Таблица взаимосвязей (базовые правила)</h3>
+    <table class="relations-table">
+      <thead><tr><th>№</th><th>Что связываем</th><th>С чем связываем</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>Результаты</td><td>Стратегии</td></tr>
+        <tr><td>2</td><td>Стратегии</td><td>Тактика</td></tr>
+        <tr><td>3</td><td>Тактика</td><td>Процесс/Проект, Исполнитель/Ответственный</td></tr>
+        <tr><td>4</td><td>Процесс/Проект</td><td>Результаты, Исполнитель/Ответственный</td></tr>
+        <tr><td>5</td><td>Исполнитель/Ответственный</td><td>Результаты</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+   <div id="settings-personality" class="settings-pane">
+  <h2>Антропометрия и оценка личности</h2>
+  <div class="grid-2">
+    <article class="card">
+      <h3>Антропометрические параметры (InBody / DDX)</h3>
+      <div id="anthroForm" class="form-row"></div>
+      <button class="btn primary" type="button" id="saveAnthroBtn">Сохранить антропометрию</button>
+      <p class="small">Параметры используются для анализа спортивных достижений и здоровья. Раздел анализов расширяемый.</p>
+    </article>
+    <article class="card">
+      <h3>Психологическое тестирование</h3>
+      <div id="testForm"></div>
+      <div style="margin-top: 8px;" id="testSummary" class="badge"></div>
+    </article>
+  </div>
+  <article class="card" style="margin-top: 12px;">
+    <h3>Результаты анализов</h3>
+    <div id="analysisList" class="list"></div>
+    <div class="form-row" style="margin-top: 8px;">
+      <input id="analysisName" placeholder="Название анализа" />
+      <input id="analysisValue" placeholder="Значение" />
+      <input id="analysisDate" type="date" />
+    </div>
+    <button class="btn" type="button" id="addAnalysisBtn">Добавить результат</button>
+  </article>
+  <div id="alarm-settings" class="alarm-section">
+    <div class="alarm-header"><span>⏰ Будильник</span><button id="add-alarm-btn" class="add-btn">+</button></div>
+    <div id="alarm-list" class="alarm-list"></div>
+  </div>
+  </div>
+  <div id="settings-processes" class="settings-pane">
+  <h2>Процессы (4 уровня иерархии)</h2>
+  <div class="card">
+    <h3>Категории процессов</h3>
+    <div id="processCategories" class="list"></div>
+    <div class="form-row"><input id="newCategoryInput" placeholder="Новая категория" /><button class="btn" id="addCategoryBtn">Добавить категорию</button></div>
+  </div>
+  <div class="card" style="margin-top: 10px;">
+    <h3>Шаблоны верхнеуровневых процессов</h3>
+    <div id="processTemplates" class="list"></div>
+  </div>
+  <div class="card" style="margin-top: 10px;">
+    <h3>Процессы пользователя</h3>
+    <div id="processItems"></div>
+    <button class="btn primary" id="addProcessItemBtn">Добавить процесс</button>
+  </div>
+  <div class="card" style="margin-top: 10px;">
+    <h3>Генерация календаря процессов</h3>
+    <p class="small">Ежесуточные, еженедельные, ежемесячные процессы формируют регулярные задачи. Генерация добавляет задачи на 14 дней вперед.</p>
+    <button class="btn" id="generateScheduleBtn">Сформировать календарь процессов</button>
+  </div>
+  </div>
+    </section>
     <!-- НОВАЯ ПАНЕЛЬ КОНТАКТЫ -->
   <section class="panel" id="panel-contacts">
     <div class="contacts-header">
@@ -673,15 +716,38 @@ async function saveState() {
 }
 
 function activateTab(tabName) {
-  currentTab = tabName;
-  document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.tab === tabName));
-  document.querySelectorAll('.panel').forEach(panel => panel.classList.toggle('active', panel.id === `panel-${tabName}`));
-  if(tabName === 'tasks') renderTasks();
-  if(tabName === 'analytics') { renderCalendar(); runAnalytics(); }
-    if(tabName === 'contacts') renderContacts();
-  if(tabName === 'chats') renderChatsList();
+   currentTab = tabName;
+  document.querySelectorAll('.panel').forEach(panel => panel.classList.remove('active'));
+  const activePanel = document.getElementById(`panel-${tabName}`);
+  if (activePanel) activePanel.classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.tab === tabName);
+  });
+  if (tabName === 'tasks') renderTasks();
+  if (tabName === 'analytics') { renderCalendar(); runAnalytics(); }
+  if (tabName === 'contacts') renderContacts();
+  if (tabName === 'chats') renderChatsList();
+  if (tabName === 'settings') {
+    const firstSubtab = document.querySelector('.settings-subtab.active');
+    if (firstSubtab) showSettingsSubtab(firstSubtab.dataset.subtab);
+    else showSettingsSubtab('year');
+  }
 }
-
+function showSettingsSubtab(subtab) {
+  document.querySelectorAll('.settings-pane').forEach(pane => pane.classList.remove('active'));
+  document.getElementById(`settings-${subtab}`).classList.add('active');
+  document.querySelectorAll('.settings-subtab').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.subtab === subtab);
+  });
+  if (subtab === 'year') renderYearTab();
+  if (subtab === 'personality') {
+    renderAnthroForm(); renderTestForm(); renderAnalysisResults(); initAlarms();
+  }
+  if (subtab === 'processes') {
+    renderProcessCategories(); renderProcessTemplates(); renderProcessItems();
+  }
+}
+  
 function renderInfluenceLegend() {
   const body = document.getElementById('influenceLegendBody');
   if(!body) return;
@@ -874,7 +940,6 @@ function setupCharacterModal(){ const modal=document.getElementById('characterMo
 
 // --- ОСНОВНЫЕ ФУНКЦИИ РЕНДЕРА И СТАРТА ---
 function bindEvents() {
-  document.querySelectorAll('.tab-btn').forEach(btn=>btn.addEventListener('click',()=>activateTab(btn.dataset.tab)));
   document.getElementById('syncNowBtn')?.addEventListener('click',saveState);
   document.getElementById('closeMatrixBtn')?.addEventListener('click',closeMatrix);
   document.getElementById('closeTaskBtn')?.addEventListener('click',closeTaskModal);
@@ -894,15 +959,6 @@ function bindEvents() {
 function renderAll() {
   normalizeTasks();
   renderInfluenceLegend();
-  renderYearTab();
-  calculateBmi();
-  renderAnthroForm();
-  renderTestForm();
-  renderAnalysisResults();
-  ensureRoutineTemplates();
-  renderProcessCategories();
-  renderProcessTemplates();
-  renderProcessItems();
   renderTaskSectorOptions();
   renderTaskInfluenceOptions();
   const df=document.getElementById('taskDateFilter'); if(df) df.value=todayIso();
@@ -1265,8 +1321,25 @@ function initContactsAndChats() {
   });
 }
 
-async function start() { bindEvents(); await loadState(); renderAll();  initContactsAndChats(); activateTab('year'); setInterval(()=>runAnalytics(),5000); }
+async function start() {
+  bindEvents();
+  document.querySelectorAll('.settings-subtab').forEach(btn => {
+    btn.addEventListener('click', () => showSettingsSubtab(btn.dataset.subtab));
+  });
+  await loadState();
+  renderAll();
+  initContactsAndChats();
+  activateTab('contacts');
+  setInterval(() => runAnalytics(), 5000);
+}
 start();
 </script>
+<div class="bottom-nav">
+  <button class="nav-item" data-tab="contacts"><span class="nav-icon">👥</span><span class="nav-label">Контакты</span></button>
+  <button class="nav-item" data-tab="chats"><span class="nav-icon">💬</span><span class="nav-label">Чаты</span></button>
+  <button class="nav-item" data-tab="tasks"><span class="nav-icon">✅</span><span class="nav-label">Задачи</span></button>
+  <button class="nav-item" data-tab="analytics"><span class="nav-icon">📊</span><span class="nav-label">Календарь</span></button>
+  <button class="nav-item" data-tab="settings"><span class="nav-icon">⚙️</span><span class="nav-label">Настройка</span></button>
+</div>
 </body>
 </html>
