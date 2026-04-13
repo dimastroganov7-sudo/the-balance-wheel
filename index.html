@@ -140,6 +140,152 @@
     input[type="range"] { width: 100%; }
     .photo-actions { display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
     .checkbox-group { margin: 10px 0; }
+      /* Стили для контактов и чатов */
+    .contacts-header, .chats-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .contacts-header h2, .chats-header h2 { margin: 0; }
+    .sort-btn, .add-contact-btn, .invite-all-btn, .edit-chats-btn {
+      background: none;
+      border: 1px solid var(--line);
+      border-radius: 40px;
+      padding: 6px 12px;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+    .search-container {
+      position: relative;
+      margin-bottom: 16px;
+    }
+    .search-container input {
+      width: 100%;
+      padding: 10px 40px 10px 40px;
+      border-radius: 40px;
+      border: 1px solid var(--line);
+      background: #fff;
+    }
+    .search-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 1.2rem;
+    }
+    .clear-search {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      font-size: 1.2rem;
+      color: #999;
+    }
+    .contact-list, .chat-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 60vh;
+      overflow-y: auto;
+    }
+    .contact-item, .chat-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px;
+      background: white;
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      cursor: pointer;
+      transition: 0.1s;
+    }
+    .contact-item:hover, .chat-item:hover { background: #f0f7f3; }
+    .contact-avatar, .chat-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: #e5f4ed;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+    }
+    .contact-info, .chat-info { flex: 1; }
+    .contact-name { font-weight: 700; }
+    .contact-status { font-size: 0.75rem; color: var(--muted); }
+    .chat-last-message { font-size: 0.8rem; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px; }
+    .chat-time { font-size: 0.7rem; color: #999; }
+    .unread-badge {
+      background: var(--accent);
+      color: white;
+      border-radius: 20px;
+      padding: 2px 8px;
+      font-size: 0.7rem;
+    }
+    .checkbox-select {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border: 2px solid #ccc;
+      background: white;
+      cursor: pointer;
+    }
+    .checkbox-select.selected { background: var(--accent); border-color: var(--accent); }
+    .chat-actions-bar {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 12px;
+      gap: 8px;
+    }
+    .chat-actions-bar button { flex: 1; }
+    .chat-messages {
+      height: 50vh;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding: 8px;
+      background: #f9fbf8;
+      border-radius: 20px;
+    }
+    .message {
+      max-width: 70%;
+      padding: 8px 12px;
+      border-radius: 20px;
+      position: relative;
+    }
+    .message.outgoing {
+      align-self: flex-end;
+      background: var(--accent);
+      color: white;
+    }
+    .message.incoming {
+      align-self: flex-start;
+      background: white;
+      border: 1px solid var(--line);
+    }
+    .message-time {
+      font-size: 0.6rem;
+      text-align: right;
+      margin-top: 4px;
+      opacity: 0.7;
+    }
+    .chat-input-area {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+      align-items: center;
+    }
+    .chat-input-area input {
+      flex: 1;
+      padding: 10px;
+      border-radius: 40px;
+      border: 1px solid var(--line);
+    }
 
     @media (max-width: 900px) {
       .weather-map-row { flex-direction: column; }
@@ -159,13 +305,15 @@
     </div>
   </section>
 
-  <nav class="tabs">
-    <button class="tab-btn active" data-tab="year" type="button">Настройка на год</button>
-    <button class="tab-btn" data-tab="personality" type="button">Настройка личности</button>
-    <button class="tab-btn" data-tab="processes" type="button">Процессы</button>
-    <button class="tab-btn" data-tab="tasks" type="button">Задачи</button>
-    <button class="tab-btn" data-tab="analytics" type="button">Календарь и аналитика</button>
-  </nav>
+<nav class="tabs">
+  <button class="tab-btn active" data-tab="year" type="button">Настройка на год</button>
+  <button class="tab-btn" data-tab="personality" type="button">Настройка личности</button>
+  <button class="tab-btn" data-tab="processes" type="button">Процессы</button>
+  <button class="tab-btn" data-tab="tasks" type="button">Задачи</button>
+  <button class="tab-btn" data-tab="analytics" type="button">Календарь и аналитика</button>
+  <button class="tab-btn" data-tab="contacts" type="button">Контакты</button>
+  <button class="tab-btn" data-tab="chats" type="button">Чаты</button>
+</nav>
 
   <section class="panel active" id="panel-year">
     <h2>Сектора года</h2>
@@ -280,6 +428,53 @@
     <div style="overflow-x:auto;"><table class="calendar"><thead id="calendarHead"></thead><tbody id="calendarBody"></tbody></table></div>
     <div class="card"><h3>Аналитика за период</h3><div class="form-row"><div><label for="analyticsFrom">От</label><input id="analyticsFrom" type="date" /></div><div><label for="analyticsTo">До</label><input id="analyticsTo" type="date" /></div><button class="btn" id="runAnalyticsBtn">Рассчитать</button></div><div id="analyticsText" class="meta"></div><div class="progress-wrap"><div id="analyticsProgress" class="progress"></div></div></div>
   </section>
+    <!-- НОВАЯ ПАНЕЛЬ КОНТАКТЫ -->
+  <section class="panel" id="panel-contacts">
+    <div class="contacts-header">
+      <h2>Контакты</h2>
+      <div style="display: flex; gap: 8px;">
+        <button class="sort-btn" id="sortContactsBtn">📋 Сортировка</button>
+        <button class="add-contact-btn" id="addContactBtn">➕</button>
+      </div>
+    </div>
+    <div id="sortDropdown" style="display: none; margin-bottom: 12px; background: white; border-radius: 20px; padding: 8px; border: 1px solid var(--line);">
+      <button class="btn" data-sort="name">По имени</button>
+      <button class="btn" data-sort="lastSeen">По времени захода</button>
+    </div>
+    <div class="search-container">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="contactsSearchInput" placeholder="поиск">
+      <span class="clear-search" id="clearContactsSearch">✖️</span>
+    </div>
+    <div id="contactsList" class="contact-list"></div>
+    <button class="btn primary" id="inviteContactBtn" style="margin-top: 12px;">👥 Пригласить</button>
+  </section>
+
+  <!-- НОВАЯ ПАНЕЛЬ ЧАТЫ -->
+  <section class="panel" id="panel-chats">
+    <div class="chats-header">
+      <h2>Чаты</h2>
+      <div>
+        <button class="edit-chats-btn" id="editChatsBtn">Изм.</button>
+        <button class="add-contact-btn" id="newChatBtn" style="margin-left: 8px;">✏️</button>
+      </div>
+    </div>
+    <div class="search-container">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="chatsSearchInput" placeholder="поиск">
+      <span class="clear-search" id="clearChatsSearch">✖️</span>
+    </div>
+    <div style="display: flex; gap: 16px; margin-bottom: 12px;">
+      <button class="btn chat-tab-filter active" data-filter="all">Все</button>
+      <button class="btn chat-tab-filter" data-filter="archived">Архив</button>
+    </div>
+    <div id="chatsList" class="chat-list"></div>
+    <div id="chatActionsBar" class="chat-actions-bar" style="display: none;">
+      <button class="btn" id="markAllReadBtn">Прочитать все</button>
+      <button class="btn" id="archiveSelectedBtn">В архив</button>
+      <button class="btn warn" id="deleteSelectedBtn">Удалить</button>
+    </div>
+  </section>
 </main>
 
 <section class="modal" id="matrixModal"><div class="modal-box"><h2 id="matrixTitle"></h2><div class="matrix-layout"><div class="matrix-tabs" id="matrixTabs"></div><div id="matrixPanes"></div></div><div class="close-row"><button class="btn" id="closeMatrixBtn">Закрыть</button></div></div></section>
@@ -307,7 +502,12 @@
     </div>
   </div>
 </div>
+<!-- НОВЫЕ МОДАЛКИ -->
+<div id="contactModal" class="modal"><div class="modal-box" style="max-width:500px;"><div style="display:flex; justify-content:space-between;"><h2>Новый контакт</h2><button class="close-modal-btn" data-modal="contactModal">✖️</button></div><div class="form-row"><input id="contactFirstName" placeholder="Имя"><input id="contactLastName" placeholder="Фамилия"></div><div class="form-row"><div style="position:relative;"><input id="contactCountryCode" placeholder="Выбрать страну" readonly><div id="countryDropdown" style="display:none; position:absolute; background:white; border:1px solid #ccc; border-radius:16px; max-height:200px; overflow-y:auto; z-index:10;"><input type="text" id="countrySearch" placeholder="поиск" style="margin:8px; width:calc(100% - 16px);"><div id="countryList"></div></div></div><input id="contactPhone" placeholder="Номер телефона"></div><div><label><input type="checkbox" id="syncWithPhone" checked> Синхронизировать с телефоном</label></div><div class="close-row"><button class="btn primary" id="saveContactBtn">✔️ Сохранить</button></div></div></div>
 
+<div id="inviteModal" class="modal"><div class="modal-box" style="max-width:400px;"><div style="display:flex; justify-content:space-between;"><h2>Пригласить</h2><button class="close-modal-btn" data-modal="inviteModal">✖️</button></div><p>Выберите контакты для приглашения:</p><div id="inviteContactList"></div><button class="btn primary" id="sendInviteBtn">Пригласить</button></div></div>
+
+<div id="chatModal" class="modal"><div class="modal-box" style="max-width:600px; height:80vh; display:flex; flex-direction:column;"><div style="display:flex; justify-content:space-between;"><button class="close-modal-btn" data-modal="chatModal">←</button><h3 id="chatUserName"></h3><div></div></div><div id="chatMessagesArea" class="chat-messages" style="flex:1;"></div><div class="chat-input-area"><input id="chatMessageInput" placeholder="Сообщение"><button id="sendMessageBtn" class="btn primary">D</button></div></div></div>
 <script>
 // ============================================================================
 // ПОЛНОЕ ПРИЛОЖЕНИЕ Balance Wheel с цветной картой и настройкой персонажа
@@ -356,7 +556,21 @@ let activeMatrixPane = 'results';
 let selectedTaskId = null;
 let calendarDate = new Date();
 let saveInFlight = false;
+// --- НОВЫЕ ПЕРЕМЕННЫЕ ДЛЯ КОНТАКТОВ И ЧАТОВ ---
+let contacts = [];
+let chats = [];
+let currentChatId = null;
+let editMode = false;
+let selectedChats = new Set();
+let currentChatFilter = 'all';
 
+const countries = [
+  { code: '+7', name: 'Россия', flag: '🇷🇺' },
+  { code: '+1', name: 'США', flag: '🇺🇸' },
+  { code: '+44', name: 'Великобритания', flag: '🇬🇧' },
+  { code: '+49', name: 'Германия', flag: '🇩🇪' },
+  { code: '+33', name: 'Франция', flag: '🇫🇷' },
+];
 // --- ПЕРЕМЕННЫЕ ДЛЯ ПЕРСОНАЖА И КАРТЫ ---
 let map = null, userMarker = null, userLatLng = null;
 let currentCharacterSettings = { photoDataUrl: null, scale: 1, offsetX: 0, offsetY: 0, crystalEnabled: true };
@@ -394,6 +608,8 @@ function getDefaultState() {
     },
     tasks: [],
     readWithoutChecklist: [],
+    contacts: [],
+    chats: [],
     updatedAt: new Date().toISOString()
   };
 }
@@ -426,6 +642,8 @@ function mergeState(state) {
     alarms: safeArray(state?.personality?.alarms),
     characterSettings: { ...getDefaultState().personality.characterSettings, ...(state?.personality?.characterSettings || {}) }
   };
+  merged.contacts = safeArray(state?.contacts);
+  merged.chats = safeArray(state?.chats);
   return merged;
 }
 
@@ -460,6 +678,8 @@ function activateTab(tabName) {
   document.querySelectorAll('.panel').forEach(panel => panel.classList.toggle('active', panel.id === `panel-${tabName}`));
   if(tabName === 'tasks') renderTasks();
   if(tabName === 'analytics') { renderCalendar(); runAnalytics(); }
+    if(tabName === 'contacts') renderContacts();
+  if(tabName === 'chats') renderChatsList();
 }
 
 function renderInfluenceLegend() {
@@ -697,8 +917,355 @@ function renderAll() {
   initCharacterFromState();
   setupCharacterModal();
 }
+  // ========== НОВЫЕ ФУНКЦИИ ДЛЯ КОНТАКТОВ И ЧАТОВ ==========
+function renderContacts() {
+  const container = document.getElementById('contactsList');
+  if (!container) return;
+  let filtered = [...contacts];
+  const searchTerm = document.getElementById('contactsSearchInput')?.value.toLowerCase() || '';
+  if (searchTerm) {
+    filtered = filtered.filter(c => c.firstName.toLowerCase().includes(searchTerm) || c.lastName.toLowerCase().includes(searchTerm) || c.phone.includes(searchTerm));
+  }
+  const sortType = localStorage.getItem('contactsSort') || 'name';
+  if (sortType === 'name') {
+    filtered.sort((a,b) => (a.lastName || a.firstName).localeCompare(b.lastName || b.firstName, 'ru'));
+  } else if (sortType === 'lastSeen') {
+    filtered.sort((a,b) => (b.lastSeen || 0) - (a.lastSeen || 0));
+  }
+  container.innerHTML = filtered.map(c => `
+    <div class="contact-item" data-id="${c.id}">
+      <div class="contact-avatar">👤</div>
+      <div class="contact-info">
+        <div class="contact-name">${escapeHtml(c.firstName)} ${escapeHtml(c.lastName)}</div>
+        <div class="contact-status">${c.isActive ? '🟢 активен' : '⚪ не активен'}</div>
+      </div>
+    </div>
+  `).join('');
+  document.querySelectorAll('.contact-item').forEach(el => {
+    el.addEventListener('click', () => openChatWithContact(parseInt(el.dataset.id)));
+  });
+}
 
-async function start() { bindEvents(); await loadState(); renderAll(); activateTab('year'); setInterval(()=>runAnalytics(),5000); }
+function openChatWithContact(contactId) {
+  let chat = chats.find(ch => ch.contactId === contactId);
+  if (!chat) {
+    chat = {
+      id: Date.now(),
+      contactId: contactId,
+      messages: [],
+      archived: false,
+      unreadCount: 0,
+      lastMessage: '',
+      lastMessageTime: Date.now(),
+    };
+    chats.push(chat);
+    saveChatsToState();
+  }
+  currentChatId = chat.id;
+  renderChatMessages(chat.id);
+  document.getElementById('chatModal').classList.add('active');
+  const contact = contacts.find(c => c.id === contactId);
+  document.getElementById('chatUserName').innerText = `${contact?.firstName} ${contact?.lastName}`;
+  if (chat.unreadCount > 0) {
+    chat.unreadCount = 0;
+    saveChatsToState();
+    renderChatsList();
+  }
+}
+
+function renderChatMessages(chatId) {
+  const chat = chats.find(ch => ch.id === chatId);
+  if (!chat) return;
+  const container = document.getElementById('chatMessagesArea');
+  container.innerHTML = chat.messages.map(msg => `
+    <div class="message ${msg.sender === 'me' ? 'outgoing' : 'incoming'}">
+      ${escapeHtml(msg.text)}
+      <div class="message-time">
+        ${new Date(msg.timestamp).toLocaleTimeString()}
+        ${msg.sender === 'me' ? (msg.read ? '✓✓' : '✓') : ''}
+      </div>
+    </div>
+  `).join('');
+  container.scrollTop = container.scrollHeight;
+}
+
+function sendMessage(chatId, text) {
+  const chat = chats.find(ch => ch.id === chatId);
+  if (!chat || !text.trim()) return;
+  const newMsg = {
+    id: Date.now(),
+    text: text.trim(),
+    sender: 'me',
+    timestamp: Date.now(),
+    read: false,
+  };
+  chat.messages.push(newMsg);
+  chat.lastMessage = text.trim();
+  chat.lastMessageTime = Date.now();
+  renderChatMessages(chatId);
+  renderChatsList();
+  saveChatsToState();
+  // Имитация ответа
+  setTimeout(() => {
+    const contact = contacts.find(c => c.id === chat.contactId);
+    if (contact) {
+      const replyMsg = {
+        id: Date.now(),
+        text: `Привет, это автоответ от ${contact.firstName}`,
+        sender: 'contact',
+        timestamp: Date.now(),
+        read: false,
+      };
+      chat.messages.push(replyMsg);
+      chat.lastMessage = replyMsg.text;
+      chat.lastMessageTime = Date.now();
+      if (currentChatId === chat.id) renderChatMessages(chat.id);
+      renderChatsList();
+      saveChatsToState();
+    }
+  }, 1000);
+}
+
+function renderChatsList() {
+  const container = document.getElementById('chatsList');
+  if (!container) return;
+  let filtered = chats.filter(ch => currentChatFilter === 'all' ? !ch.archived : ch.archived);
+  const searchTerm = document.getElementById('chatsSearchInput')?.value.toLowerCase() || '';
+  if (searchTerm) {
+    filtered = filtered.filter(ch => {
+      const contact = contacts.find(c => c.id === ch.contactId);
+      return contact && (contact.firstName.toLowerCase().includes(searchTerm) || contact.lastName.toLowerCase().includes(searchTerm) || contact.phone.includes(searchTerm));
+    });
+  }
+  filtered.sort((a,b) => b.lastMessageTime - a.lastMessageTime);
+  container.innerHTML = filtered.map(ch => {
+    const contact = contacts.find(c => c.id === ch.contactId);
+    if (!contact) return '';
+    return `
+      <div class="chat-item" data-id="${ch.id}">
+        ${editMode ? `<div class="checkbox-select ${selectedChats.has(ch.id) ? 'selected' : ''}" data-chat="${ch.id}"></div>` : ''}
+        <div class="chat-avatar">👤</div>
+        <div class="chat-info">
+          <div class="contact-name">${escapeHtml(contact.firstName)} ${escapeHtml(contact.lastName)}</div>
+          <div class="chat-last-message">${escapeHtml(ch.lastMessage || '')}</div>
+        </div>
+        <div class="chat-time">${new Date(ch.lastMessageTime).toLocaleDateString()}</div>
+        ${ch.unreadCount > 0 ? `<div class="unread-badge">${ch.unreadCount}</div>` : ''}
+      </div>
+    `;
+  }).join('');
+  document.querySelectorAll('.chat-item').forEach(el => {
+    const chatId = parseInt(el.dataset.id);
+    if (editMode) {
+      const cb = el.querySelector('.checkbox-select');
+      if (cb) cb.addEventListener('click', (e) => { e.stopPropagation(); toggleSelectChat(chatId); });
+      el.addEventListener('click', (e) => { if (!e.target.closest('.checkbox-select')) openChat(chatId); });
+    } else {
+      el.addEventListener('click', () => openChat(chatId));
+    }
+  });
+}
+
+function openChat(chatId) {
+  currentChatId = chatId;
+  const chat = chats.find(ch => ch.id === chatId);
+  if (chat) {
+    renderChatMessages(chatId);
+    document.getElementById('chatModal').classList.add('active');
+    const contact = contacts.find(c => c.id === chat.contactId);
+    document.getElementById('chatUserName').innerText = `${contact?.firstName} ${contact?.lastName}`;
+    if (chat.unreadCount > 0) {
+      chat.unreadCount = 0;
+      saveChatsToState();
+      renderChatsList();
+    }
+  }
+}
+
+function toggleSelectChat(chatId) {
+  if (selectedChats.has(chatId)) selectedChats.delete(chatId);
+  else selectedChats.add(chatId);
+  renderChatsList();
+  updateChatActionsBar();
+}
+
+function updateChatActionsBar() {
+  const bar = document.getElementById('chatActionsBar');
+  const hasSelected = selectedChats.size > 0;
+  if (editMode) {
+    bar.style.display = 'flex';
+    document.getElementById('archiveSelectedBtn').disabled = !hasSelected;
+    document.getElementById('deleteSelectedBtn').disabled = !hasSelected;
+  } else {
+    bar.style.display = 'none';
+  }
+}
+
+function saveChatsToState() {
+  if (appState) {
+    appState.contacts = contacts;
+    appState.chats = chats;
+    saveState();
+  }
+}
+
+function loadContactsFromState() {
+  if (appState && appState.contacts) {
+    contacts = appState.contacts;
+    chats = appState.chats || [];
+  } else {
+    contacts = [
+      { id: 1, firstName: 'Иван', lastName: 'Петров', phone: '+79123456789', countryCode: '+7', isActive: true, lastSeen: Date.now(), avatar: null },
+      { id: 2, firstName: 'Мария', lastName: 'Иванова', phone: '+79876543210', countryCode: '+7', isActive: false, lastSeen: Date.now() - 3600000, avatar: null },
+    ];
+    chats = [];
+  }
+  renderContacts();
+  renderChatsList();
+}
+
+function initContactsAndChats() {
+  loadContactsFromState();
+  // Обработчики UI
+  document.getElementById('addContactBtn')?.addEventListener('click', () => {
+    document.getElementById('contactModal').classList.add('active');
+    document.getElementById('contactFirstName').value = '';
+    document.getElementById('contactLastName').value = '';
+    document.getElementById('contactPhone').value = '';
+    document.getElementById('contactCountryCode').value = '';
+  });
+  document.getElementById('saveContactBtn')?.addEventListener('click', () => {
+    const firstName = document.getElementById('contactFirstName').value.trim();
+    const lastName = document.getElementById('contactLastName').value.trim();
+    const phone = document.getElementById('contactPhone').value.trim();
+    const countryCode = document.getElementById('contactCountryCode').value.trim();
+    if (!firstName || !lastName || !phone) {
+      alert('Заполните все поля');
+      return;
+    }
+    const newContact = {
+      id: Date.now(),
+      firstName,
+      lastName,
+      phone: countryCode + phone,
+      countryCode,
+      isActive: false,
+      lastSeen: null,
+      avatar: null,
+    };
+    contacts.push(newContact);
+    saveChatsToState();
+    renderContacts();
+    document.getElementById('contactModal').classList.remove('active');
+  });
+  document.getElementById('sortContactsBtn')?.addEventListener('click', () => {
+    const dd = document.getElementById('sortDropdown');
+    dd.style.display = dd.style.display === 'none' ? 'block' : 'none';
+  });
+  document.querySelectorAll('[data-sort]').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      localStorage.setItem('contactsSort', e.target.dataset.sort);
+      renderContacts();
+      document.getElementById('sortDropdown').style.display = 'none';
+    });
+  });
+  document.getElementById('contactsSearchInput')?.addEventListener('input', () => renderContacts());
+  document.getElementById('clearContactsSearch')?.addEventListener('click', () => {
+    document.getElementById('contactsSearchInput').value = '';
+    renderContacts();
+  });
+  document.getElementById('inviteContactBtn')?.addEventListener('click', () => {
+    alert('Функция приглашения в разработке');
+  });
+  document.getElementById('editChatsBtn')?.addEventListener('click', () => {
+    editMode = !editMode;
+    document.getElementById('editChatsBtn').innerText = editMode ? 'Готово' : 'Изм.';
+    if (!editMode) {
+      selectedChats.clear();
+      updateChatActionsBar();
+    }
+    renderChatsList();
+  });
+  document.getElementById('markAllReadBtn')?.addEventListener('click', () => {
+    chats.forEach(ch => { ch.unreadCount = 0; });
+    saveChatsToState();
+    renderChatsList();
+  });
+  document.getElementById('archiveSelectedBtn')?.addEventListener('click', () => {
+    selectedChats.forEach(id => {
+      const ch = chats.find(c => c.id === id);
+      if (ch) ch.archived = true;
+    });
+    selectedChats.clear();
+    saveChatsToState();
+    renderChatsList();
+    updateChatActionsBar();
+  });
+  document.getElementById('deleteSelectedBtn')?.addEventListener('click', () => {
+    if (confirm('Удалить выбранные чаты навсегда?')) {
+      chats = chats.filter(ch => !selectedChats.has(ch.id));
+      selectedChats.clear();
+      saveChatsToState();
+      renderChatsList();
+      updateChatActionsBar();
+    }
+  });
+  document.querySelectorAll('.chat-tab-filter').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      currentChatFilter = e.target.dataset.filter;
+      document.querySelectorAll('.chat-tab-filter').forEach(b => b.classList.remove('active'));
+      e.target.classList.add('active');
+      renderChatsList();
+    });
+  });
+  document.getElementById('newChatBtn')?.addEventListener('click', () => {
+    document.getElementById('contactModal').classList.add('active');
+  });
+  document.getElementById('sendMessageBtn')?.addEventListener('click', () => {
+    const input = document.getElementById('chatMessageInput');
+    const text = input.value;
+    if (text && currentChatId) {
+      sendMessage(currentChatId, text);
+      input.value = '';
+    }
+  });
+  document.querySelectorAll('.close-modal-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const modalId = btn.dataset.modal;
+      document.getElementById(modalId).classList.remove('active');
+    });
+  });
+  // Выбор страны
+  const countryInput = document.getElementById('contactCountryCode');
+  const countryDropdown = document.getElementById('countryDropdown');
+  countryInput?.addEventListener('click', () => {
+    renderCountryList('');
+    countryDropdown.style.display = 'block';
+  });
+  function renderCountryList(search) {
+    const container = document.getElementById('countryList');
+    const filtered = countries.filter(c => c.name.toLowerCase().includes(search.toLowerCase()));
+    container.innerHTML = filtered.map(c => `
+      <div class="country-item" data-code="${c.code}">${c.flag} ${c.name} (${c.code})</div>
+    `).join('');
+    document.querySelectorAll('.country-item').forEach(el => {
+      el.addEventListener('click', () => {
+        countryInput.value = el.dataset.code;
+        countryDropdown.style.display = 'none';
+      });
+    });
+  }
+  document.getElementById('countrySearch')?.addEventListener('input', (e) => {
+    renderCountryList(e.target.value);
+  });
+  document.addEventListener('click', (e) => {
+    if (!countryDropdown?.contains(e.target) && e.target !== countryInput) {
+      countryDropdown.style.display = 'none';
+    }
+  });
+}
+
+async function start() { bindEvents(); await loadState(); renderAll();  initContactsAndChats(); activateTab('year'); setInterval(()=>runAnalytics(),5000); }
 start();
 </script>
 </body>
