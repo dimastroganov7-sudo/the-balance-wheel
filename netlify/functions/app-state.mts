@@ -70,8 +70,8 @@ function createDefaultState() {
         scale: 1,
         offsetX: 0,
         offsetY: 0,
-        crystalEnabled: true
-      }
+        crystalEnabled: true,
+      },
     },
     processes: {
       categories: ['Регулярно-циклические', 'Нестандартные (адаптивные / редкие)'],
@@ -105,6 +105,8 @@ function createDefaultState() {
     },
     tasks: [],
     readWithoutChecklist: [],
+    contacts: [],    // новый раздел
+    chats: [],       // новый раздел
     updatedAt: new Date().toISOString(),
   }
 }
@@ -121,6 +123,7 @@ const corsHeaders = {
   'cache-control': 'no-store',
 }
 
+// Глубокое слияние объектов с поддержкой массивов (замена, а не слияние по элементам)
 function deepMerge(target, source) {
   if (!source || typeof source !== 'object') return target
   const result = Array.isArray(target) ? [...target] : { ...target }
@@ -130,6 +133,7 @@ function deepMerge(target, source) {
     if (srcVal && typeof srcVal === 'object' && !Array.isArray(srcVal) && tgtVal && typeof tgtVal === 'object' && !Array.isArray(tgtVal)) {
       result[key] = deepMerge(tgtVal, srcVal)
     } else {
+      // Для массивов (tasks, contacts, chats) просто заменяем – клиент присылает полный актуальный список
       result[key] = srcVal
     }
   }
@@ -158,7 +162,10 @@ export default async (req) => {
     if (req.method === 'PUT') {
       const body = await req.json().catch(() => null)
       if (!body || typeof body !== 'object') {
-        return Response.json({ ok: false, error: 'State must be a JSON object.' }, { status: 400, headers: corsHeaders })
+        return Response.json(
+          { ok: false, error: 'State must be a JSON object.' },
+          { status: 400, headers: corsHeaders }
+        )
       }
 
       let currentState = await store.get(key, { type: 'json' })
@@ -173,7 +180,10 @@ export default async (req) => {
       return Response.json({ ok: true, state: mergedState }, { headers: corsHeaders })
     }
 
-    return Response.json({ ok: false, error: 'Method not allowed.' }, { status: 405, headers: corsHeaders })
+    return Response.json(
+      { ok: false, error: 'Method not allowed.' },
+      { status: 405, headers: corsHeaders }
+    )
   } catch (error) {
     console.error('State function error:', error)
     return Response.json(
