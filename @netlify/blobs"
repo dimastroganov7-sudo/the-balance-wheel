@@ -1,340 +1,498 @@
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
-  :root {
-    --bg-main: #f5f5f7;
-    --bg-secondary: #ffffff;
-    --glass-bg: rgba(255, 255, 255, 0.72);
-    --glass-strong: rgba(255, 255, 255, 0.88);
-    --border-soft: rgba(0, 0, 0, 0.06);
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>NEBULA WHEEL · Стеклянный баланс</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
-    --text-main: #1d1d1f;
-    --text-secondary: #6e6e73;
-
-    --accent: #0071e3;
-    --accent-light: #5ac8fa;
-    --danger: #ff3b30;
-
-    --shadow-soft: 0 8px 30px rgba(0, 0, 0, 0.08);
-    --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.06);
-
-    --radius-xl: 30px;
-    --radius-lg: 24px;
-    --radius-md: 18px;
-    --radius-sm: 14px;
-  }
-
-  * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    transition: all 0.25s cubic-bezier(0.25, 1, 0.5, 1);
-  }
-
-  body {
-    margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display",
-      "Segoe UI", Inter, sans-serif;
-    background: var(--bg-main);
-    color: var(--text-main);
-    min-height: 100vh;
-    -webkit-font-smoothing: antialiased;
-  }
-
-  .app {
-    max-width: 1360px;
-    margin: 0 auto;
-    padding: 24px 18px 110px;
-  }
-
-  .hero {
-    background: var(--glass-bg);
-    backdrop-filter: blur(28px) saturate(180%);
-    -webkit-backdrop-filter: blur(28px) saturate(180%);
-    border: 1px solid rgba(255, 255, 255, 0.7);
-    border-radius: var(--radius-xl);
-    padding: 32px;
-    box-shadow: var(--shadow-soft);
-    margin-bottom: 24px;
-  }
-
-  .hero h1 {
-    font-size: 2.4rem;
-    font-weight: 700;
-    letter-spacing: -0.04em;
-    color: var(--text-main);
-    margin-bottom: 10px;
-  }
-
-  .hero p {
-    color: var(--text-secondary);
-    font-size: 1rem;
-  }
-
-  .toolbar {
-    margin-top: 18px;
-    display: flex;
-    gap: 12px;
-    flex-wrap: wrap;
-  }
-
-  .status-pill {
-    background: rgba(0, 113, 227, 0.08);
-    color: var(--accent);
-    border-radius: 999px;
-    padding: 10px 18px;
-    font-size: 0.9rem;
-    font-weight: 600;
-  }
-
-  .btn {
-    border: none;
-    border-radius: 999px;
-    padding: 14px 22px;
-    background: white;
-    color: var(--text-main);
-    font-size: 0.95rem;
-    font-weight: 600;
-    cursor: pointer;
-    box-shadow: var(--shadow-card);
-  }
-
-  .btn:hover {
-    transform: scale(0.98);
-  }
-
-  .btn.primary {
-    background: var(--accent);
-    color: white;
-  }
-
-  .btn.warn {
-    background: rgba(255, 59, 48, 0.08);
-    color: var(--danger);
-  }
-
-  .panel {
-    display: none;
-    background: var(--glass-bg);
-    backdrop-filter: blur(24px) saturate(180%);
-    -webkit-backdrop-filter: blur(24px) saturate(180%);
-    border-radius: var(--radius-xl);
-    padding: 28px;
-    box-shadow: var(--shadow-soft);
-    margin-bottom: 20px;
-  }
-
-  .panel.active {
-    display: block;
-    animation: fadeIn 0.25s ease;
-  }
-
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-      transform: translateY(6px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  h2 {
-    font-size: 1.9rem;
-    font-weight: 700;
-    letter-spacing: -0.03em;
-    margin-bottom: 18px;
-  }
-
-  h3 {
-    font-size: 1.2rem;
-    font-weight: 600;
-    margin-bottom: 14px;
-  }
-
-  .card,
-  .sector-card,
-  .task-item,
-  .contact-item,
-  .chat-item {
-    background: var(--glass-strong);
-    backdrop-filter: blur(20px);
-    border-radius: var(--radius-lg);
-    padding: 22px;
-    box-shadow: var(--shadow-card);
-    border: 1px solid rgba(255, 255, 255, 0.7);
-  }
-
-  .sector-card:hover,
-  .contact-item:hover,
-  .chat-item:hover {
-    transform: translateY(-2px);
-  }
-
-  .grid-2 {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 18px;
-  }
-
-  .sector-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 16px;
-  }
-
-  .form-row {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
-    gap: 12px;
-    margin-bottom: 14px;
-  }
-
-  input,
-  select,
-  textarea {
-    width: 100%;
-    border: none;
-    background: rgba(242, 242, 247, 0.95);
-    border-radius: var(--radius-md);
-    padding: 14px 16px;
-    font-size: 16px;
-    color: var(--text-main);
-    font-family: inherit;
-  }
-
-  input:focus,
-  select:focus,
-  textarea:focus {
-    outline: 2px solid rgba(0, 113, 227, 0.25);
-  }
-
-  .badge {
-    background: rgba(0, 113, 227, 0.08);
-    color: var(--accent);
-    border-radius: 999px;
-    padding: 8px 14px;
-    font-weight: 600;
-    display: inline-block;
-  }
-
-  .calendar {
-    width: 100%;
-    border-collapse: separate;
-    border-spacing: 8px;
-  }
-
-  .calendar th,
-  .calendar td {
-    background: white;
-    border-radius: 14px;
-    padding: 12px;
-    text-align: center;
-    box-shadow: var(--shadow-card);
-  }
-
-  .progress-wrap {
-    height: 10px;
-    border-radius: 999px;
-    background: #e5e5ea;
-    overflow: hidden;
-  }
-
-  .progress {
-    height: 100%;
-    width: 0;
-    background: var(--accent);
-    border-radius: 999px;
-  }
-
-  .modal {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.2);
-    backdrop-filter: blur(18px);
-    display: none;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-    padding: 20px;
-  }
-
-  .modal.active {
-    display: flex;
-  }
-
-  .modal-box {
-    width: 100%;
-    max-width: 900px;
-    max-height: 90vh;
-    overflow: auto;
-    background: rgba(255, 255, 255, 0.92);
-    backdrop-filter: blur(30px);
-    border-radius: 32px;
-    padding: 28px;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12);
-  }
-
-  .bottom-nav {
-    position: fixed;
-    left: 16px;
-    right: 16px;
-    bottom: 16px;
-
-    background: rgba(255, 255, 255, 0.82);
-    backdrop-filter: blur(30px) saturate(180%);
-    -webkit-backdrop-filter: blur(30px) saturate(180%);
-
-    border-radius: 28px;
-
-    padding: 14px 18px;
-
-    display: flex;
-    justify-content: space-around;
-
-    box-shadow: var(--shadow-soft);
-
-    z-index: 100;
-  }
-
-  .nav-item {
-    background: none;
-    border: none;
-    color: var(--text-secondary);
-    font-weight: 500;
-    cursor: pointer;
-
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-  }
-
-  .nav-item.active {
-    color: var(--accent);
-    font-weight: 600;
-  }
-
-  .nav-icon {
-    font-size: 1.8rem;
-  }
-
-  .meta {
-    color: var(--text-secondary);
-  }
-
-  @media (max-width: 800px) {
-    .grid-2 {
-      grid-template-columns: 1fr;
+    :root {
+      --bg-deep: #0a0f18;
+      --glass-bg: rgba(18, 28, 40, 0.5);
+      --glass-border: rgba(0, 212, 255, 0.25);
+      --neon-cyan: #00e5ff;
+      --neon-purple: #b86bff;
+      --neon-blue: #3b82f6;
+      --text-glow: #eef5ff;
+      --text-dim: #9ab3cf;
+      --shadow-glow: 0 0 30px rgba(0, 229, 255, 0.3);
+      --radius-card: 28px;
+      --blur-amount: 20px;
     }
 
-    .app {
-      padding: 16px 12px 100px;
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      margin: 0;
+      color: var(--text-glow);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: radial-gradient(circle at 30% 10%, #1a2a40, #050a12 90%);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
     }
-
+    .app { max-width: 1360px; margin: 0 auto; padding: 28px 20px 90px; }
+    .hero {
+      background: rgba(10, 20, 35, 0.4);
+      backdrop-filter: blur(25px);
+      -webkit-backdrop-filter: blur(25px);
+      border: 1px solid rgba(0, 229, 255, 0.3);
+      border-radius: 36px;
+      padding: 32px 30px;
+      box-shadow: 0 0 40px rgba(0, 180, 255, 0.2), inset 0 0 20px rgba(255,255,255,0.03);
+      margin-bottom: 28px;
+    }
     .hero h1 {
-      font-size: 2rem;
+      margin: 0 0 10px;
+      font-size: 2.3rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #ffffff, #a0e0ff);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      letter-spacing: -0.02em;
     }
+    .hero p { color: var(--text-dim); font-weight: 400; }
+    .toolbar { margin-top: 20px; display: flex; flex-wrap: wrap; gap: 14px; }
+    .status-pill {
+      background: rgba(0, 229, 255, 0.08);
+      border: 1px solid rgba(0, 229, 255, 0.4);
+      border-radius: 60px;
+      padding: 10px 20px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: #c0e6ff;
+      backdrop-filter: blur(8px);
+    }
+    .btn {
+      border: none;
+      background: rgba(20, 35, 50, 0.6);
+      backdrop-filter: blur(10px);
+      border-radius: 60px;
+      padding: 12px 24px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: #f0f9ff;
+      transition: all 0.2s ease;
+      font-family: inherit;
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow: 0 6px 14px rgba(0,0,0,0.3);
+    }
+    .btn:hover {
+      transform: translateY(-2px);
+      background: rgba(35, 55, 75, 0.8);
+      border-color: var(--neon-cyan);
+      box-shadow: 0 12px 22px -6px #00000080, 0 0 12px #00e5ff55;
+    }
+    .btn.primary {
+      background: linear-gradient(145deg, #0a84ff, #0066d9);
+      border: 1px solid rgba(255,255,255,0.25);
+      color: white;
+      box-shadow: 0 8px 20px #0066d980;
+    }
+    .btn.primary:hover { background: linear-gradient(145deg, #1a8cff, #0a74e6); box-shadow: 0 12px 28px #0a84ffb3; }
+    .btn.warn { background: rgba(248, 113, 113, 0.18); border-color: #f8717190; color: #ffe0e0; }
+    .panel {
+      display: none;
+      background: var(--glass-bg);
+      backdrop-filter: blur(var(--blur-amount));
+      -webkit-backdrop-filter: blur(var(--blur-amount));
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-card);
+      box-shadow: 0 25px 40px -12px #00000080, inset 0 0 0 0.5px #ffffff0d;
+      padding: 30px 26px;
+      margin-bottom: 20px;
+    }
+    .panel.active { display: block; animation: fadeSlide 0.25s; }
+    @keyframes fadeSlide { 0% { opacity: 0; transform: translateY(8px); } 100% { opacity: 1; transform: translateY(0); } }
+    h2 { margin: 0 0 20px; font-size: 1.8rem; font-weight: 600; background: linear-gradient(to right, #fff, #b0d6ff); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    h3 { margin: 0 0 14px; font-size: 1.25rem; font-weight: 600; color: #d0e4ff; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .card {
+      background: rgba(8, 18, 28, 0.45);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(0, 229, 255, 0.15);
+      border-radius: 24px;
+      padding: 22px;
+      box-shadow: 0 12px 20px -5px #0000004d;
+    }
+    .sector-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 16px; }
+    .sector-card {
+      background: rgba(20, 35, 50, 0.5);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(0, 229, 255, 0.2);
+      border-radius: 24px;
+      padding: 20px;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 8px 14px -4px #0000004d;
+    }
+    .sector-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--neon-cyan);
+      box-shadow: 0 20px 28px -8px #000000b3, 0 0 24px #00e5ff33;
+      background: rgba(30, 50, 70, 0.6);
+    }
+    .meta { color: var(--text-dim); font-size: 0.9rem; }
+    .level-legend { margin-top: 20px; border-collapse: collapse; width: 100%; }
+    .level-legend td, .level-legend th { border: 1px solid #1f3f55; padding: 12px; background: #0b162280; }
+    .form-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; margin-bottom: 12px; }
+    input, select, textarea {
+      width: 100%;
+      border: 1.5px solid #1f4055;
+      background: #0c1925cc;
+      backdrop-filter: blur(4px);
+      border-radius: 20px;
+      padding: 14px 16px;
+      font-family: inherit;
+      color: white;
+      font-size: 0.95rem;
+      transition: 0.15s;
+    }
+    input:focus, select:focus, textarea:focus { border-color: var(--neon-cyan); outline: none; box-shadow: 0 0 14px #00e5ff66; }
+    .list { display: flex; flex-direction: column; gap: 10px; }
+    .list-item {
+      background: rgba(0, 15, 25, 0.5);
+      border: 1px solid #1e4a60;
+      border-radius: 20px;
+      padding: 16px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      backdrop-filter: blur(8px);
+    }
+    .matrix-layout { display: grid; grid-template-columns: 250px 1fr; gap: 22px; }
+    .matrix-tabs { display: flex; flex-direction: column; gap: 10px; }
+    .matrix-tabs button {
+      text-align: left;
+      padding: 16px 20px;
+      border-radius: 20px;
+      background: rgba(0,0,0,0.3);
+      border: 1px solid #1a4055;
+      color: #c0dbff;
+      font-weight: 600;
+      backdrop-filter: blur(6px);
+      cursor: pointer;
+    }
+    .matrix-tabs button.active { background: var(--neon-cyan); color: #010a14; border-color: transparent; box-shadow: 0 0 24px #00e5ff; }
+    .badge {
+      background: rgba(0, 229, 255, 0.12);
+      border: 0.5px solid #00e5ff80;
+      color: #b0eeff;
+      border-radius: 60px;
+      padding: 6px 16px;
+      font-weight: 600;
+      display: inline-block;
+    }
+    .process-item, .task-item {
+      background: rgba(8, 22, 32, 0.6);
+      border: 1px solid #1e5068;
+      border-radius: 22px;
+      padding: 18px;
+      backdrop-filter: blur(6px);
+      margin-bottom: 12px;
+    }
+    .task-item.today { border-left: 6px solid var(--neon-cyan); }
+    .task-item.overdue { border-left: 6px solid #f87171; }
+    .calendar { width: 100%; border-collapse: collapse; }
+    .calendar th, .calendar td { border: 1px solid #1a4055; padding: 10px; background: #0a1520b3; backdrop-filter: blur(4px); }
+    .progress-wrap { background: #0f2630; height: 12px; border-radius: 40px; overflow: hidden; }
+    .progress { background: linear-gradient(90deg, #00e5ff, #3b82f6); height: 100%; width: 0; border-radius: 40px; }
+    .modal {
+      position: fixed; inset: 0; background: #020a0fd9;
+      backdrop-filter: blur(30px);
+      display: none; align-items: center; justify-content: center;
+      padding: 20px; z-index: 1000;
+    }
+    .modal.active { display: flex; }
+    .modal-box {
+      background: rgba(10, 20, 30, 0.85);
+      backdrop-filter: blur(35px);
+      border: 1px solid rgba(0, 229, 255, 0.5);
+      border-radius: 40px;
+      padding: 32px;
+      box-shadow: 0 30px 60px #000000cc, 0 0 50px #00e5ff4d;
+      max-width: 95%;
+      max-height: 92vh;
+      overflow: auto;
+    }
+    .close-row { display: flex; justify-content: flex-end; margin-top: 24px; gap: 12px; }
+    .weather-map-row { display: flex; flex-wrap: wrap; gap: 24px; margin-bottom: 24px; }
+    .weather-card {
+      flex: 1.2; min-width: 240px;
+      background: rgba(0, 20, 35, 0.5);
+      backdrop-filter: blur(16px);
+      border: 1px solid #2a6a85;
+      border-radius: 32px;
+      padding: 22px;
+    }
+    .map-container {
+      flex: 2; min-width: 280px;
+      background: rgba(0, 20, 35, 0.4);
+      backdrop-filter: blur(16px);
+      border: 1px solid #2a6a85;
+      border-radius: 32px;
+      padding: 18px;
+    }
+    #map { height: 280px; border-radius: 24px; border: 1px solid #2a8faf; }
+    .gear-icon { font-size: 1.8rem; cursor: pointer; filter: drop-shadow(0 0 8px cyan); transition: 0.2s; }
+    .gear-icon:hover { transform: rotate(20deg) scale(1.05); }
+    .bottom-nav {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      background: rgba(5, 12, 20, 0.7);
+      backdrop-filter: blur(40px);
+      border-top: 1px solid #00e5ff55;
+      display: flex; justify-content: space-around;
+      padding: 14px 20px 20px; z-index: 100;
+    }
+    .nav-item {
+      background: none; border: none;
+      display: flex; flex-direction: column; align-items: center;
+      color: #9ab3cf; font-weight: 500; cursor: pointer;
+    }
+    .nav-item.active { color: #00e5ff; text-shadow: 0 0 16px #00e5ff; }
+    .nav-icon { font-size: 2rem; }
+    .contact-item, .chat-item {
+      background: rgba(20, 35, 48, 0.6);
+      border: 1px solid #1f6078;
+      border-radius: 26px;
+      backdrop-filter: blur(10px);
+      padding: 16px;
+      cursor: pointer;
+    }
+    .message.outgoing { background: linear-gradient(145deg, #0a84ff, #0066d9); }
+    .settings-subtabs { display: flex; gap: 12px; margin-bottom: 24px; }
+    .settings-subtab {
+      background: none; border: none; padding: 12px 24px;
+      border-radius: 60px; font-weight: 600; color: var(--text-dim);
+      backdrop-filter: blur(8px); background: #0a1a2880; cursor: pointer;
+    }
+    .settings-subtab.active { background: var(--neon-cyan); color: #010a14; }
+    .settings-pane { display: none; }
+    .settings-pane.active { display: block; }
+    @media (max-width: 800px) {
+      .app { padding: 16px 12px 80px; }
+      .matrix-layout { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+<main class="app">
+  <section class="hero">
+    <h1>NEBULA WHEEL</h1>
+    <p>8 секторов · X-матрица · кристальная аналитика</p>
+    <div class="toolbar">
+      <span class="status-pill" id="saveStateLabel">⚡ синхронизация...</span>
+      <button class="btn" id="syncNowBtn">🔄 Синхронизировать</button>
+    </div>
+  </section>
+
+  <section class="panel" id="panel-tasks">
+    <h2>Задачи по дням</h2>
+    <div class="form-row"><div><label>Дата</label><input id="taskDateFilter" type="date" /></div><div><label>Оставшееся время (мин)</label><input id="freeTimeInput" type="number" min="0" value="90" /></div></div>
+    <div class="card"><h3>Создать функцию на день</h3><div class="form-row"><input id="quickTaskTitle" placeholder="Название" /><select id="quickTaskSector"></select><input id="quickTaskMinutes" type="number" min="5" value="30" /><select id="quickTaskInfluence"></select><button class="btn primary" id="createQuickTaskBtn">Добавить</button></div></div>
+    <div id="tasksContainer"></div>
+  </section>
+
+  <section class="panel" id="panel-analytics">
+    <h2>Календарь и прогресс</h2>
+    <div class="weather-map-row">
+      <div class="weather-card">
+        <div>📍 Москва</div>
+        <div class="weather-main"><span class="weather-temp" id="weatherTemp">--°</span><span id="weatherIcon">⛅</span></div>
+        <div id="weatherDesc">загрузка...</div>
+        <div id="weatherDetails"></div>
+      </div>
+      <div class="map-container">
+        <h4>🗺️ Карта <span class="gear-icon" id="openCharSettingsBtn" title="Настройка персонажа">⚙️</span></h4>
+        <div id="map"></div>
+      </div>
+    </div>
+    <div class="form-row"><button class="btn" id="prevMonthBtn">←</button><span id="calendarMonthLabel" class="badge"></span><button class="btn" id="nextMonthBtn">→</button></div>
+    <div style="overflow-x:auto;"><table class="calendar"><thead id="calendarHead"></thead><tbody id="calendarBody"></tbody></table></div>
+    <div class="card"><h3>Аналитика</h3><div class="form-row"><div><label>От</label><input id="analyticsFrom" type="date" /></div><div><label>До</label><input id="analyticsTo" type="date" /></div><button class="btn" id="runAnalyticsBtn">Рассчитать</button></div><div id="analyticsText" class="meta"></div><div class="progress-wrap"><div id="analyticsProgress" class="progress"></div></div></div>
+  </section>
+
+  <section class="panel" id="panel-settings">
+    <div class="settings-subtabs">
+      <button class="settings-subtab active" data-subtab="year">Год</button>
+      <button class="settings-subtab" data-subtab="personality">Личность</button>
+      <button class="settings-subtab" data-subtab="processes">Процессы</button>
+    </div>
+    <div id="settings-year" class="settings-pane active">
+      <h2>Сектора года</h2>
+      <div id="sectorCards" class="sector-grid"></div>
+      <table class="level-legend"><thead><tr><th>Уровень влияния</th><th>Значок</th></tr></thead><tbody id="influenceLegendBody"></tbody></table>
+    </div>
+    <div id="settings-personality" class="settings-pane">
+      <h2>Антропометрия и оценка</h2>
+      <div class="grid-2">
+        <div class="card"><h3>Параметры</h3><div id="anthroForm" class="form-row"></div><button class="btn primary" id="saveAnthroBtn">Сохранить</button></div>
+        <div class="card"><h3>Тестирование</h3><div id="testForm"></div><div id="testSummary" class="badge"></div></div>
+      </div>
+      <div class="card"><h3>Анализы</h3><div id="analysisList" class="list"></div><div class="form-row"><input id="analysisName" placeholder="Название"><input id="analysisValue" placeholder="Значение"><input id="analysisDate" type="date"></div><button class="btn" id="addAnalysisBtn">Добавить</button></div>
+      <div class="alarm-section" style="margin-top:20px;"><div class="alarm-header"><span>⏰ Будильник</span><button id="add-alarm-btn" class="add-btn" style="background:#00e5ff;border:none;width:44px;height:44px;border-radius:30px;">+</button></div><div id="alarm-list" class="alarm-list"></div></div>
+    </div>
+    <div id="settings-processes" class="settings-pane">
+      <h2>Процессы</h2>
+      <div class="card"><h3>Категории</h3><div id="processCategories" class="list"></div><div class="form-row"><input id="newCategoryInput" placeholder="Новая"><button class="btn" id="addCategoryBtn">Добавить</button></div></div>
+      <div class="card"><h3>Шаблоны</h3><div id="processTemplates" class="list"></div></div>
+      <div class="card"><h3>Мои процессы</h3><div id="processItems"></div><button class="btn primary" id="addProcessItemBtn">Добавить</button></div>
+      <div class="card"><h3>Генерация</h3><button class="btn" id="generateScheduleBtn">Сформировать на 14 дней</button></div>
+    </div>
+  </section>
+
+  <section class="panel" id="panel-contacts">
+    <div style="display:flex;justify-content:space-between;"><h2>Контакты</h2><div><button class="btn" id="sortContactsBtn">📋</button><button class="btn" id="addContactBtn">➕</button></div></div>
+    <div class="search-container"><input id="contactsSearchInput" placeholder="поиск" style="padding-left:44px;"><span class="search-icon" style="position:absolute;left:18px;top:50%;transform:translateY(-50%);">🔍</span></div>
+    <div id="contactsList" class="contact-list"></div>
+  </section>
+
+  <section class="panel" id="panel-chats">
+    <div style="display:flex;justify-content:space-between;"><h2>Чаты</h2><div><button class="btn" id="editChatsBtn">Изм.</button><button class="btn" id="newChatBtn">✏️</button></div></div>
+    <div id="chatsList" class="chat-list"></div>
+    <div id="chatActionsBar" style="display:none;"><button class="btn" id="markAllReadBtn">Прочитать все</button><button class="btn" id="archiveSelectedBtn">В архив</button><button class="btn warn" id="deleteSelectedBtn">Удалить</button></div>
+  </section>
+</main>
+
+<div class="modal" id="matrixModal"><div class="modal-box"><h2 id="matrixTitle"></h2><div class="matrix-layout"><div class="matrix-tabs" id="matrixTabs"></div><div id="matrixPanes"></div></div><div class="close-row"><button class="btn" id="closeMatrixBtn">Закрыть</button></div></div></div>
+<div class="modal" id="taskModal"><div class="modal-box"><h2 id="taskModalTitle"></h2><div id="taskModalBody"></div><div class="close-row"><button class="btn" id="markReadBtn">Выйти без заполнения</button><button class="btn" id="closeTaskBtn">Закрыть</button></div></div></div>
+<div class="modal" id="characterModal"><div class="modal-box"><h2>⚙️ Настройка персонажа</h2><div class="character-settings"><div class="crop-preview"><canvas id="previewCanvas" width="120" height="120" style="border-radius:50%;"></canvas><div><input type="range" id="scaleSlider" min="0.5" max="2" step="0.01" value="1"><input type="range" id="offsetXSlider" min="-50" max="50" value="0"><input type="range" id="offsetYSlider" min="-50" max="50" value="0"></div></div><input type="file" id="photoUploadInput" accept="image/*"><button class="btn" id="applyPhotoBtn">Применить</button><label><input type="checkbox" id="crystalEnabledCheckbox" checked> Кристалл</label><div class="close-row"><button class="btn primary" id="saveCharacterBtn">Сохранить</button><button class="btn" id="closeCharModalBtn">Отмена</button></div></div></div></div>
+<div class="modal" id="contactModal"><div class="modal-box"><h2>Новый контакт</h2><input id="contactFirstName" placeholder="Имя"><input id="contactLastName" placeholder="Фамилия"><input id="contactPhone" placeholder="Телефон"><button class="btn primary" id="saveContactBtn">Сохранить</button></div></div>
+<div class="modal" id="chatModal"><div class="modal-box" style="display:flex;flex-direction:column;height:80vh;"><div><h3 id="chatUserName"></h3></div><div id="chatMessagesArea" class="chat-messages" style="flex:1;overflow-y:auto;"></div><div class="chat-input-area"><input id="chatMessageInput" placeholder="Сообщение"><button id="sendMessageBtn" class="btn primary">➤</button></div></div></div>
+
+<div class="bottom-nav">
+  <button class="nav-item" data-tab="contacts"><span class="nav-icon">👥</span><span class="nav-label">Контакты</span></button>
+  <button class="nav-item" data-tab="chats"><span class="nav-icon">💬</span><span class="nav-label">Чаты</span></button>
+  <button class="nav-item" data-tab="tasks"><span class="nav-icon">✅</span><span class="nav-label">Задачи</span></button>
+  <button class="nav-item" data-tab="analytics"><span class="nav-icon">📊</span><span class="nav-label">Календарь</span></button>
+  <button class="nav-item" data-tab="settings"><span class="nav-icon">⚙️</span><span class="nav-label">Настройка</span></button>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+(() => {
+  const USER_ID = '69d7a4ce59d4646ae0dae714';
+  const stateEndpoint = `/.netlify/functions/app-state?userId=${encodeURIComponent(USER_ID)}`;
+  const sectorMeta = [
+    { id: 'career_business', title: '🧑‍💼 Карьера / Бизнес' }, { id: 'finance', title: '💰 Финансы' }, { id: 'health_fitness', title: '🩺 Здоровье и Фитнес' },
+    { id: 'family_friends', title: '👨‍👩‍👧‍👦 Семья и Друзья' }, { id: 'romantic_relations', title: '❤️ Романтические отношения' },
+    { id: 'physical_environment', title: '🏠 Физическое окружение' }, { id: 'rest_entertainment', title: '🎉 Отдых и Развлечения' }, { id: 'personal_growth', title: '📚 Личностный рост' }
+  ];
+  const matrixPanesMeta = [
+    { key: 'results', label: '1. Результаты' }, { key: 'strategies', label: '2. Стратегии' }, { key: 'tactics', label: '3. Тактика' },
+    { key: 'processProjects', label: '4. Процесс/Проект' }, { key: 'relations', label: '5. Взаимосвязи' }
+  ];
+  const influenceMap = { 1:{icon:'○',label:'Самое слабое'},2:{icon:'◔',label:'Слабое'},3:{icon:'◑',label:'Среднее'},4:{icon:'◕',label:'Сильное'},5:{icon:'●',label:'Самое сильное'} };
+  const processRegularityTemplates = {
+    daily: ['Подъем','Завтрак','Работа','Обед','Дорога','Сон'],
+    weekly: ['Закупка','Уборка','Стирка'],
+    monthly: ['Оплата счетов']
+  };
+  let appState = null, currentTab = 'contacts', activeSectorId = null, activeMatrixPane = 'results', selectedTaskId = null, calendarDate = new Date(), saveInFlight = false;
+  let contacts = [], chats = [], currentChatId = null, editMode = false, selectedChats = new Set(), currentChatFilter = 'all';
+  let map = null, userMarker = null, userLatLng = null, currentCharacterSettings = { photoDataUrl: null, scale: 1, offsetX: 0, offsetY: 0, crystalEnabled: true };
+  let animationFrameId = null, currentRotationAngle = 0, photoImage = null, previewImage = null;
+
+  function uid(p){ return `${p}_${Date.now()}_${Math.floor(Math.random()*1000)}`; }
+  function todayIso(){ return new Date().toISOString().slice(0,10); }
+  function safeArray(v){ return Array.isArray(v)?v:[]; }
+  function escapeHtml(t){ return String(t||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[m]); }
+  function getDefaultState(){
+    const sec={}; sectorMeta.forEach(s=>sec[s.id]={title:s.title,score:5,matrix:{results:[],strategies:[],tactics:[],processProjects:[],owners:[],links:[]}});
+    return {sectors:sec,influenceLevels:influenceMap,personality:{anthropometry:{},test:{responses:{}},analysisResults:[],alarms:[],characterSettings:{photoDataUrl:null,scale:1,offsetX:0,offsetY:0,crystalEnabled:true}},processes:{categories:['Регулярные','Нестандартные'],hierarchyTemplates:[],items:[]},tasks:[],readWithoutChecklist:[],contacts:[],chats:[],updatedAt:new Date().toISOString()};
   }
-</style>
+  function mergeState(st){
+    const m={...getDefaultState(),...(st||{})}; m.sectors={...getDefaultState().sectors,...(st?.sectors||{})};
+    Object.keys(m.sectors).forEach(k=>{ const mx=m.sectors[k].matrix||{}; m.sectors[k].matrix={results:safeArray(mx.results),strategies:safeArray(mx.strategies),tactics:safeArray(mx.tactics),processProjects:safeArray(mx.processProjects),owners:safeArray(mx.owners),links:safeArray(mx.links)}; });
+    m.processes={...getDefaultState().processes,...(st?.processes||{}),categories:safeArray(st?.processes?.categories||getDefaultState().processes.categories),items:safeArray(st?.processes?.items)};
+    m.tasks=safeArray(st?.tasks); m.readWithoutChecklist=safeArray(st?.readWithoutChecklist);
+    m.personality={...getDefaultState().personality,...(st?.personality||{}),anthropometry:{...getDefaultState().personality.anthropometry,...(st?.personality?.anthropometry||{})},test:{...getDefaultState().personality.test,...(st?.personality?.test||{}),responses:{...(st?.personality?.test?.responses||{})}},analysisResults:safeArray(st?.personality?.analysisResults),alarms:safeArray(st?.personality?.alarms),characterSettings:{...getDefaultState().personality.characterSettings,...(st?.personality?.characterSettings||{})}};
+    m.contacts=safeArray(st?.contacts); m.chats=safeArray(st?.chats); return m;
+  }
+  async function loadState(){ try{ const r=await fetch(stateEndpoint); const d=await r.json(); if(!r.ok||!d?.state) throw new Error(); appState=mergeState(d.state); }catch(e){ appState=getDefaultState(); } }
+  async function saveState(){ if(!appState||saveInFlight)return; saveInFlight=true; try{ await fetch(stateEndpoint,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({...appState,updatedAt:new Date().toISOString()})}); }catch(e){} finally{ saveInFlight=false; } }
+  function activateTab(tab){
+    currentTab=tab; document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active')); document.getElementById(`panel-${tab}`).classList.add('active');
+    document.querySelectorAll('.nav-item').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));
+    if(tab==='tasks') renderTasks(); if(tab==='analytics'){ renderCalendar(); runAnalytics(); } if(tab==='contacts') renderContacts(); if(tab==='chats') renderChatsList();
+    if(tab==='settings'){ const sub=document.querySelector('.settings-subtab.active')?.dataset.subtab||'year'; showSettingsSubtab(sub); }
+  }
+  function showSettingsSubtab(sub){
+    document.querySelectorAll('.settings-pane').forEach(p=>p.classList.remove('active')); document.getElementById(`settings-${sub}`).classList.add('active');
+    document.querySelectorAll('.settings-subtab').forEach(b=>b.classList.toggle('active',b.dataset.subtab===sub));
+    if(sub==='year') renderYearTab(); if(sub==='personality'){ renderAnthroForm(); renderTestForm(); renderAnalysisResults(); initAlarms(); } if(sub==='processes'){ renderProcessCategories(); renderProcessItems(); }
+  }
+  function renderInfluenceLegend(){ const b=document.getElementById('influenceLegendBody'); b.innerHTML=''; Object.entries(influenceMap).forEach(([l,i])=>{ const r=document.createElement('tr'); r.innerHTML=`<td>${i.label}</td><td>${i.icon} (${l})</td>`; b.appendChild(r); }); }
+  function renderYearTab(){ const c=document.getElementById('sectorCards'); c.innerHTML=''; sectorMeta.forEach(s=>{ const mx=appState.sectors[s.id].matrix; const card=document.createElement('button'); card.className='sector-card'; card.innerHTML=`<strong>${s.title}</strong><div>Рез:${safeArray(mx.results).length} Стр:${safeArray(mx.strategies).length}</div><div class="badge">Связей:${safeArray(mx.links).length}</div>`; card.onclick=()=>openMatrix(s.id); c.appendChild(card); }); }
+  function openMatrix(id){ activeSectorId=id; activeMatrixPane='results'; document.getElementById('matrixTitle').textContent=appState.sectors[id].title; document.getElementById('matrixModal').classList.add('active'); renderMatrixTabs(); renderMatrixPane(); }
+  function closeMatrix(){ activeSectorId=null; document.getElementById('matrixModal').classList.remove('active'); renderYearTab(); saveState(); }
+  function renderMatrixTabs(){ const t=document.getElementById('matrixTabs'); t.innerHTML=''; matrixPanesMeta.forEach(m=>{ const b=document.createElement('button'); b.textContent=m.label; b.classList.toggle('active',m.key===activeMatrixPane); b.onclick=()=>{ activeMatrixPane=m.key; renderMatrixTabs(); renderMatrixPane(); }; t.appendChild(b); }); }
+  function addMatrixItem(key){ if(!activeSectorId)return; const mx=appState.sectors[activeSectorId].matrix; if(key==='processProjects')mx.processProjects.push({id:uid(key),title:'',ownerId:''}); else if(key==='owners')mx.owners.push({id:uid(key),name:''}); else mx[key].push({id:uid(key),title:''}); renderMatrixPane(); }
+  function removeMatrixItem(key,id){ const mx=appState.sectors[activeSectorId].matrix; const tgt=key==='processProjects'?'processProjects':key; mx[tgt]=mx[tgt].filter(i=>i.id!==id); mx.links=mx.links.filter(l=>l.fromId!==id&&l.toId!==id); renderMatrixPane(); }
+  function renderEntityEditor(key,title,addLabel){
+    const mx=appState.sectors[activeSectorId].matrix; const list=key==='processProjects'?mx.processProjects:key==='owners'?mx.owners:mx[key];
+    const wrap=document.createElement('div'); wrap.className='pane active'; wrap.innerHTML=`<h3>${title}</h3><div class="list" id="list_${key}"></div><button class="btn" id="add_${key}">${addLabel}</button>`;
+    const cont=wrap.querySelector(`#list_${key}`); list.forEach(it=>{ const r=document.createElement('div'); r.className='list-item';
+      if(key==='processProjects') r.innerHTML=`<input data-id="${it.id}" data-key="title" value="${escapeHtml(it.title||'')}"><select data-id="${it.id}" data-key="ownerId"><option value="">Исп.</option>${mx.owners.map(o=>`<option value="${o.id}" ${o.id===it.ownerId?'selected':''}>${escapeHtml(o.name)}</option>`)}</select><button class="btn warn" data-del="${it.id}">🗑</button>`;
+      else if(key==='owners') r.innerHTML=`<input data-id="${it.id}" data-key="name" value="${escapeHtml(it.name||'')}"><button class="btn warn" data-del="${it.id}">🗑</button>`;
+      else r.innerHTML=`<input data-id="${it.id}" data-key="title" value="${escapeHtml(it.title||'')}"><button class="btn warn" data-del="${it.id}">🗑</button>`;
+      cont.appendChild(r);
+    });
+    cont.querySelectorAll('input,select').forEach(f=>f.addEventListener('change',()=>{ const idx=list.findIndex(i=>i.id===f.dataset.id); if(idx>=0)list[idx][f.dataset.key]=f.value; saveState(); }));
+    cont.querySelectorAll('[data-del]').forEach(b=>b.addEventListener('click',()=>removeMatrixItem(key,b.dataset.del)));
+    wrap.querySelector(`#add_${key}`).onclick=()=>{ addMatrixItem(key); saveState(); }; return wrap;
+  }
+  function renderRelationsEditor(){
+    const mx=appState.sectors[activeSectorId].matrix; const wrap=document.createElement('div'); wrap.className='pane active';
+    wrap.innerHTML=`<h3>Связи</h3><div class="form-row"><select id="relFromType"></select><select id="relFromId"></select><select id="relToType"></select><select id="relToId"></select><select id="relInfluence"></select><button class="btn" id="addRelationBtn">+</button></div><table class="relations-table"><tbody id="relationsBody"></tbody></table>`;
+    const pairs=[{from:'results',to:'strategies'},{from:'strategies',to:'tactics'},{from:'tactics',to:'processProjects'},{from:'tactics',to:'owners'},{from:'processProjects',to:'results'},{from:'processProjects',to:'owners'},{from:'owners',to:'results'}];
+    const fromT=wrap.querySelector('#relFromType'), toT=wrap.querySelector('#relToType'), fromId=wrap.querySelector('#relFromId'), toId=wrap.querySelector('#relToId'), inf=wrap.querySelector('#relInfluence');
+    fromT.innerHTML=[...new Set(pairs.map(p=>p.from))].map(t=>`<option>${t}</option>`).join('');
+    function upd(){ const allowed=pairs.filter(p=>p.from===fromT.value).map(p=>p.to); toT.innerHTML=allowed.map(t=>`<option>${t}</option>`).join(''); const fn=mx[fromT.value]||[], tn=mx[toT.value]||[]; fromId.innerHTML=fn.map(n=>`<option value="${n.id}">${n.title||n.name||'?'}</option>`).join(''); toId.innerHTML=tn.map(n=>`<option value="${n.id}">${n.title||n.name||'?'}</option>`).join(''); }
+    inf.innerHTML=Object.entries(influenceMap).map(([l,d])=>`<option value="${l}">${d.icon}</option>`).join(''); fromT.onchange=upd; toT.onchange=upd; upd();
+    wrap.querySelector('#addRelationBtn').onclick=()=>{ mx.links.push({id:uid('link'),fromType:fromT.value,fromId:fromId.value,toType:toT.value,toId:toId.value,influence:Number(inf.value)}); renderMatrixPane(); saveState(); };
+    const tbody=wrap.querySelector('#relationsBody'); mx.links.forEach(l=>{ const r=document.createElement('tr'); r.innerHTML=`<td>${l.fromType}</td><td>${l.toType}</td><td><select data-rel="${l.id}">${Object.entries(influenceMap).map(([v,d])=>`<option value="${v}" ${Number(v)===l.influence?'selected':''}>${d.icon}</option>`)}</select></td><td><button class="btn warn" data-del="${l.id}">🗑</button></td>`; tbody.appendChild(r); });
+    tbody.querySelectorAll('select').forEach(s=>s.addEventListener('change',()=>{ const lk=mx.links.find(li=>li.id===s.dataset.rel); if(lk)lk.influence=Number(s.value); saveState(); }));
+    tbody.querySelectorAll('[data-del]').forEach(b=>b.addEventListener('click',()=>{ mx.links=mx.links.filter(li=>li.id!==b.dataset.del); renderMatrixPane(); saveState(); })); return wrap;
+  }
+  function renderMatrixPane(){ const t=document.getElementById('matrixPanes'); t.innerHTML=''; if(!activeSectorId)return;
+    if(activeMatrixPane==='results') t.appendChild(renderEntityEditor('results','Результаты','+ Результат'));
+    else if(activeMatrixPane==='strategies') t.appendChild(renderEntityEditor('strategies','Стратегии','+ Стратегия'));
+    else if(activeMatrixPane==='tactics') t.appendChild(renderEntityEditor('tactics','Тактика','+ Тактика'));
+    else if(activeMatrixPane==='processProjects'){ const d=document.createElement('div'); d.appendChild(renderEntityEditor('processProjects','Процесс/Проект','+ Процесс')); d.appendChild(renderEntityEditor('owners','Исполнитель','+ Исполнитель')); t.appendChild(d); }
+    else if(activeMatrixPane==='relations') t.appendChild(renderRelationsEditor());
+  }
+  function renderAnthroForm(){ const f=document.getElementById('anthroForm'); f.innerHTML=''; ['heightCm','weightKg'].forEach(k=>{ f.innerHTML+=`<label>${k}<input data-key="${k}" type="number" value="${appState.personality.anthropometry[k]||''}"></label>`; }); }
+  function renderTestForm(){ document.getElementById('testForm').innerHTML='<div>Саморегуляция <input type="range" min="1" max="5"></div>'; }
+  function renderAnalysisResults(){ document.getElementById('analysisList').innerHTML=''; }
+  let currentAlarms=[];
+  function renderAlarms(){ const c=document.getElementById('alarm-list'); c.innerHTML=currentAlarms.length?currentAlarms.map(a=>`<div>${a.time}</div>`).join(''):'Нет будильников'; }
+  function initAlarms(){ currentAlarms=appState.personality.alarms||[]; renderAlarms(); }
+  function renderProcessCategories(){ document.getElementById('processCategories').innerHTML=appState.processes.categories.map(c=>`<span class="badge">${c}</span>`).join(''); }
+  function renderProcessItems(){ document.getElementById('processItems').innerHTML=''; }
+  function ensureTaskShape(t){ return {id:t.id||uid('task'),title:t.title,date:t.date||todayIso(),sectorId:t.sectorId||'personal_growth',minutes:Number(t.minutes||30),influence:t.influence||3,checklist:safeArray(t.checklist),checklistDone:safeArray(t.checklistDone),status:t.status||'pending',reason:t.reason||''}; }
+  function renderTasks(){ const d=document.getElementById('taskDateFilter').value||todayIso(); const tasks=appState.tasks.filter(t=>t.date===d); document.getElementById('tasksContainer').innerHTML=tasks.map(t=>`<div class="task-item"><strong>${t.title}</strong> (${t.minutes} мин) <button data-id="${t.id}">✓</button></div>`).join(''); }
+  function renderCalendar(){ const y=calendarDate.getFullYear(),m=calendarDate.getMonth(); document.getElementById('calendarMonthLabel').textContent=new Date(y,m).toLocaleDateString('ru',{month:'long',year:'numeric'}); }
+  function runAnalytics(){ document.getElementById('analyticsText').innerText=`Задач: ${appState.tasks.length}`; }
+  function startWeatherUpdates(){ fetchWeather(); setInterval(fetchWeather,30*60*1000); }
+  async function fetchWeather(){ try{ const r=await fetch(`https://api.open-meteo.com/v1/forecast?latitude=55.75&longitude=37.61&current_weather=true`); const d=await r.json(); document.getElementById('weatherTemp').innerText=Math.round(d.current_weather.temperature)+'°'; }catch(e){} }
+  function initInteractiveMap(){ map=L.map('map').setView([55.75,37.61],12); L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map); }
+  function initCharacterFromState(){}
+  function renderContacts(){ const c=document.getElementById('contactsList'); c.innerHTML=contacts.map(ct=>`<div class="contact-item">${ct.firstName} ${ct.lastName}</div>`).join(''); }
+  function renderChatsList(){ document.getElementById('chatsList').innerHTML=chats.map(ch=>`<div class="chat-item">чат ${ch.id}</div>`).join(''); }
+  function loadContactsFromState(){ contacts=appState.contacts||[]; chats=appState.chats||[]; renderContacts(); renderChatsList(); }
+  function bindEvents(){
+    document.querySelectorAll('.nav-item').forEach(b=>b.addEventListener('click',()=>activateTab(b.dataset.tab)));
+    document.getElementById('syncNowBtn').onclick=saveState;
+    document.getElementById('closeMatrixBtn').onclick=closeMatrix;
+    document.querySelectorAll('.settings-subtab').forEach(b=>b.addEventListener('click',()=>showSettingsSubtab(b.dataset.subtab)));
+    document.getElementById('addContactBtn').onclick=()=>document.getElementById('contactModal').classList.add('active');
+  }
+  async function start(){ await loadState(); renderInfluenceLegend(); bindEvents(); activateTab('contacts'); startWeatherUpdates(); initInteractiveMap(); loadContactsFromState(); }
+  start();
+})();
+</script>
+</body>
+</html>
