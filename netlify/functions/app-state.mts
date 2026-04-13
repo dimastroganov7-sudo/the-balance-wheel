@@ -105,6 +105,9 @@ function createDefaultState() {
     },
     tasks: [],
     readWithoutChecklist: [],
+    contacts: [],
+    chats: [],
+    messages: {},
     updatedAt: new Date().toISOString(),
   }
 }
@@ -123,6 +126,9 @@ const corsHeaders = {
 
 function deepMerge(target, source) {
   if (!source || typeof source !== 'object') return target
+  if (Array.isArray(target) && Array.isArray(source)) {
+    return source
+  }
   const result = Array.isArray(target) ? [...target] : { ...target }
   for (const key of Object.keys(source)) {
     const srcVal = source[key]
